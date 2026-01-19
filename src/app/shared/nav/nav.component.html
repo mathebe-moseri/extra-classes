@@ -1,80 +1,91 @@
 <header class="w-full bg-gray-300 lg:px-8 py-2 flex items-center justify-between">
-<a class="inline-block transition-all duration-300 font-semibold 
-          text-gray-800 px-3 py-1 
-          hover:scale-110 active:scale-95 text-[12px] lg:text-[16px]" 
-   href="#hero">
-    <span class="text-[8px] ml-[34px] block">Sesi Mathebe</span>
-    <span class="block mt-[-2px]">Remote Extra Classes</span>
-</a>
 
-    <div class="relative md:hidden group">
-        <div class="absolute -translate-x-20 translate-y-1 cursor-pointer" (click)="toggleBg()">
-            <div class="w-14 h-8 bg-white-50 rounded-full flex items-center px-1 transition-all duration-300 text-gray-800 text-[10px] mt-[8px]">contactUS
-                <!-- <div class="w-6 h-6 rounded-full transition-transform duration-300" [ngClass]="
-                currentBg
-                ? 'bg-black-100 translate-x-0'
-                : 'bg-[#00213d] translate-x-[24px]'
-            ">
-                </div> -->
+    <!-- Navbar item -->
+    <a class="inline-block transition-all duration-300 font-semibold text-gray-800 px-3 py-1 text-center text-[12px] lg:text-[16px]"
+        href="#hero">
+        <span class="block text-[8px]">Sesi Mathebe</span>
+        <span class="block mt-[-2px]">Remote Extra Classes</span>
+    </a>
+
+    <!-- Mobile menu / contact toggle -->
+    <div class="relative md:hidden group flex items-center justify-end px-3">
+
+        <!-- contactUS toggle -->
+        <div class="absolute right-32 top-1/2 -translate-y-1/2 cursor-pointer" (click)="toggleBg()">
+            <div
+                class="w-14 h-8 bg-white-50 rounded-full flex items-center justify-center px-1 transition-all duration-300 text-gray-800 text-[9px]">
+                contactUS
             </div>
         </div>
-        <button (click)="toggleMobileMenu()"
-            class="right-2  w-24 bg-gray-800 border border-gray-700 
-            rounded-lg flex flex-col shadow-lg py-2 z-50 text-white-50 text-[12px] font-bold cursor-pointer select-none -translate-x-2 mobile-menu-toggle">
-            Join<br>Our Classes
-    </button>
-        <div *ngIf="isMobileMenuOpen" class="absolute right-2 mt-4 w-40 bg-gray-800 border border-gray-700 
-            rounded-lg flex flex-col shadow-lg py-2 z-50 text-white-50">
-            <a href="/mathebe-cv.pdf" download="Mathebe_cv.pdf" (click)="closeMobileMenuWithDelay()"
-                class="px-3 py-1 text-sm active:bg-gray-700 rounded">
-                Grade 10
-            </a>
-            <a href="#projects" (click)="selectMenuItem('projects')"
-                [ngClass]="selectedMenuItem === 'projects' ? 'bg-gray-700 text-white' : 'text-white'"
-                class="px-3 py-2 text-sm rounded transition-colors duration-300 active:bg-gray-700">
-                Grade 11
-            </a>
-            <a href="#experience" (click)="selectMenuItem('experience')"
-                [ngClass]="selectedMenuItem === 'experience' ? 'bg-gray-700 text-white' : 'text-white'"
-                class="px-3 py-2 text-sm rounded transition-colors duration-300 active:bg-gray-700">
-                Grade 12
-            </a>
-        </div>
 
+        <!-- Join Our Classes button -->
+        <button (click)="toggleMobileMenu()"
+            class="mobile-menu-toggle w-24 bg-gray-800 border border-gray-700 rounded-lg flex flex-col shadow-lg py-2 z-50 text-white-50 text-[12px] font-bold cursor-pointer select-none">
+            Join<br>Our Classes
+        </button>
     </div>
 
+    <!-- Form popup -->
+    <div *ngIf="isMobileMenuOpen"
+        class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 px-3">
+
+        <div class="form-popup bg-white-50 text-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
+            <!-- Manual close button -->
+            <button (click)="closeForm()"
+                class="absolute top-2 right-2 text-gray-800 font-bold text-lg">&times;
+            </button>
+
+            <h3 class="text-center font-bold text-lg mb-4">Join Our Classes</h3>
+
+            <form (ngSubmit)="submitForm()" class="flex flex-col gap-3">
+                <!-- Learner info -->
+                <input name="learnerFirstName" [(ngModel)]="learnerFirstName" required type="text"
+                    placeholder="Learner First Name"
+                     class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
+                <input name="learnerSurname" [(ngModel)]="learnerSurname" required type="text"
+                    placeholder="Learner Surname"
+                     class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
+                <input name="grade" [(ngModel)]="grade" required type="text" placeholder="Grade"
+                     class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
+                <input name="email" [(ngModel)]="email" required type="email" placeholder="Email"
+                     class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
+                <input name="schoolName" [(ngModel)]="schoolName" required type="text" placeholder="School Name"
+                     class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
+
+                <!-- Parent/Guardian info -->
+                <input name="parentFirstName" [(ngModel)]="parentFirstName" required type="text"
+                    placeholder="Parent/Guardian Full Name"
+                     class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
+                <input name="parentSurname" [(ngModel)]="parentSurname" required type="text"
+                    placeholder="Parent/Guardian Cell"
+                     class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
+
+                <button type="submit"
+                    [disabled]="!learnerFirstName || !learnerSurname || !grade || !email || !schoolName || !parentFirstName || !parentSurname"
+                    class="mt-2 w-full bg-gray-800 hover:bg-gray-700 transition-colors rounded py-2 font-bold text-white-50">
+                    JOIN
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Desktop menu -->
     <div class="hidden md:flex items-center space-x-6 pr-4">
         <a href="/mathebe-cv.pdf" download="Mathebe_cv.pdf"
             class="text-white-50 border-2 border-[#1C2A4A] rounded p-1 hover:bg-blue-100 hover:scale-110 active:scale-95 inline-block transition-all duration-300">My
             Resume</a>
-        <a href="#projects" class="relative text-gray-400 p-1
-          transition-all duration-300
-          before:content-[''] before:absolute before:left-0 before:bottom-0
-          before:h-[2px] before:bg-white-50
-          before:w-0 before:transition-all before:duration-300
-          hover:before:w-full">Projects</a>
-        <!-- <a href="#linkedin" class="text-gray-400 border-2 border-[#1C2A4A] rounded p-1">LinkedIn</a> -->
-        <a href="#experience" class="relative text-gray-400 p-1
-          transition-all duration-300
-          before:content-[''] before:absolute before:left-0 before:bottom-0
-          before:h-[2px] before:bg-white-50
-          before:w-0 before:transition-all before:duration-300
-          hover:before:w-full">Experience</a>
-        <a href="#Contacts" class="relative text-gray-400 p-1
-          transition-all duration-300
-          before:content-[''] before:absolute before:left-0 before:bottom-0
-          before:h-[2px] before:bg-white-50
-          before:w-0 before:transition-all before:duration-300
-          hover:before:w-full">Contacts</a>
+        <a href="#projects"
+            class="relative text-gray-400 p-1 transition-all duration-300 before:content-[''] before:absolute before:left-0 before:bottom-0 before:h-[2px] before:bg-white-50 before:w-0 before:transition-all before:duration-300 hover:before:w-full">Projects</a>
+        <a href="#experience"
+            class="relative text-gray-400 p-1 transition-all duration-300 before:content-[''] before:absolute before:left-0 before:bottom-0 before:h-[2px] before:bg-white-50 before:w-0 before:transition-all before:duration-300 hover:before:w-full">Experience</a>
+        <a href="#Contacts"
+            class="relative text-gray-400 p-1 transition-all duration-300 before:content-[''] before:absolute before:left-0 before:bottom-0 before:h-[2px] before:bg-white-50 before:w-0 before:transition-all before:duration-300 hover:before:w-full">Contacts</a>
+
         <div class="w-20 h-10 bg-white-50 rounded-full flex items-center px-1 transition-all duration-300 cursor-pointer"
             (click)="toggleBg()">
-            <div class="w-8 h-8 rounded-full transition-transform duration-300" [ngClass]="
-                currentBg
-                ? 'bg-black-100 translate-x-0'
-                : 'bg-[#00213d] translate-x-[39px]'
-            ">
+            <div class="w-8 h-8 rounded-full transition-transform duration-300"
+                [ngClass]="currentBg ? 'bg-black-100 translate-x-0' : 'bg-[#00213d] translate-x-[39px]'">
             </div>
         </div>
     </div>
 </header>
-
