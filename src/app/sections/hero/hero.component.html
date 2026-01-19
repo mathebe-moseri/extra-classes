@@ -9,13 +9,13 @@
       <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
         <!-- Responsive YouTube Video -->
         <div class="video-container">
-          <iframe
-            src="https://www.youtube.com/embed/oCdP_3ezF9w?rel=0&autoplay=0&mute=1"
-            title="Testimonials Video"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen>
+          <iframe width="560" height="315"
+            src="https://www.youtube.com/embed/oCdP_3ezF9w?rel=0&autoplay=0&mute=1&si=eTlR-YHPJEk-0SXm"
+            title="Testimonials Video" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
           </iframe>
+
         </div>
       </div>
     </div>
@@ -30,10 +30,8 @@
     <div class="w-full max-w-5xl px-4">
       <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
         <div class="aspect-video">
-          <iframe class="w-full h-full"
-                  src=""
-                  title="Demo Lesson Video" frameborder="0" allow="autoplay; encrypted-media; fullscreen"
-                  allowfullscreen>
+          <iframe class="w-full h-full" src="" title="Demo Lesson Video" frameborder="0"
+            allow="autoplay; encrypted-media; fullscreen" allowfullscreen>
           </iframe>
         </div>
       </div>
@@ -44,7 +42,7 @@
     </p>
 
     <button (click)="openQuiz()"
-            class="mt-4 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300">
+      class="mt-4 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300">
       Test Your Knowledge
     </button>
   </div>
@@ -60,25 +58,26 @@
     <h3 class="text-2xl font-bold mb-4 text-center">Trig Quiz</h3>
 
     <p class="mb-4 text-center">
-      In a right-angled triangle, if angle θ is {{quizAngle}}° and the hypotenuse is {{quizHypotenuse}} units, what is the length of the side opposite to θ?
+      In a right-angled triangle, if angle θ is {{quizAngle}}° and the hypotenuse is {{quizHypotenuse}} units, what is
+      the length of the side opposite to θ?
     </p>
 
     <input [(ngModel)]="userAnswer" type="number" placeholder="Enter your answer"
-           class="w-full border border-gray-600 rounded px-3 py-2 mb-4 text-gray-900">
+      class="w-full border border-gray-600 rounded px-3 py-2 mb-4 text-gray-900">
 
     <div class="flex justify-between">
       <button (click)="checkAnswer()"
-              class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-all duration-200">
+        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-all duration-200">
         Submit
       </button>
       <button (click)="closeQuiz()"
-              class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-all duration-200">
+        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-all duration-200">
         Close
       </button>
     </div>
 
-    <p *ngIf="feedback" class="mt-4 font-semibold text-center" 
-       [ngClass]="{'text-green-500': isCorrect, 'text-red-500': !isCorrect}">
+    <p *ngIf="feedback" class="mt-4 font-semibold text-center"
+      [ngClass]="{'text-green-500': isCorrect, 'text-red-500': !isCorrect}">
       {{feedback}}
     </p>
   </div>
