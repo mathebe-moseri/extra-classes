@@ -1,0 +1,20 @@
+.remote-classes-btn {
+  transform: translateY(0) rotate(0deg);
+  transition: transform 0.3s ease;
+}
+
+.remote-classes-btn:hover {
+  /* Simulate a U-shaped curve */
+  transform: translateY(-10px) rotate(0deg);
+}
+
+/* Optional: you can add multiple span adjustments to exaggerate the U-shape */
+.remote-classes-btn span:nth-child(2) {
+  display: block;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+.remote-classes-btn:hover span:nth-child(2) {
+  transform: translateY(-5px);
+}
