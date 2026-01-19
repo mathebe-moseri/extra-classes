@@ -1,36 +1,82 @@
 <app-nav></app-nav>
-<section id="hero" class="relative overflow-hidden">
-    <div class="absolute top-0 left-0 z-10">
-        <img src="images/bg.png" alt="bg-image" />
+
+<!-- Testimonials Section -->
+<div class="rounded-xl p-10">
+  <div class="w-full flex flex-col items-center justify-center bg-gray-900 px-4 py-12 rounded-xl">
+    <h2 class="text-white text-3xl md:text-4xl font-bold mb-8 text-center">Testimonials</h2>
+
+    <div class="w-full max-w-5xl px-4">
+      <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
+        <div class="aspect-video">
+          <iframe class="w-full h-full"
+                  src="https://www.youtube.com/embed/oCdP_3ezF9w?rel=0&autoplay=0&mute=1"
+                  title="Testimonials Video" frameborder="0" allow="autoplay; encrypted-media; fullscreen"
+                  allowfullscreen>
+          </iframe>
+        </div>
+      </div>
     </div>
-    <div class="hero-layout">
-        <!-- left/top -->
-        <!-- <header class="flex flex-col justify-center md:w-full w-screen lg:px-8 px-4">
-            <div class="flex flex-col gap-7">
-                <div class="hero-text">
-                    <h1 class="flex items-center gap-2 md:gap-3 relative">
-                        Shaping
-                        <span class="relative w-[400px] h-[54px] overflow-hidden">
-                            <span *ngFor="let word of words" #slideWord
-                                class="flex items-center gap-2 md:gap-3 absolute top-0 left-0">
-                                <img [src]="word.imgPath" [alt]="word.text" class="bg-white-50 p-1 transalte-x-1" />
-                                <span>{{ word.text }}</span>
-                            </span>
-                        </span>
-                    </h1>
-                    <h1 class="flex items-center">into <img src="images/iconW.png" class="rounded-full translate-x-1"
-                            #rotateIcon />World-Class Applications</h1>
-                    <h1>that Elevate Business Performance</h1>
-                </div>
-            </div>
-        </header> -->
+  </div>
+</div>
 
-        <!-- right/bottom -->
-        <!-- <div class="w-full md:w-[70%] bg-white-500 imgContainer p-12">
-            <img src="images/room.png" alt="roomImage" class="" />
-        </div> -->
-        <!-- download but -->
+<!-- Demo Lesson Section -->
+<div class="rounded-xl p-10">
+  <div class="w-full flex flex-col items-center justify-center bg-gray-900 px-4 py-12 rounded-xl">
+    <h2 class="text-white text-3xl md:text-4xl font-bold mb-8 text-center">Demo Lesson</h2>
 
+    <div class="w-full max-w-5xl px-4">
+      <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
+        <div class="aspect-video">
+          <iframe class="w-full h-full"
+                  src=""
+                  title="Demo Lesson Video" frameborder="0" allow="autoplay; encrypted-media; fullscreen"
+                  allowfullscreen>
+          </iframe>
+        </div>
+      </div>
     </div>
 
-</section>
+    <p class="mt-6 text-center text-gray-300 text-lg max-w-2xl">
+      After going through this demo lesson, you can try to solve the following questions.
+    </p>
+
+    <button (click)="openQuiz()"
+            class="mt-4 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300">
+      Test Your Knowledge
+    </button>
+  </div>
+</div>
+
+<!-- Quiz Modal -->
+<div *ngIf="showQuiz" class="fixed inset-0 flex items-center justify-center z-50">
+  <!-- Background blur -->
+  <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
+
+  <!-- Modal content -->
+  <div class="relative bg-gray-900 text-white rounded-xl p-8 w-11/12 max-w-md shadow-2xl z-10">
+    <h3 class="text-2xl font-bold mb-4 text-center">Trig Quiz</h3>
+
+    <p class="mb-4 text-center">
+      In a right-angled triangle, if angle θ is {{quizAngle}}° and the hypotenuse is {{quizHypotenuse}} units, what is the length of the side opposite to θ?
+    </p>
+
+    <input [(ngModel)]="userAnswer" type="number" placeholder="Enter your answer"
+           class="w-full border border-gray-600 rounded px-3 py-2 mb-4 text-gray-900">
+
+    <div class="flex justify-between">
+      <button (click)="checkAnswer()"
+              class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-all duration-200">
+        Submit
+      </button>
+      <button (click)="closeQuiz()"
+              class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-all duration-200">
+        Close
+      </button>
+    </div>
+
+    <p *ngIf="feedback" class="mt-4 font-semibold text-center" 
+       [ngClass]="{'text-green-500': isCorrect, 'text-red-500': !isCorrect}">
+      {{feedback}}
+    </p>
+  </div>
+</div>
