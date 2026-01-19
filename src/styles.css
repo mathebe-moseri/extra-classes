@@ -1,0 +1,52 @@
+/* You can add global styles to this file, and also import other style files */
+
+@tailwind base;
+@tailwind components;
+@tailwind  utilities;
+
+:root {
+  --gradient: radial-gradient(circle, #e5e5e5 0%, #fff 100%);
+}
+
+html,
+body {
+  width: 100dvw;
+  overflow-x: hidden;
+  /* background-color: black; */
+  color: white;
+  scroll-behavior: smooth;
+  font-family: "Mona Sans", sans-serif;
+}
+
+section {
+  width: 100dvw;
+}
+
+@layer utilities {
+  .flex-center {
+    @apply flex justify-center items-center;
+  }
+
+  .flex-col-center {
+    @apply flex flex-col justify-center items-center;
+  }
+}
+
+@layer components {
+  .hero-layout {
+    @apply relative z-10 xl:mt-20 mt-32 md:h-dvh h-[80vh] flex flex-col md:flex-row xl:items-center items-start justify-center;
+  }
+
+  .hero-text {
+    @apply flex flex-col justify-center md:text-[40px] text-[15px] font-semibold relative z-10 pointer-events-none text-white-50;
+  }
+
+  .hero-text img {
+    @apply size-8 md:size-10 object-contain;
+  }
+
+  .hero-3d-layout {
+    @apply xl:w-[70%] w-full h-full min-h-[50vh] absolute xl:-top-20 top-24 xl:-right-20 right-0;
+  }
+}
+
