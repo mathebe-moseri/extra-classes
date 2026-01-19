@@ -21,32 +21,6 @@ export class HeroComponent implements AfterViewInit {
 
   ngAfterViewInit() {
 
-    const tl = gsap.timeline({ repeat: -1 });
-
-    this.slideWordElements.forEach((el, index) => {
-      gsap.set(el.nativeElement, { opacity: 0, position: 'absolute', left: 0, top: 0 });
-
-      tl.fromTo(
-        el.nativeElement,
-        { x: '-50%', opacity: 0 },
-        { x: '0%', opacity: 1, duration: 2, ease: 'power1.out', yoyo: true }
-      )
-        .to(
-          el.nativeElement,
-          { x: '100%', opacity: 0, duration: 3, ease: 'power1.in', delay: 0, yoyo: true }
-        );
-
-    });
-
-    gsap.to(this.rotateIcon.nativeElement, {
-      rotation: 360,
-      repeat: -1,
-      duration: 6,
-      ease: "none",
-      yoyo: true
-      
-    })
-
   }
 
     printCV() {

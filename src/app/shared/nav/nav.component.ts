@@ -12,10 +12,11 @@ import { FormsModule } from '@angular/forms'; // Required for ngModel
 export class NavComponent {
   // Navbar state
   isMobileMenuOpen = false;
+  isContactFormOpen = false;
   currentBg = true;
   selectedMenuItem = '';
 
-  // Form fields
+  // Join form fields
   learnerFirstName = '';
   learnerSurname = '';
   grade = '';
@@ -24,21 +25,21 @@ export class NavComponent {
   parentFirstName = '';
   parentSurname = '';
 
+  // Contact form state
+  contactFormType: 'whatsapp' | 'email' = 'whatsapp';
+  whatsappNumber = '';
+  whatsappMessage = '';
+  emailAddress = '';
+  emailMessage = '';
+
   constructor() {
     document.body.style.backgroundColor = '#9CA3AF';
   }
 
-  // Opens the form popup
-  toggleMobileMenu() {
-    this.isMobileMenuOpen = true;
-  }
+  // --- Join form ---
+  toggleMobileMenu() { this.isMobileMenuOpen = true; }
+  closeForm() { this.isMobileMenuOpen = false; }
 
-  // Close popup manually
-  closeForm() {
-    this.isMobileMenuOpen = false;
-  }
-
-  // Submit form
   submitForm() {
     if (
       this.learnerFirstName && this.learnerSurname &&
@@ -56,11 +57,9 @@ export class NavComponent {
       });
 
       alert('Form submitted successfully!');
-
-      // Close popup
       this.isMobileMenuOpen = false;
 
-      // Reset fields
+      // reset
       this.learnerFirstName = '';
       this.learnerSurname = '';
       this.grade = '';
@@ -73,7 +72,35 @@ export class NavComponent {
     }
   }
 
-  // Toggle page background color
+  // --- Contact form ---
+  openContactForm() { this.isContactFormOpen = true; }
+  closeContactForm() { this.isContactFormOpen = false; }
+
+sendWhatsappMessage() {
+  if (this.whatsappMessage) {
+    const phone = '27765956598'; // your WhatsApp number (South Africa format, no +)
+    const text = encodeURIComponent(this.whatsappMessage);
+    window.open(`https://wa.me/${phone}?text=${text}`, '_blank'); // opens WhatsApp web or app
+    this.closeContactForm();
+    this.whatsappMessage = '';
+  }
+}
+
+
+sendEmailMessage() {
+  if (this.emailAddress && this.emailMessage) {
+    const to = 'mathebemoseri@gmail.com'; // your email
+    const subject = encodeURIComponent('Contact Form Message');
+    const body = encodeURIComponent(`From: ${this.emailAddress}\n\n${this.emailMessage}`);
+    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`; // opens email client
+    this.closeContactForm();
+    this.emailAddress = '';
+    this.emailMessage = '';
+  }
+}
+
+
+  // --- Navbar toggle ---
   toggleBg() {
     this.currentBg = !this.currentBg;
     document.body.style.backgroundColor = this.currentBg ? '#9CA3AF' : '#00213d';
@@ -81,27 +108,34 @@ export class NavComponent {
 
   selectMenuItem(item: string, delay: number = 100) {
     this.selectedMenuItem = item;
-    setTimeout(() => {
-      this.isMobileMenuOpen = false;
-    }, delay);
+    setTimeout(() => this.isMobileMenuOpen = false, delay);
   }
 
   closeMobileMenuWithDelay(delay: number = 500) {
-    setTimeout(() => {
-      this.isMobileMenuOpen = false;
-    }, delay);
+    setTimeout(() => this.isMobileMenuOpen = false, delay);
   }
 
-  // Only close popup when clicking outside the form or join button
+  // --- Click outside to close ---
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     const clickedElement = event.target as HTMLElement;
+
+    // Join form
     if (
       this.isMobileMenuOpen &&
-      !clickedElement.closest('.form-popup') && // container of form
-      !clickedElement.closest('.mobile-menu-toggle') // join button
+      !clickedElement.closest('.form-popup') &&
+      !clickedElement.closest('.mobile-menu-toggle')
     ) {
       this.isMobileMenuOpen = false;
+    }
+
+    // Contact form
+    if (
+      this.isContactFormOpen &&
+      !clickedElement.closest('.contact-form-popup') &&
+      !clickedElement.closest('.contact-toggle')
+    ) {
+      this.isContactFormOpen = false;
     }
   }
 }
