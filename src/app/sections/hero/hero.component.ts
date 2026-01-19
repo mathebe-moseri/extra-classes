@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { NavComponent } from '../../shared/nav/nav.component';
 import { FormsModule } from '@angular/forms';
 import html2pdf from 'html2pdf.js';
+import { ResumeComponent } from '../resume/resume.component';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, NavComponent, FormsModule],
+  imports: [CommonModule, NavComponent, FormsModule, ResumeComponent],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css']
 })
