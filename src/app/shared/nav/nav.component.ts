@@ -1,15 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms'; // Required for ngModel
+import { LearnerAPiService } from '../../learner-api.service';
+import { HttpClientModule } from '@angular/common/http';
+import { tap } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
+  providers: [LearnerAPiService],
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.css']
 })
 export class NavComponent {
+
+  //learner info from API
+ joinedLearners: any = []; 
   // Navbar state
   isMobileMenuOpen = false;
   isContactFormOpen = false;
@@ -22,8 +30,8 @@ export class NavComponent {
   grade = '';
   email = '';
   schoolName = '';
-  parentFirstName = '';
-  parentSurname = '';
+  parentFullName = '';
+  parentCell = '';
 
   // Contact form state
   contactFormType: 'whatsapp' | 'email' = 'whatsapp';
@@ -32,45 +40,78 @@ export class NavComponent {
   emailAddress = '';
   emailMessage = '';
 
-  constructor() {
+  constructor(private learnerApiService: LearnerAPiService) {
     document.body.style.backgroundColor = '#9CA3AF';
+  }
+
+  ngOnInit() {
+    this. learnerApiService.getLearnerInfo()
+      .pipe(
+        tap(data => {
+          this.joinedLearners = data;
+          console.log('Fetched learner info:', data);
+        })
+      )
+      .subscribe();
+
+
+
+       this.loadLearners()
   }
 
   // --- Join form ---
   toggleMobileMenu() { this.isMobileMenuOpen = true; }
   closeForm() { this.isMobileMenuOpen = false; }
 
-  submitForm() {
-    if (
-      this.learnerFirstName && this.learnerSurname &&
-      this.grade && this.email && this.schoolName &&
-      this.parentFirstName && this.parentSurname
-    ) {
-      console.log('Form submitted', {
-        learnerFirstName: this.learnerFirstName,
-        learnerSurname: this.learnerSurname,
-        grade: this.grade,
-        email: this.email,
-        schoolName: this.schoolName,
-        parentFirstName: this.parentFirstName,
-        parentSurname: this.parentSurname
-      });
+submitForm() {
+  if (
+    this.learnerFirstName && this.learnerSurname &&
+    this.grade && this.email && this.schoolName &&
+    this.parentFullName && this.parentCell
+  ) {
+    const learnerData = {
+      LearnerFirstName: this.learnerFirstName,
+      LearnerSurname: this.learnerSurname,
+      Grade: this.grade,
+      Email: this.email,
+      SchoolName: this.schoolName,
+      ParentFullName: this.parentFullName,
+      ParentCell: this.parentCell // match backend property
+    };
 
-      alert('Form submitted successfully!');
-      this.isMobileMenuOpen = false;
+    this.learnerApiService.addLearner(learnerData).subscribe({
+      next: () => {
+        alert('Learner added successfully!');
+        this.isMobileMenuOpen = false;
 
-      // reset
-      this.learnerFirstName = '';
-      this.learnerSurname = '';
-      this.grade = '';
-      this.email = '';
-      this.schoolName = '';
-      this.parentFirstName = '';
-      this.parentSurname = '';
-    } else {
-      alert('Please fill all fields before submitting.');
-    }
+        // Reset fields
+        this.learnerFirstName = '';
+        this.learnerSurname = '';
+        this.grade = '';
+        this.email = '';
+        this.schoolName = '';
+        this.parentFullName = '';
+        this.parentCell = '';
+
+        // Optionally refresh list
+        this.loadLearners();
+      },
+      error: (err) => {
+        console.error('Error adding learner:', err);
+        alert('Failed to add learner. Please try again.');
+      }
+    });
+  } else {
+    alert('Please fill all fields.');
   }
+}
+
+loadLearners() {
+  this.learnerApiService.getLearnerInfo().subscribe({
+    next: (data) => this.joinedLearners = data,
+    error: (err) => console.error('Error fetching learners:', err)
+  });
+}
 
   // --- Contact form ---
   openContactForm() { this.isContactFormOpen = true; }

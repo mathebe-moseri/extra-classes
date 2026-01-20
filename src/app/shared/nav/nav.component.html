@@ -1,3 +1,4 @@
+
 <header class="w-full bg-gray-300 lg:px-8 py-2 flex items-center justify-between">
 
   <!-- Navbar item -->
@@ -89,12 +90,12 @@
                class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
         <input name="schoolName" [(ngModel)]="schoolName" required type="text" placeholder="School Name"
                class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
-        <input name="parentFirstName" [(ngModel)]="parentFirstName" required type="text" placeholder="Parent/Guardian Full Name"
+        <input name="parentFullName" [(ngModel)]="parentFullName" required type="text" placeholder="Parent/Guardian Full Name"
                class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
-        <input name="parentSurname" [(ngModel)]="parentSurname" required type="text" placeholder="Parent/Guardian Cell"
+        <input name="parentCell" [(ngModel)]="parentCell" required type="text" placeholder="Parent/Guardian Cell"
                class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
         <button type="submit"
-                [disabled]="!learnerFirstName || !learnerSurname || !grade || !email || !schoolName || !parentFirstName || !parentSurname"
+                [disabled]="!learnerFirstName || !learnerSurname || !grade || !email || !schoolName || !parentFullName || !parentCell"
                 class="mt-2 w-full bg-gray-800 hover:bg-gray-700 transition-colors rounded py-2 font-bold text-white-50">
           JOIN
         </button>

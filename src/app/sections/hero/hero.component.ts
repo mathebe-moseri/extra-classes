@@ -67,18 +67,12 @@ export class HeroComponent implements AfterViewInit {
     html2pdf().from(cvElement).set(options).save();
   }
 
-downloadPDF() {
-  const link = document.createElement('a');
-  link.href = 'test.pdf'
-  link.download = 'SesiMathebe-Extra Classes.pdf'; // name of downloaded file
-  link.click();
-}
+  downloadPDF() {
+    const link = document.createElement('a');
+    link.href = 'test.pdf'
+    link.download = 'SesiMathebe-Extra Classes.pdf'; // name of downloaded file
+    link.click();
+  }
 
 
 }
-
-
-
-
-
-
