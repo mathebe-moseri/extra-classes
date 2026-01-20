@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'http://localhost:8000'
+  apiBaseUrl: 'https://sesi-mathebeextraclasses-f5hchpghcxafgrdf.westeurope-01.azurewebsites.net'
 };
