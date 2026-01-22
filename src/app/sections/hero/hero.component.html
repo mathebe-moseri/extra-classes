@@ -1,14 +1,40 @@
+<div class="px-3 py-2 flex space-x-2 items-center">
 
-<div class="px-3 py-2">
+  <!-- About Us -->
   <button (click)="downloadPDF()"
-    class="bg-blue-500 hover:bg-blue-600 text-white px-1 py-1 rounded flex items-center  text-[12px] lg:text-[14px] transition-all duration-300">
+    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center text-[12px] lg:text-[14px] transition-all duration-300">
     <!-- Minimal arrow-down icon -->
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"
       stroke-width="2">
       <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m0 0l-4-4m4 4l4-4" />
     </svg>
-    aboutUS
+    About Us
   </button>
+
+  <!-- Subjects Offered Dropdown -->
+  <div class="relative">
+    <button (click)="subjectsDropdownOpen = !subjectsDropdownOpen"
+      class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center text-[12px] lg:text-[14px] transition-all duration-300">
+      Subjects Offered
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform duration-200"
+           [class.rotate-180]="subjectsDropdownOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+           stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+
+    <!-- Dropdown Menu -->
+    <div *ngIf="subjectsDropdownOpen"
+         class="absolute mt-1 w-64 bg-white-50 text-gray-800 rounded-md shadow-lg z-50 border border-gray-200">
+      <a href="#grades101112" class="block px-4 py-2 hover:bg-gray-200">
+        Grades 10, 11, 12 – Mathematics & Physical Sciences
+      </a>
+      <a href="#grade12Coding" class="block px-4 py-2 hover:bg-gray-200">
+        Grade 12 – Introduction to Computers
+      </a>
+    </div>
+  </div>
+
 </div>
 
 <!-- Testimonials Section -->

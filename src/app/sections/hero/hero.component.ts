@@ -13,6 +13,7 @@ import { ResumeComponent } from '../resume/resume.component';
   styleUrls: ['./hero.component.css']
 })
 export class HeroComponent implements AfterViewInit {
+  subjectsDropdownOpen = false;
 
   showQuiz = false;
   userAnswer: number | null = null;
