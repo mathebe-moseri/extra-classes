@@ -49,7 +49,7 @@ export class NavComponent {
       .pipe(
         tap(data => {
           this.joinedLearners = data;
-          console.log('Fetched learner info:', data);
+          // console.log('Fetched learner info:', data);
         })
       )
       .subscribe();
