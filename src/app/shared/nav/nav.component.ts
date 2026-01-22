@@ -81,7 +81,7 @@ submitForm() {
 
     this.learnerApiService.addLearner(learnerData).subscribe({
       next: () => {
-        alert('Learner added successfully!');
+        alert('Welcome to Sesi Mathebe Extra Classes! Your registration was successful. Please check your spam email for further details.');
         this.isMobileMenuOpen = false;
 
         // Reset fields
