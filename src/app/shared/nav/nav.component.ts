@@ -64,47 +64,43 @@ export class NavComponent {
   closeForm() { this.isMobileMenuOpen = false; }
 
 submitForm() {
-  if (
-    this.learnerFirstName && this.learnerSurname &&
-    this.grade && this.email && this.schoolName &&
-    this.parentFullName && this.parentCell
-  ) {
-    const learnerData = {
-      LearnerFirstName: this.learnerFirstName,
-      LearnerSurname: this.learnerSurname,
-      Grade: this.grade,
-      Email: this.email,
-      SchoolName: this.schoolName,
-      ParentFullName: this.parentFullName,
-      ParentCell: this.parentCell // match backend property
-    };
+  // Build the payload from the form fields
+  const payload = {
+    learnerFirstName: this.learnerFirstName,
+    learnerSurname: this.learnerSurname,
+    grade: this.grade,
+    email: this.email,
+    schoolName: this.schoolName,
+    parentFullName: this.parentFullName,
+    parentCell: this.parentCell
+  };
 
-    this.learnerApiService.addLearner(learnerData).subscribe({
-      next: () => {
-        alert('Welcome to Sesi Mathebe Extra Classes! Your registration was successful. Please check your spam email for further details.');
-        this.isMobileMenuOpen = false;
+  // Use LearnerAPiService to submit the form
+  this.learnerApiService.addLearner(payload).subscribe({
+    next: (response) => {
+      // Success: show confirmation and reset form
+      alert('Registration successful! Please check your email.');
+      this.closeForm();
 
-        // Reset fields
-        this.learnerFirstName = '';
-        this.learnerSurname = '';
-        this.grade = '';
-        this.email = '';
-        this.schoolName = '';
-        this.parentFullName = '';
-        this.parentCell = '';
+      // Optionally, reset form fields
+      this.learnerFirstName = '';
+      this.learnerSurname = '';
+      this.grade = '';
+      this.email = '';
+      this.schoolName = '';
+      this.parentFullName = '';
+      this.parentCell = '';
 
-        // Optionally refresh list
-        this.loadLearners();
-      },
-      error: (err) => {
-        console.error('Error adding learner:', err);
-        alert('Failed to add learner. Please try again.');
-      }
-    });
-  } else {
-    alert('Please fill all fields.');
-  }
+      // Optionally, refresh learner list
+      this.loadLearners();
+    },
+    error: (err) => {
+      console.error('Error submitting form:', err);
+      alert('Something went wrong. Please try again.');
+    }
+  });
 }
+
 
 loadLearners() {
   this.learnerApiService.getLearnerInfo().subscribe({
