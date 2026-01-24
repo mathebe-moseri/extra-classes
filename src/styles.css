@@ -24,6 +24,23 @@ body::-webkit-scrollbar {
   display: none;                /* Chrome, Safari */
 }
 
+.blur-background {
+  filter: blur(6px);
+  pointer-events: none;
+  transition: filter 0.3s ease;
+}
+
+/* Popups appear above everything */
+.popup, .form-popup, .contact-form-popup {
+  pointer-events: auto;
+  z-index: 60;
+}
+
+/* Buttons that should never blur */
+.keep-sharp {
+  z-index: 70; /* above blur */
+  position: relative;
+}
 section {
   width: 100dvw;
 }

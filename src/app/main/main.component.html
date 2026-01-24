@@ -1,5 +1,10 @@
 <ng-container>
-    <app-nav />
-    <app-hero /> 
-    <!-- <app-resume /> -->
+  <!-- Nav buttons stay outside blur -->
+  <app-nav #nav />
+
+  <!-- Everything else that should blur when a popup is open -->
+  <div [class.blur-background]="nav.isMobileMenuOpen || nav.isContactFormOpen || hero.showQuiz">
+    <app-hero #hero />
+    <!-- other page content -->
+  </div>
 </ng-container>

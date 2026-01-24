@@ -1,123 +1,103 @@
-
 <header class="w-full bg-gray-300 lg:px-8 py-2 flex items-center justify-between fixed top-0 z-50 shadow-md">
 
-  <!-- Navbar item -->
+  <!-- Navbar brand -->
   <a class="inline-block transition-all duration-300 font-semibold text-gray-800 px-3 py-1 text-center text-[12px] lg:text-[16px]"
      href="#hero">
     <span class="block text-[8px]">Sesi Mathebe</span>
     <span class="block mt-[-2px]">Remote Extra Classes</span>
   </a>
 
-  <!-- Mobile menu / contact toggle -->
-  <div class="relative md:hidden group flex items-center justify-end px-3">
+  <!-- Mobile menu / contact buttons (outside blur) -->
+  <div class="relative md:hidden flex items-center justify-end px-3">
 
-    <!-- contactUS toggle -->
-    <div class="absolute right-32 top-1/2 -translate-y-1/2 cursor-pointer contact-toggle" (click)="openContactForm()">
-      <div class="w-14 h-8 bg-white-50 rounded-full flex items-center justify-center px-1 transition-all duration-300 text-gray-800 text-[9px]">
+    <!-- contactUS button -->
+    <div class="absolute right-32 top-1/2 -translate-y-1/2 cursor-pointer contact-toggle z-70" (click)="openContactForm()">
+      <div class="w-14 h-8 bg-white-50 rounded-full flex items-center justify-center px-1 text-gray-800 text-[9px]">
         contactUS
       </div>
     </div>
 
     <!-- Join Our Classes button -->
     <button (click)="toggleMobileMenu()"
-            class="mobile-menu-toggle w-24 bg-gray-800 border border-gray-700 rounded-full flex flex-col shadow-lg py-2 z-50 text-white-50 text-[12px] font-bold cursor-pointer select-none">
+            class="mobile-menu-toggle w-24 bg-gray-800 border border-gray-700 rounded-full flex flex-col shadow-lg py-2 z-70 text-white-50 text-[12px] font-bold cursor-pointer select-none">
       Join<br>Our Classes
     </button>
   </div>
-
-
-  <div *ngIf="isContactFormOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 px-3">
-    <div class="contact-form-popup form-popup bg-white-50 text-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
-
-      <button (click)="closeContactForm()" class="absolute top-2 right-2 text-gray-800 font-bold text-lg">&times;</button>
-
-      <h3 class="text-center font-bold text-lg mb-4">Contact Us</h3>
-
-      <!-- Choose form type -->
-      <div class="flex justify-center gap-4 mb-4">
-        <button (click)="contactFormType='whatsapp'"
-                [ngClass]="contactFormType==='whatsapp' ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-800'"
-                class="px-3 py-1 rounded font-bold">
-          WhatsApp
-        </button>
-        <button (click)="contactFormType='email'"
-                [ngClass]="contactFormType==='email' ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-800'"
-                class="px-3 py-1 rounded font-bold">
-          Email
-        </button>
-      </div>
-
-      <!-- WhatsApp Form -->
-      <form *ngIf="contactFormType==='whatsapp'" (ngSubmit)="sendWhatsappMessage()" class="flex flex-col gap-3">
-        <input name="whatsappNumber" [(ngModel)]="whatsappNumber" required type="text" placeholder="Your WhatsApp Number"
-               class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
-        <textarea name="whatsappMessage" [(ngModel)]="whatsappMessage" required placeholder="Your Message"
-               class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]"></textarea>
-        <button type="submit" [disabled]="!whatsappNumber || !whatsappMessage"
-                class="mt-2 w-full bg-green-500 hover:bg-green-600 transition-colors rounded py-2 font-bold text-white">
-          Send via WhatsApp
-        </button>
-      </form>
-
-      <!-- Email Form -->
-      <form *ngIf="contactFormType==='email'" (ngSubmit)="sendEmailMessage()" class="flex flex-col gap-3">
-        <input name="emailAddress" [(ngModel)]="emailAddress" required type="email" placeholder="Your Email"
-               class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
-        <textarea name="emailMessage" [(ngModel)]="emailMessage" required placeholder="Your Message"
-               class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]"></textarea>
-        <button type="submit" [disabled]="!emailAddress || !emailMessage"
-                class="mt-2 w-full bg-green-500 hover:bg-blue-600 transition-colors rounded py-2 font-bold text-white">
-          Send via Email
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Join Form Popup -->
-  <div *ngIf="isMobileMenuOpen" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 px-3">
-    <div class="form-popup bg-white-50 text-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative">
-      <button (click)="closeForm()" class="absolute top-2 right-2 text-gray-800 font-bold text-lg">&times;</button>
-      <h3 class="text-center font-bold text-lg mb-4">Join Our Classes</h3>
-
-      <form (ngSubmit)="submitForm()" class="flex flex-col gap-3">
-        <input name="learnerFirstName" [(ngModel)]="learnerFirstName" required type="text" placeholder="Learner First Name"
-               class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
-        <input name="learnerSurname" [(ngModel)]="learnerSurname" required type="text" placeholder="Learner Surname"
-               class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
-        <input name="grade" [(ngModel)]="grade" required type="text" placeholder="Grade"
-               class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
-        <input name="email" [(ngModel)]="email" required type="email" placeholder="Email"
-               class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
-        <input name="schoolName" [(ngModel)]="schoolName" required type="text" placeholder="School Name"
-               class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
-        <input name="parentFullName" [(ngModel)]="parentFullName" required type="text" placeholder="Parent/Guardian Full Name"
-               class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
-        <input name="parentCell" [(ngModel)]="parentCell" required type="text" placeholder="Parent/Guardian Cell"
-               class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 focus:outline-none focus:border-gray-400 bg-white-50 text-[14px]">
-        <button type="submit"
-                [disabled]="!learnerFirstName || !learnerSurname || !grade || !email || !schoolName || !parentFullName || !parentCell"
-                class="mt-2 w-full bg-gray-800 hover:bg-gray-700 transition-colors rounded py-2 font-bold text-white-50">
-          JOIN
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- Desktop menu -->
-  <!-- <div class="hidden md:flex items-center space-x-6 pr-4">
-    <a href="/mathebe-cv.pdf" download="Mathebe_cv.pdf"
-       class="text-white-50 border-2 border-[#1C2A4A] rounded p-1 hover:bg-blue-100 hover:scale-110 active:scale-95 inline-block transition-all duration-300">My Resume</a>
-    <a href="#projects"
-       class="relative text-gray-400 p-1 transition-all duration-300 before:content-[''] before:absolute before:left-0 before:bottom-0 before:h-[2px] before:bg-white-50 before:w-0 before:transition-all before:duration-300 hover:before:w-full">Projects</a>
-    <a href="#experience"
-       class="relative text-gray-400 p-1 transition-all duration-300 before:content-[''] before:absolute before:left-0 before:bottom-0 before:h-[2px] before:bg-white-50 before:w-0 before:transition-all before:duration-300 hover:before:w-full">Experience</a>
-    <a href="#Contacts"
-       class="relative text-gray-400 p-1 transition-all duration-300 before:content-[''] before:absolute before:left-0 before:bottom-0 before:h-[2px] before:bg-white-50 before:w-0 before:transition-all before:duration-300 hover:before:w-full">Contacts</a>
-
-    <div class="w-20 h-10 bg-white-50 rounded-full flex items-center px-1 transition-all duration-300 cursor-pointer"
-         (click)="toggleBg()">
-      <div class="w-8 h-8 rounded-full transition-transform duration-300"
-           [ngClass]="currentBg ? 'bg-black-100 translate-x-0' : 'bg-[#00213d] translate-x-[39px]'"></div>
-    </div>
-  </div> -->
 </header>
+
+<!-- Join Form Popup -->
+<div *ngIf="isMobileMenuOpen" class="fixed inset-0 flex items-center justify-center popup px-3">
+  <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" (click)="closeForm()"></div>
+
+  <div class="form-popup bg-white-50 text-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative"
+       (click)="$event.stopPropagation()">
+    <button (click)="closeForm()" class="absolute top-2 right-2 text-gray-800 font-bold text-lg">&times;</button>
+    <h3 class="text-center font-bold text-lg mb-4">Join Our Classes</h3>
+
+    <form (ngSubmit)="submitForm()" class="flex flex-col gap-3">
+      <input name="learnerFirstName" [(ngModel)]="learnerFirstName" required type="text" placeholder="Learner First Name"
+             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+      <input name="learnerSurname" [(ngModel)]="learnerSurname" required type="text" placeholder="Learner Surname"
+             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+      <input name="grade" [(ngModel)]="grade" required type="text" placeholder="Grade"
+             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+      <input name="email" [(ngModel)]="email" required type="email" placeholder="Email"
+             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+      <input name="schoolName" [(ngModel)]="schoolName" required type="text" placeholder="School Name"
+             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+      <input name="parentFullName" [(ngModel)]="parentFullName" required type="text" placeholder="Parent/Guardian Full Name"
+             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+      <input name="parentCell" [(ngModel)]="parentCell" required type="text" placeholder="Parent/Guardian Cell"
+             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+      <button type="submit"
+              [disabled]="!learnerFirstName || !learnerSurname || !grade || !email || !schoolName || !parentFullName || !parentCell"
+              class="mt-2 w-full bg-gray-800 hover:bg-gray-700 transition-colors rounded py-2 font-bold text-white-50">
+        JOIN
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Contact Form Popup -->
+<div *ngIf="isContactFormOpen" class="fixed inset-0 flex items-center justify-center popup px-3">
+  <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" (click)="closeContactForm()"></div>
+
+  <div class="contact-form-popup form-popup bg-white-50 text-gray-800 rounded-lg shadow-lg w-full max-w-md p-6 relative"
+       (click)="$event.stopPropagation()">
+    <button (click)="closeContactForm()" class="absolute top-2 right-2 text-gray-800 font-bold text-lg">&times;</button>
+    <h3 class="text-center font-bold text-lg mb-4">Contact Us</h3>
+
+    <div class="flex justify-center gap-4 mb-4">
+      <button (click)="contactFormType='whatsapp'"
+              [ngClass]="contactFormType==='whatsapp' ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-800'"
+              class="px-3 py-1 rounded font-bold">WhatsApp</button>
+      <button (click)="contactFormType='email'"
+              [ngClass]="contactFormType==='email' ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-800'"
+              class="px-3 py-1 rounded font-bold">Email</button>
+    </div>
+
+    <!-- WhatsApp Form -->
+    <form *ngIf="contactFormType==='whatsapp'" (ngSubmit)="sendWhatsappMessage()" class="flex flex-col gap-3">
+      <input name="whatsappNumber" [(ngModel)]="whatsappNumber" required type="text" placeholder="Your WhatsApp Number"
+             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+      <textarea name="whatsappMessage" [(ngModel)]="whatsappMessage" required placeholder="Your Message"
+                class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50"></textarea>
+      <button type="submit" [disabled]="!whatsappNumber || !whatsappMessage"
+              class="mt-2 w-full bg-green-500 hover:bg-green-600 transition-colors rounded py-2 font-bold text-white">
+        Send via WhatsApp
+      </button>
+    </form>
+
+    <!-- Email Form -->
+    <form *ngIf="contactFormType==='email'" (ngSubmit)="sendEmailMessage()" class="flex flex-col gap-3">
+      <input name="emailAddress" [(ngModel)]="emailAddress" required type="email" placeholder="Your Email"
+             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+      <textarea name="emailMessage" [(ngModel)]="emailMessage" required placeholder="Your Message"
+                class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50"></textarea>
+      <button type="submit" [disabled]="!emailAddress || !emailMessage"
+              class="mt-2 w-full bg-green-500 hover:bg-blue-600 transition-colors rounded py-2 font-bold text-white">
+        Send via Email
+      </button>
+    </form>
+  </div>
+</div>
