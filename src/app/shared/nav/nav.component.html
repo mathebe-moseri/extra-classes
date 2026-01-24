@@ -88,16 +88,16 @@
       </button>
     </form>
 
-    <!-- Email Form -->
-    <form *ngIf="contactFormType==='email'" (ngSubmit)="sendEmailMessage()" class="flex flex-col gap-3">
-      <input name="emailAddress" [(ngModel)]="emailAddress" required type="email" placeholder="Your Email"
-             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
-      <textarea name="emailMessage" [(ngModel)]="emailMessage" required placeholder="Your Message"
-                class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50"></textarea>
-      <button type="submit" [disabled]="!emailAddress || !emailMessage"
-              class="mt-2 w-full bg-green-500 hover:bg-blue-600 transition-colors rounded py-2 font-bold text-white">
-        Send via Email
-      </button>
-    </form>
+
+<!-- Email Form -->
+<form *ngIf="contactFormType==='email'" (ngSubmit)="sendEmailMessage()" class="flex flex-col gap-3">
+  <!-- Remove the email input -->
+  <textarea name="emailMessage" [(ngModel)]="emailMessage" required placeholder="Your Message"
+            class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50"></textarea>
+  <button type="submit" [disabled]="!emailMessage"
+          class="mt-2 w-full bg-green-500 hover:bg-blue-600 transition-colors rounded py-2 font-bold text-white">
+    Send via Email
+  </button>
+</form>
   </div>
 </div>

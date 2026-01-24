@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms'; // Required for ngModel
 import { LearnerAPiService } from '../../learner-api.service';
 import { HttpClientModule } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
-
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-nav',
@@ -16,6 +16,7 @@ import { tap } from 'rxjs/operators';
 })
 export class NavComponent {
 
+  
   //learner info from API
  joinedLearners: any = []; 
   // Navbar state
@@ -40,10 +41,12 @@ export class NavComponent {
   emailAddress = '';
   emailMessage = '';
 
-  constructor(private learnerApiService: LearnerAPiService) {
-    document.body.style.backgroundColor = '#9CA3AF';
-  }
-
+constructor(
+private learnerApiService: LearnerAPiService,
+private http: HttpClient
+) {
+document.body.style.backgroundColor = '#9CA3AF';
+}
   ngOnInit() {
     this. learnerApiService.getLearnerInfo()
       .pipe(
@@ -127,19 +130,29 @@ sendWhatsappMessage() {
   }
 }
 
-
 sendEmailMessage() {
-  if (this.emailAddress && this.emailMessage) {
-    const to = 'mathebemoseri@gmail.com'; // your email
-    const subject = encodeURIComponent('Contact Form Message');
-    const body = encodeURIComponent(`From: ${this.emailAddress}\n\n${this.emailMessage}`);
-    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`; // opens email client
-    this.closeContactForm();
-    this.emailAddress = '';
-    this.emailMessage = '';
+  if (!this.emailMessage) {
+    alert('Please enter a message.');
+    return;
   }
-}
 
+  const payload = {
+    email: 'mathebemoseri@gmail.com', // fixed recipient
+    message: this.emailMessage
+  };
+
+  this.learnerApiService.sendContactEmail(payload).subscribe({
+    next: (res: any) => {
+      alert(res.message);  // success alert
+      this.emailMessage = '';
+      this.closeContactForm();
+    },
+    error: (err) => {
+      console.error('Failed to send message:', err);
+      alert('Failed to send message. Please try again.');
+    }
+  });
+}
 
   // --- Navbar toggle ---
   toggleBg() {
