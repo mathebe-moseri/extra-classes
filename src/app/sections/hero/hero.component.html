@@ -1,120 +1,121 @@
 <div class="mt-20">
 
-<div class="px-3 py-2 flex space-x-2 items-center">
+  <div class="px-3 py-2 flex space-x-2 items-center">
 
-  <!-- About Us -->
-  <button (click)="downloadPDF()"
-    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center text-[12px] lg:text-[14px] transition-all duration-300">
-    <!-- Minimal arrow-down icon -->
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-      stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m0 0l-4-4m4 4l4-4" />
-    </svg>
-    About Us
-  </button>
-
-  <!-- Subjects Offered Dropdown -->
-  <div class="relative">
-    <button (click)="subjectsDropdownOpen = !subjectsDropdownOpen"
+    <!-- About Us -->
+    <button (click)="downloadPDF()"
       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center text-[12px] lg:text-[14px] transition-all duration-300">
-      Subjects Offered
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform duration-200"
-           [class.rotate-180]="subjectsDropdownOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-           stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+      <!-- Minimal arrow-down icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m0 0l-4-4m4 4l4-4" />
       </svg>
+      About Us
     </button>
 
-    <!-- Dropdown Menu -->
-    <div *ngIf="subjectsDropdownOpen"
-         class="absolute mt-1 w-64 bg-white-50 text-gray-800 rounded-md shadow-lg z-50 border border-gray-200">
-      <a href="#grades101112" class="block px-4 py-2 hover:bg-gray-200">
-        Grades 10, 11, 12 – Mathematics & Physical Sciences
-      </a>
-      <a href="#grade12Coding" class="block px-4 py-2 hover:bg-gray-200">
-        Grade 12 – Introduction to Computers
-      </a>
+    <!-- Subjects Offered Dropdown -->
+    <div class="relative">
+      <button (click)="subjectsDropdownOpen = !subjectsDropdownOpen"
+        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center text-[12px] lg:text-[14px] transition-all duration-300">
+        Subjects Offered
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform duration-200"
+          [class.rotate-180]="subjectsDropdownOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+          stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      <!-- Dropdown Menu -->
+      <div *ngIf="subjectsDropdownOpen"
+        class="absolute mt-1 w-64 bg-white-50 text-gray-800 rounded-md shadow-lg z-50 border border-gray-200">
+        <a href="#grades101112" class="block px-4 py-2 hover:bg-gray-200">
+          Grades 10, 11, 12 – Mathematics, Physical Sciences & Computer Applications
+          Technology
+        </a>
+        <!-- <a href="#grade12Coding" class="block px-4 py-2 hover:bg-gray-200">
+          Grade 12 – Introduction to Computers
+        </a> -->
+      </div>
     </div>
+
   </div>
 
-</div>
-
-<!-- Testimonials Section -->
-<div class="rounded-xl p-5">
-  <div class="w-full flex flex-col items-center justify-center bg-gray-900 px-4 py-12 rounded-xl">
-    <h2 class="text-white text-3xl md:text-4xl font-bold mb-8 text-center">Testimonials</h2>
-    <div class="w-full max-w-5xl px-4">
-      <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
-        <!-- Responsive YouTube Video -->
-        <div class="video-container">
-          <iframe width="560" height="315" src="https://www.youtube.com/embed/j85JYYSE1vI?si=Xugh7NKnaA_SbJae"
-            title="Testimonials Video" frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-          </iframe>
+  <!-- Testimonials Section -->
+  <div class="rounded-xl p-5">
+    <div class="w-full flex flex-col items-center justify-center bg-gray-900 px-4 py-12 rounded-xl">
+      <h2 class="text-white text-3xl md:text-4xl font-bold mb-8 text-center">Testimonials</h2>
+      <div class="w-full max-w-5xl px-4">
+        <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
+          <!-- Responsive YouTube Video -->
+          <div class="video-container">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/j85JYYSE1vI?si=Xugh7NKnaA_SbJae"
+              title="Testimonials Video" frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+            </iframe>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Demo Lesson Section -->
-<div class="rounded-xl p-5">
-  <div class="w-full flex flex-col items-center justify-center bg-gray-900 px-4 py-12 rounded-xl">
-    <h2 class="text-white text-3xl md:text-4xl font-bold mb-8 text-center">Demo Lesson</h2>
-    <div class="w-full max-w-5xl px-4">
-      <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
-        <div class="aspect-video">
-          <iframe class="w-full h-full" src="" title="Demo Lesson Video" frameborder="0"
-            allow="autoplay; encrypted-media; fullscreen" allowfullscreen>
-          </iframe>
+  <!-- Demo Lesson Section -->
+  <div class="rounded-xl p-5">
+    <div class="w-full flex flex-col items-center justify-center bg-gray-900 px-4 py-12 rounded-xl">
+      <h2 class="text-white text-3xl md:text-4xl font-bold mb-8 text-center">Demo Lesson</h2>
+      <div class="w-full max-w-5xl px-4">
+        <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
+          <div class="aspect-video">
+            <iframe class="w-full h-full" src="" title="Demo Lesson Video" frameborder="0"
+              allow="autoplay; encrypted-media; fullscreen" allowfullscreen>
+            </iframe>
+          </div>
         </div>
       </div>
-    </div>
 
-    <p class="mt-6 text-center text-gray-300 text-lg max-w-2xl">
-      After going through this demo lesson, you can try to solve the following questions.
-    </p>
+      <p class="mt-6 text-center text-gray-300 text-lg max-w-2xl">
+        After going through this demo lesson, you can try to solve the following questions.
+      </p>
 
-    <button (click)="openQuiz()"
-      class="mt-4 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300">
-      Test Your Knowledge
-    </button>
-  </div>
-</div>
-
-<!-- Quiz Modal -->
-<div *ngIf="showQuiz" class="fixed inset-0 flex items-center justify-center z-50">
-  <!-- Background blur -->
-  <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
-
-  <!-- Modal content -->
-  <div class="relative bg-gray-900 text-white rounded-xl p-8 w-11/12 max-w-md shadow-2xl z-10">
-    <h3 class="text-2xl font-bold mb-4 text-center">Trig Quiz</h3>
-
-    <p class="mb-4 text-center">
-      In a right-angled triangle, if angle θ is {{quizAngle}}° and the hypotenuse is {{quizHypotenuse}} units, what is
-      the length of the side opposite to θ?
-    </p>
-
-    <input [(ngModel)]="userAnswer" type="number" placeholder="Enter your answer"
-      class="w-full border border-gray-600 rounded px-3 py-2 mb-4 text-gray-900">
-
-    <div class="flex justify-between">
-      <button (click)="checkAnswer()"
-        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-all duration-200">
-        Submit
-      </button>
-      <button (click)="closeQuiz()"
-        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-all duration-200">
-        Close
+      <button (click)="openQuiz()"
+        class="mt-4 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300">
+        Test Your Knowledge
       </button>
     </div>
-
-    <p *ngIf="feedback" class="mt-4 font-semibold text-center"
-      [ngClass]="{'text-green-500': isCorrect, 'text-red-500': !isCorrect}">
-      {{feedback}}
-    </p>
   </div>
-</div>
+
+  <!-- Quiz Modal -->
+  <div *ngIf="showQuiz" class="fixed inset-0 flex items-center justify-center z-50">
+    <!-- Background blur -->
+    <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"></div>
+
+    <!-- Modal content -->
+    <div class="relative bg-gray-900 text-white rounded-xl p-8 w-11/12 max-w-md shadow-2xl z-10">
+      <h3 class="text-2xl font-bold mb-4 text-center">Trig Quiz</h3>
+
+      <p class="mb-4 text-center">
+        In a right-angled triangle, if angle θ is {{quizAngle}}° and the hypotenuse is {{quizHypotenuse}} units, what is
+        the length of the side opposite to θ?
+      </p>
+
+      <input [(ngModel)]="userAnswer" type="number" placeholder="Enter your answer"
+        class="w-full border border-gray-600 rounded px-3 py-2 mb-4 text-gray-900">
+
+      <div class="flex justify-between">
+        <button (click)="checkAnswer()"
+          class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-all duration-200">
+          Submit
+        </button>
+        <button (click)="closeQuiz()"
+          class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-all duration-200">
+          Close
+        </button>
+      </div>
+
+      <p *ngIf="feedback" class="mt-4 font-semibold text-center"
+        [ngClass]="{'text-green-500': isCorrect, 'text-red-500': !isCorrect}">
+        {{feedback}}
+      </p>
+    </div>
+  </div>
 </div>
