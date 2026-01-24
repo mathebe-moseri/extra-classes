@@ -14,9 +14,10 @@
     </button>
 
     <!-- Subjects Offered Dropdown -->
-    <div class="relative">
+    <div class="relative z-50">
+      <!-- Subjects Offered Button -->
       <button (click)="subjectsDropdownOpen = !subjectsDropdownOpen"
-        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center text-[12px] lg:text-[14px] transition-all duration-300">
+        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center text-[12px] lg:text-[14px] transition-all duration-300 relative z-50">
         Subjects Offered
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform duration-200"
           [class.rotate-180]="subjectsDropdownOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -25,24 +26,32 @@
         </svg>
       </button>
 
-<div *ngIf="subjectsDropdownOpen"
-  class="absolute mt-1 w-64 bg-white-50 text-gray-800 rounded-md shadow-lg z-50 border border-gray-200 text-[13px]">
+      <!-- BLUR BACKGROUND OVERLAY -->
+      <div *ngIf="subjectsDropdownOpen" class="fixed inset-0 z-40" (click)="closeSubjectsDropdown()">
+        <!-- Only blur content behind the button -->
+        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+      </div>
 
-  <a href="#grades101112" class="block px-4 py-2 hover:bg-gray-200">
-    Grades 10, 11, 12 –
-    <span class="block">Mathematics</span>
-    <span class="block">Physical Sciences</span>
-    <span class="block">Computer Applications Technology</span>
-  </a>
+      <!-- DROPDOWN MENU -->
+      <div *ngIf="subjectsDropdownOpen"
+        class="absolute mt-1 w-64 bg-white-50 text-gray-800 rounded-md shadow-lg z-50 border border-gray-200 text-[13px]"
+        (click)="$event.stopPropagation()">
 
-  <a href="#mathsUpgrade" class="block px-4 py-2 hover:bg-gray-200">
-    Mathematics Upgrading
-    <span class="block text-sm text-gray-500">
-      (Grades 12 - Matric Rewrite)
-    </span>
-  </a>
+        <a href="#grades101112" class="block px-4 py-2 hover:bg-gray-200" (click)="closeSubjectsDropdown()">
+          Grades 10, 11, 12 –
+          <span class="block">Mathematics</span>
+          <span class="block">Physical Sciences</span>
+          <span class="block">Computer Applications Technology</span>
+        </a>
 
-</div>
+        <a href="#mathsUpgrade" class="block px-4 py-2 hover:bg-gray-200" (click)="closeSubjectsDropdown()">
+          Mathematics Upgrading
+          <span class="block text-sm text-gray-500">
+            (Grades 12 - Matric Rewrite)
+          </span>
+        </a>
+
+      </div>
     </div>
 
   </div>

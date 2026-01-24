@@ -75,5 +75,12 @@ export class HeroComponent implements AfterViewInit {
     link.click();
   }
 
+  toggleSubjectsDropdown() {
+    this.subjectsDropdownOpen = !this.subjectsDropdownOpen;
+  }
+
+  closeSubjectsDropdown() {
+    this.subjectsDropdownOpen = false;
+  }
 
 }
