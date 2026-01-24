@@ -25,17 +25,24 @@
         </svg>
       </button>
 
-      <!-- Dropdown Menu -->
-      <div *ngIf="subjectsDropdownOpen"
-        class="absolute mt-1 w-64 bg-white-50 text-gray-800 rounded-md shadow-lg z-50 border border-gray-200">
-        <a href="#grades101112" class="block px-4 py-2 hover:bg-gray-200">
-          Grades 10, 11, 12 – Mathematics, Physical Sciences & Computer Applications
-          Technology
-        </a>
-        <!-- <a href="#grade12Coding" class="block px-4 py-2 hover:bg-gray-200">
-          Grade 12 – Introduction to Computers
-        </a> -->
-      </div>
+<div *ngIf="subjectsDropdownOpen"
+  class="absolute mt-1 w-64 bg-white-50 text-gray-800 rounded-md shadow-lg z-50 border border-gray-200 text-[13px]">
+
+  <a href="#grades101112" class="block px-4 py-2 hover:bg-gray-200">
+    Grades 10, 11, 12 –
+    <span class="block">Mathematics</span>
+    <span class="block">Physical Sciences</span>
+    <span class="block">Computer Applications Technology</span>
+  </a>
+
+  <a href="#mathsUpgrade" class="block px-4 py-2 hover:bg-gray-200">
+    Mathematics Upgrading
+    <span class="block text-sm text-gray-500">
+      (Grades 12 - Matric Rewrite)
+    </span>
+  </a>
+
+</div>
     </div>
 
   </div>
