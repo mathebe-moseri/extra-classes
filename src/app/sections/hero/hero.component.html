@@ -34,7 +34,7 @@
 
       <!-- DROPDOWN MENU -->
       <div *ngIf="subjectsDropdownOpen"
-        class="absolute mt-1 w-64 bg-white-50 text-gray-800 rounded-md shadow-lg z-50 border border-gray-200 text-[13px]"
+        class="absolute mt-2 w-72 bg-white-50 text-gray-800 rounded-md shadow-lg z-50 border border-gray-200 text-[13px] left-[-114px]"
         (click)="$event.stopPropagation()">
 
         <a href="#grades101112" class="block px-4 py-2 hover:bg-gray-200" (click)="closeSubjectsDropdown()">
@@ -100,7 +100,7 @@
     </div>
   </div>
 
-  <!-- Quiz Modal -->
+<!-- Quiz Modal -->
 <!-- Quiz Modal -->
 <div *ngIf="showQuiz" class="fixed inset-0 flex items-center justify-center z-50">
   <!-- Background blur -->
@@ -117,19 +117,25 @@
     <h3 class="text-2xl font-bold mb-4 text-center">Trig Quiz</h3>
 
     <p class="mb-4 text-center">
-      In a right-angled triangle, if angle θ is {{quizAngle}}° and the hypotenuse is {{quizHypotenuse}} units, what is
-      the length of the side opposite to θ?
+      {{ currentQuestion?.text }}
     </p>
 
     <input [(ngModel)]="userAnswer" type="number" placeholder="Enter your answer"
       class="w-full border border-gray-600 rounded px-3 py-2 mb-4 text-gray-900">
 
-    <div class="flex justify-between">
+    <div class="flex justify-between mb-2">
       <button (click)="checkAnswer()"
         class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-all duration-200">
         Submit
       </button>
-      <button (click)="closeQuiz()"
+
+      <button (click)="nextQuestion()" 
+        [disabled]="!isCorrect" 
+        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all duration-200 disabled:opacity-50">
+        Next Question
+      </button>
+
+      <button (click)="closeQuiz()" 
         class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-all duration-200">
         Close
       </button>
@@ -137,8 +143,9 @@
 
     <p *ngIf="feedback" class="mt-4 font-semibold text-center"
       [ngClass]="{'text-green-500': isCorrect, 'text-red-500': !isCorrect}">
-      {{feedback}}
+      {{ feedback }}
     </p>
   </div>
 </div>
+
 </div>

@@ -13,49 +13,102 @@ import { ResumeComponent } from '../resume/resume.component';
   styleUrls: ['./hero.component.css']
 })
 export class HeroComponent implements AfterViewInit {
-  subjectsDropdownOpen = false;
 
+  /* ---------------- QUIZ STATE ---------------- */
   showQuiz = false;
   userAnswer: number | null = null;
   feedback = '';
   isCorrect = false;
+  quizCompleted = false;
+  totalCorrect = 0;
 
-  // Example quiz values
-  quizAngle = 30;
-  quizHypotenuse = 10;
+  currentQuestionIndex = 0;
+  currentQuestion: any;
 
-  ngAfterViewInit() {
-    // Any GSAP animations can go here
-  }
+  subjectsDropdownOpen = false;
 
+  /* ---------------- QUIZ QUESTIONS ---------------- */
+  quizQuestions = [
+    { text: 'In a right-angled triangle, if angle θ is 30° and the hypotenuse is 10 units, find the length of the opposite side.', answer: +(10 * Math.sin(30 * Math.PI / 180)).toFixed(2) },
+    { text: 'In a right-angled triangle, if angle θ is 60° and the hypotenuse is 12 units, find the length of the adjacent side.', answer: +(12 * Math.cos(60 * Math.PI / 180)).toFixed(2) },
+    { text: 'In a right-angled triangle, the opposite side is 5 units and the hypotenuse is 13 units. Find sin θ.', answer: +(5 / 13).toFixed(2) },
+    { text: 'In a right-angled triangle, if angle θ is 45° and the hypotenuse is 14 units, find the length of the opposite side.', answer: +(14 * Math.sin(45 * Math.PI / 180)).toFixed(2) },
+    { text: 'In a right-angled triangle, if angle θ is 35° and the adjacent side is 8 units, find the length of the hypotenuse.', answer: +(8 / Math.cos(35 * Math.PI / 180)).toFixed(2) },
+    { text: 'In a right-angled triangle, if the opposite side is 6 units and the adjacent side is 8 units, find tan θ.', answer: +(6 / 8).toFixed(2) },
+    { text: 'In a right-angled triangle, if sin θ = 0.5, find the value of θ.', answer: 30 },
+    { text: 'In a right-angled triangle, if cos θ = 0.866, find the value of θ.', answer: 30 },
+    { text: 'In a right-angled triangle, the hypotenuse is 20 units and angle θ is 25°. Find the length of the adjacent side.', answer: +(20 * Math.cos(25 * Math.PI / 180)).toFixed(2) },
+    { text: 'In a right-angled triangle, the opposite side is 7 units and the hypotenuse is 14 units. Find cos θ.', answer: +(Math.sqrt(14**2 - 7**2) / 14).toFixed(2) },
+    { text: 'In a right-angled triangle, the adjacent side is 9 units and angle θ is 40°. Find the opposite side.', answer: +(9 * Math.tan(40 * Math.PI / 180)).toFixed(2) },
+    { text: 'If sin θ = 0.6 and cos θ = 0.8 in a right-angled triangle, find tan θ.', answer: +(0.6 / 0.8).toFixed(2) },
+    { text: 'In a right-angled triangle, angle θ is 50° and hypotenuse is 15 units. Find the opposite side.', answer: +(15 * Math.sin(50 * Math.PI / 180)).toFixed(2) }
+  ];
+
+  ngAfterViewInit() {}
+
+  /* ---------------- QUIZ METHODS ---------------- */
   openQuiz() {
     this.showQuiz = true;
-    this.userAnswer = null;
-    this.feedback = '';
+    this.quizCompleted = false;
+    this.totalCorrect = 0;
+    this.currentQuestionIndex = 0;
+    this.loadQuestion();
   }
 
   closeQuiz() {
     this.showQuiz = false;
     this.feedback = '';
+    this.userAnswer = null;
+    this.isCorrect = false;
+    this.quizCompleted = false;
+  }
+
+  loadQuestion() {
+    this.currentQuestion = this.quizQuestions[this.currentQuestionIndex];
+    this.userAnswer = null;
+    this.feedback = '';
+    this.isCorrect = false;
   }
 
   checkAnswer() {
     if (this.userAnswer === null) return;
 
-    const correctAnswer = this.quizHypotenuse * Math.sin(this.quizAngle * Math.PI / 180);
-
-    if (Math.abs(this.userAnswer - correctAnswer) < 0.01) {
-      this.feedback = '✅ Correct! Well done!';
+    if (Math.abs(this.userAnswer - this.currentQuestion.answer) < 0.05) {
+      this.feedback = '✅ Correct! Well done.';
       this.isCorrect = true;
+      this.totalCorrect++;
     } else {
-      this.feedback = '❌ Incorrect. Hint: Opposite = hypotenuse × sin(θ)';
+      this.feedback = `❌ Incorrect. Correct answer is ${this.currentQuestion.answer}`;
       this.isCorrect = false;
     }
   }
 
+  nextQuestion() {
+    if (this.currentQuestionIndex < this.quizQuestions.length - 1) {
+      this.currentQuestionIndex++;
+      this.loadQuestion();
+    } else {
+      // Quiz completed
+      this.quizCompleted = true;
+      const scorePercent = (this.totalCorrect / this.quizQuestions.length) * 100;
+      if (scorePercent >= 90) {
+        this.feedback = `🎉 You completed the quiz! You passed with ${scorePercent.toFixed(0)}%`;
+      } else {
+        this.feedback = `❌ You failed the quiz with ${scorePercent.toFixed(0)}%. Try again!`;
+      }
+    }
+  }
+
+  tryAgain() {
+    this.quizCompleted = false;
+    this.totalCorrect = 0;
+    this.currentQuestionIndex = 0;
+    this.loadQuestion();
+  }
+
+  /* ---------------- PDF & OTHER EXISTING CODE ---------------- */
   printCV() {
     const cvElement = document.getElementById('resume') as HTMLElement;
-
     const options = {
       margin: 0,
       filename: 'Mathebe_Conny_Moseri_CV.pdf',
@@ -64,14 +117,13 @@ export class HeroComponent implements AfterViewInit {
       jsPDF: { unit: 'pt' as const, format: 'a4' as const, orientation: 'landscape' as const },
       pagebreak: { mode: ['css', 'legacy'] }
     };
-
     html2pdf().from(cvElement).set(options).save();
   }
 
   downloadPDF() {
     const link = document.createElement('a');
-    link.href = 'test.pdf'
-    link.download = 'SesiMathebe-Extra Classes.pdf'; // name of downloaded file
+    link.href = 'test.pdf';
+    link.download = 'SesiMathebe-Extra Classes.pdf';
     link.click();
   }
 
