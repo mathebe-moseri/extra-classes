@@ -126,18 +126,20 @@ sendWhatsappMessage() {
     return;
   }
 
-  // Send email notification only
-  this.http.post('http://localhost:8000/send_contact_whatsapp', {
+  const payload = {
     whatsappNumber: this.whatsappNumber,
     message: this.whatsappMessage
-  }).subscribe({
+  };
+
+  this.learnerApiService.sendContactWhatsapp(payload).subscribe({
     next: () => {
       alert('Thank you! We will contact you shortly on WhatsApp.');
       this.whatsappNumber = '';
       this.whatsappMessage = '';
       this.closeContactForm();
     },
-    error: () => {
+    error: (err) => {
+      console.error('Failed to send WhatsApp message:', err);
       alert('Failed to send message. Please try again.');
     }
   });

@@ -10,7 +10,8 @@ export class LearnerAPiService {
   private baseUrl = environment.apiBaseUrl;
   private getUrl = `${this.baseUrl}/get_learnerInfo`;
   private addUrl = `${this.baseUrl}/add_learnerInfo`;
-  private emailUrl = `${this.baseUrl}/send_contact_email`; // <-- new
+  private emailUrl = `${this.baseUrl}/send_contact_email`;
+  private whatsappUrl = `${this.baseUrl}/send_contact_whatsapp`; // <-- new
 
   constructor(private http: HttpClient) {}
 
@@ -24,5 +25,9 @@ export class LearnerAPiService {
 
   sendContactEmail(payload: { email: string; message: string }): Observable<any> {
     return this.http.post<any>(this.emailUrl, payload);
+  }
+
+  sendContactWhatsapp(payload: { whatsappNumber: string; message: string }): Observable<any> {
+    return this.http.post<any>(this.whatsappUrl, payload);
   }
 }
