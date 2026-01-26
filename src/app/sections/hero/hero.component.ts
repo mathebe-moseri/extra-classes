@@ -16,6 +16,7 @@ export class HeroComponent implements AfterViewInit {
 
   /* ---------------- QUIZ STATE ---------------- */
   showQuiz = false;
+  showQuizCompletedPopup = false;
   userAnswer: number | null = null;
   feedback = '';
   isCorrect = false;
@@ -83,21 +84,24 @@ export class HeroComponent implements AfterViewInit {
     }
   }
 
-  nextQuestion() {
-    if (this.currentQuestionIndex < this.quizQuestions.length - 1) {
-      this.currentQuestionIndex++;
-      this.loadQuestion();
-    } else {
-      // Quiz completed
-      this.quizCompleted = true;
-      const scorePercent = (this.totalCorrect / this.quizQuestions.length) * 100;
-      if (scorePercent >= 90) {
-        this.feedback = `🎉 You completed the quiz! You passed with ${scorePercent.toFixed(0)}%`;
-      } else {
-        this.feedback = `❌ You failed the quiz with ${scorePercent.toFixed(0)}%. Try again!`;
-      }
-    }
-  }
+nextQuestion() {
+if (this.currentQuestionIndex < this.quizQuestions.length - 1) {
+this.currentQuestionIndex++;
+this.loadQuestion();
+} else {
+// Quiz completed
+this.quizCompleted = true;
+const scorePercent = (this.totalCorrect / this.quizQuestions.length) * 100;
+
+// Hide the normal quiz content and show the completed popup
+this.showQuiz = false;
+this.showQuizCompletedPopup = true;
+
+
+// Set feedback message for the popup
+this.completedMessage = `🎉 You completed the quiz! You passed with ${scorePercent.toFixed(0)}%`;
+}
+}
 
   tryAgain() {
     this.quizCompleted = false;
@@ -105,6 +109,14 @@ export class HeroComponent implements AfterViewInit {
     this.currentQuestionIndex = 0;
     this.loadQuestion();
   }
+  closeQuizCompletedPopup() {
+this.showQuizCompletedPopup = false;
+this.tryAgain(); // resets quiz if needed
+}
+
+
+/* ---------------- QUIZ COMPLETED MESSAGE ---------------- */
+completedMessage = ''
 
   /* ---------------- PDF & OTHER EXISTING CODE ---------------- */
   printCV() {
