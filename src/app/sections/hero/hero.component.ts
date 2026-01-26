@@ -33,16 +33,16 @@ export class HeroComponent implements AfterViewInit {
     { text: 'In a right-angled triangle, if angle θ is 30° and the hypotenuse is 10 units, find the length of the opposite side.', answer: +(10 * Math.sin(30 * Math.PI / 180)).toFixed(2) },
     { text: 'In a right-angled triangle, if angle θ is 60° and the hypotenuse is 12 units, find the length of the adjacent side.', answer: +(12 * Math.cos(60 * Math.PI / 180)).toFixed(2) },
     { text: 'In a right-angled triangle, the opposite side is 5 units and the hypotenuse is 13 units. Find sin θ.', answer: +(5 / 13).toFixed(2) },
-    // { text: 'In a right-angled triangle, if angle θ is 45° and the hypotenuse is 14 units, find the length of the opposite side.', answer: +(14 * Math.sin(45 * Math.PI / 180)).toFixed(2) },
-    // { text: 'In a right-angled triangle, if angle θ is 35° and the adjacent side is 8 units, find the length of the hypotenuse.', answer: +(8 / Math.cos(35 * Math.PI / 180)).toFixed(2) },
-    // { text: 'In a right-angled triangle, if the opposite side is 6 units and the adjacent side is 8 units, find tan θ.', answer: +(6 / 8).toFixed(2) },
-    // { text: 'In a right-angled triangle, if sin θ = 0.5, find the value of θ.', answer: 30 },
-    // { text: 'In a right-angled triangle, if cos θ = 0.866, find the value of θ.', answer: 30 },
-    // { text: 'In a right-angled triangle, the hypotenuse is 20 units and angle θ is 25°. Find the length of the adjacent side.', answer: +(20 * Math.cos(25 * Math.PI / 180)).toFixed(2) },
-    // { text: 'In a right-angled triangle, the opposite side is 7 units and the hypotenuse is 14 units. Find cos θ.', answer: +(Math.sqrt(14**2 - 7**2) / 14).toFixed(2) },
-    // { text: 'In a right-angled triangle, the adjacent side is 9 units and angle θ is 40°. Find the opposite side.', answer: +(9 * Math.tan(40 * Math.PI / 180)).toFixed(2) },
-    // { text: 'If sin θ = 0.6 and cos θ = 0.8 in a right-angled triangle, find tan θ.', answer: +(0.6 / 0.8).toFixed(2) },
-    // { text: 'In a right-angled triangle, angle θ is 50° and hypotenuse is 15 units. Find the opposite side.', answer: +(15 * Math.sin(50 * Math.PI / 180)).toFixed(2) }
+    { text: 'In a right-angled triangle, if angle θ is 45° and the hypotenuse is 14 units, find the length of the opposite side.', answer: +(14 * Math.sin(45 * Math.PI / 180)).toFixed(2) },
+    { text: 'In a right-angled triangle, if angle θ is 35° and the adjacent side is 8 units, find the length of the hypotenuse.', answer: +(8 / Math.cos(35 * Math.PI / 180)).toFixed(2) },
+    { text: 'In a right-angled triangle, if the opposite side is 6 units and the adjacent side is 8 units, find tan θ.', answer: +(6 / 8).toFixed(2) },
+    { text: 'In a right-angled triangle, if sin θ = 0.5, find the value of θ.', answer: 30 },
+    { text: 'In a right-angled triangle, if cos θ = 0.866, find the value of θ.', answer: 30 },
+    { text: 'In a right-angled triangle, the hypotenuse is 20 units and angle θ is 25°. Find the length of the adjacent side.', answer: +(20 * Math.cos(25 * Math.PI / 180)).toFixed(2) },
+    { text: 'In a right-angled triangle, the opposite side is 7 units and the hypotenuse is 14 units. Find cos θ.', answer: +(Math.sqrt(14**2 - 7**2) / 14).toFixed(2) },
+    { text: 'In a right-angled triangle, the adjacent side is 9 units and angle θ is 40°. Find the opposite side.', answer: +(9 * Math.tan(40 * Math.PI / 180)).toFixed(2) },
+    { text: 'If sin θ = 0.6 and cos θ = 0.8 in a right-angled triangle, find tan θ.', answer: +(0.6 / 0.8).toFixed(2) },
+    { text: 'In a right-angled triangle, angle θ is 50° and hypotenuse is 15 units. Find the opposite side.', answer: +(15 * Math.sin(50 * Math.PI / 180)).toFixed(2) }
   ];
 
   ngAfterViewInit() {}
