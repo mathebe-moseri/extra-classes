@@ -121,13 +121,26 @@ loadLearners() {
   closeContactForm() { this.isContactFormOpen = false; }
 
 sendWhatsappMessage() {
-  if (this.whatsappMessage) {
-    const phone = '27765956598'; // your WhatsApp number (South Africa format, no +)
-    const text = encodeURIComponent(this.whatsappMessage);
-    window.open(`https://wa.me/${phone}?text=${text}`, '_blank'); // opens WhatsApp web or app
-    this.closeContactForm();
-    this.whatsappMessage = '';
+  if (!this.whatsappNumber || !this.whatsappMessage) {
+    alert('Please fill all fields.');
+    return;
   }
+
+  // Send email notification only
+  this.http.post('http://localhost:8000/send_contact_whatsapp', {
+    whatsappNumber: this.whatsappNumber,
+    message: this.whatsappMessage
+  }).subscribe({
+    next: () => {
+      alert('Thank you! We will contact you shortly on WhatsApp.');
+      this.whatsappNumber = '';
+      this.whatsappMessage = '';
+      this.closeContactForm();
+    },
+    error: () => {
+      alert('Failed to send message. Please try again.');
+    }
+  });
 }
 
 sendEmailMessage() {
@@ -192,4 +205,6 @@ sendEmailMessage() {
       this.isContactFormOpen = false;
     }
   }
+
+  
 }
