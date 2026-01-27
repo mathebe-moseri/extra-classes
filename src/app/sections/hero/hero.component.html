@@ -1,59 +1,48 @@
 <div class="mt-20">
 
+  <!-- Header Buttons -->
   <div class="px-3 py-2 flex space-x-2 items-center">
-
     <!-- About Us -->
     <button (click)="downloadPDF()"
       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center text-[12px] lg:text-[14px] transition-all duration-300">
-      <!-- Minimal arrow-down icon -->
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-        stroke-width="2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m0 0l-4-4m4 4l4-4" />
       </svg>
       About Us
     </button>
 
-    <!-- Subjects Offered Dropdown -->
+    <!-- Subjects Dropdown -->
     <div class="relative z-30">
-      <!-- Subjects Offered Button -->
       <button (click)="subjectsDropdownOpen = !subjectsDropdownOpen"
         class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center text-[12px] lg:text-[14px] transition-all duration-300 relative z-50">
         Subjects Offered
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform duration-200"
-          [class.rotate-180]="subjectsDropdownOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-          stroke-width="2">
+          [class.rotate-180]="subjectsDropdownOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 
-      <!-- BLUR BACKGROUND OVERLAY -->
+      <!-- Blur overlay behind dropdown -->
       <div *ngIf="subjectsDropdownOpen" class="fixed inset-0 z-40" (click)="closeSubjectsDropdown()">
-        <!-- Only blur content behind the button -->
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
       </div>
 
-      <!-- DROPDOWN MENU -->
+      <!-- Dropdown Menu -->
       <div *ngIf="subjectsDropdownOpen"
-        class="absolute mt-2 w-72 bg-white-50 text-gray-800 rounded-md shadow-lg z-50 border border-gray-200 text-[13px] left-[-114px]"
-        (click)="$event.stopPropagation()">
-
+           class="absolute mt-2 w-72 bg-white-50 text-gray-800 rounded-md shadow-lg z-50 border border-gray-200 text-[13px] left-[-114px]"
+           (click)="$event.stopPropagation()">
         <a href="#grades101112" class="block px-4 py-2 hover:bg-gray-200" (click)="closeSubjectsDropdown()">
           Grades 10, 11, 12 –
           <span class="block">Mathematics</span>
           <span class="block">Physical Sciences</span>
           <span class="block">Computer Applications Technology</span>
         </a>
-
         <a href="#mathsUpgrade" class="block px-4 py-2 hover:bg-gray-200" (click)="closeSubjectsDropdown()">
           Mathematics Upgrading
-          <span class="block text-sm text-gray-500">
-            (Grades 12 - Matric Rewrite)
-          </span>
+          <span class="block text-sm text-gray-500">(Grades 12 - Matric Rewrite)</span>
         </a>
-
       </div>
     </div>
-
   </div>
 
   <!-- Testimonials Section -->
@@ -62,7 +51,6 @@
       <h2 class="text-white text-3xl md:text-4xl font-bold mb-8 text-center">Testimonials</h2>
       <div class="w-full max-w-5xl px-4">
         <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
-          <!-- Responsive YouTube Video -->
           <div class="video-container">
             <iframe width="560" height="315" src="https://www.youtube.com/embed/j85JYYSE1vI?si=Xugh7NKnaA_SbJae"
               title="Testimonials Video" frameborder="0"
@@ -93,6 +81,7 @@
         After going through this demo lesson, you can try to solve the following questions.
       </p>
 
+      <!-- Test Your Knowledge Button -->
       <button (click)="openQuiz()"
         class="mt-4 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300">
         Test Your Knowledge
@@ -100,52 +89,51 @@
     </div>
   </div>
 
-<!-- Quiz Modal -->
-<!-- Quiz Modal -->
-<div *ngIf="showQuiz" class="fixed inset-0 flex items-center justify-center z-50">
-  <!-- Background blur -->
-  <div 
-    class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
-    (click)="closeQuiz()">
-  </div>
+  <!-- ------------------ QUIZ MODALS ------------------ -->
 
-  <!-- Modal content -->
-  <div 
-    class="relative bg-gray-900 text-white rounded-xl p-8 w-11/12 max-w-md shadow-2xl z-10"
-    (click)="$event.stopPropagation()"
-  >
-    <h3 class="text-2xl font-bold mb-4 text-center">Trig Quiz</h3>
+  <!-- Quiz Modal -->
+  <div *ngIf="showQuiz" class="fixed inset-0 flex items-center justify-center z-[60]">
+    <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" (click)="closeQuiz()"></div>
 
-    <p class="mb-4 text-center">
-      {{ currentQuestion?.text }}
-    </p>
+    <div class="relative bg-white-50 text-gray-900 rounded-xl p-8 m-[10px] w-full max-w-sm shadow-2xl z-[70]"
+         (click)="$event.stopPropagation()">
+      <button (click)="closeQuiz()" class="absolute top-3 right-3 text-gray-800 font-bold text-xl hover:text-red-600 transition-colors">&times;</button>
 
-    <input [(ngModel)]="userAnswer" type="number" placeholder="Enter your answer"
-      class="w-full border border-gray-600 rounded px-3 py-2 mb-4 text-gray-900">
+      <h3 class="text-2xl font-bold mb-4 text-center">Trig Quiz</h3>
+      <p class="mb-4 text-center">{{ currentQuestion?.text }}</p>
 
-    <div class="flex justify-between mb-2">
-      <button (click)="checkAnswer()"
-        class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-all duration-200">
-        Submit
-      </button>
+      <input [(ngModel)]="userAnswer" type="number" placeholder="Enter your answer"
+             class="w-full px-3 py-2 rounded border border-gray-600 mb-4 text-gray-900">
 
-      <button (click)="nextQuestion()" 
-        [disabled]="!isCorrect" 
-        class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all duration-200 disabled:opacity-50">
-        Next Question
-      </button>
+      <div class="flex justify-between mb-2">
+        <button (click)="checkAnswer()" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-all duration-200">Submit</button>
+        <button (click)="nextQuestion()" [disabled]="!isCorrect"
+                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all duration-200 disabled:opacity-50">Next Question</button>
+      </div>
 
-      <button (click)="closeQuiz()" 
-        class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-all duration-200">
-        Close
-      </button>
+      <p *ngIf="feedback" class="mt-4 text-center font-semibold"
+         [ngClass]="{'text-green-500': isCorrect, 'text-red-500': !isCorrect}">
+        {{ feedback }}
+      </p>
     </div>
-
-    <p *ngIf="feedback" class="mt-4 font-semibold text-center"
-      [ngClass]="{'text-green-500': isCorrect, 'text-red-500': !isCorrect}">
-      {{ feedback }}
-    </p>
   </div>
-</div>
+
+  <!-- Quiz Completed Popup -->
+  <div *ngIf="showQuizCompletedPopup" class="fixed inset-0 flex items-center justify-center z-50">
+    <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" (click)="closeQuizCompletedPopup()"></div>
+
+    <div class="relative bg-white-50 text-gray-900 rounded-xl p-8 w-full max-w-sm shadow-2xl z-10 m-5"
+         (click)="$event.stopPropagation()">
+      <button (click)="closeQuizCompletedPopup()" class="absolute top-3 right-3 text-gray-800 font-bold text-xl hover:text-red-600 transition-colors">&times;</button>
+
+      <h3 class="text-2xl font-bold mb-4 text-center">Quiz Completed!</h3>
+      <p class="text-center text-lg font-semibold">{{ completedMessage }}</p>
+
+      <div class="flex justify-center mt-6">
+        <button (click)="closeQuizCompletedPopup()"
+                class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all duration-200">Close</button>
+      </div>
+    </div>
+  </div>
 
 </div>
