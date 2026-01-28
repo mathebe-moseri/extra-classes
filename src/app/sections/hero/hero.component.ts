@@ -39,13 +39,13 @@ export class HeroComponent implements AfterViewInit {
     { text: 'In a right-angled triangle, if sin θ = 0.5, find the value of θ.', answer: 30 },
     { text: 'In a right-angled triangle, if cos θ = 0.866, find the value of θ.', answer: 30 },
     { text: 'In a right-angled triangle, the hypotenuse is 20 units and angle θ is 25°. Find the length of the adjacent side.', answer: +(20 * Math.cos(25 * Math.PI / 180)).toFixed(2) },
-    { text: 'In a right-angled triangle, the opposite side is 7 units and the hypotenuse is 14 units. Find cos θ.', answer: +(Math.sqrt(14**2 - 7**2) / 14).toFixed(2) },
+    { text: 'In a right-angled triangle, the opposite side is 7 units and the hypotenuse is 14 units. Find cos θ.', answer: +(Math.sqrt(14 ** 2 - 7 ** 2) / 14).toFixed(2) },
     { text: 'In a right-angled triangle, the adjacent side is 9 units and angle θ is 40°. Find the opposite side.', answer: +(9 * Math.tan(40 * Math.PI / 180)).toFixed(2) },
     { text: 'If sin θ = 0.6 and cos θ = 0.8 in a right-angled triangle, find tan θ.', answer: +(0.6 / 0.8).toFixed(2) },
     { text: 'In a right-angled triangle, angle θ is 50° and hypotenuse is 15 units. Find the opposite side.', answer: +(15 * Math.sin(50 * Math.PI / 180)).toFixed(2) }
   ];
 
-  ngAfterViewInit() {}
+  ngAfterViewInit() { }
 
   /* ---------------- QUIZ METHODS ---------------- */
   openQuiz() {
@@ -84,24 +84,24 @@ export class HeroComponent implements AfterViewInit {
     }
   }
 
-nextQuestion() {
-if (this.currentQuestionIndex < this.quizQuestions.length - 1) {
-this.currentQuestionIndex++;
-this.loadQuestion();
-} else {
-// Quiz completed
-this.quizCompleted = true;
-const scorePercent = (this.totalCorrect / this.quizQuestions.length) * 100;
+  nextQuestion() {
+    if (this.currentQuestionIndex < this.quizQuestions.length - 1) {
+      this.currentQuestionIndex++;
+      this.loadQuestion();
+    } else {
+      // Quiz completed
+      this.quizCompleted = true;
+      const scorePercent = (this.totalCorrect / this.quizQuestions.length) * 100;
 
-// Hide the normal quiz content and show the completed popup
-this.showQuiz = false;
-this.showQuizCompletedPopup = true;
+      // Hide the normal quiz content and show the completed popup
+      this.showQuiz = false;
+      this.showQuizCompletedPopup = true;
 
 
-// Set feedback message for the popup
-this.completedMessage = `🎉 You completed the quiz! You passed with ${scorePercent.toFixed(0)}%`;
-}
-}
+      // Set feedback message for the popup
+      this.completedMessage = `🎉 You completed the quiz! You passed with ${scorePercent.toFixed(0)}%`;
+    }
+  }
 
   tryAgain() {
     this.quizCompleted = false;
@@ -110,13 +110,12 @@ this.completedMessage = `🎉 You completed the quiz! You passed with ${scorePer
     this.loadQuestion();
   }
   closeQuizCompletedPopup() {
-this.showQuizCompletedPopup = false;
-this.tryAgain(); // resets quiz if needed
-}
+    this.showQuizCompletedPopup = false;
+    this.tryAgain(); // resets quiz if needed
+  }
 
-
-/* ---------------- QUIZ COMPLETED MESSAGE ---------------- */
-completedMessage = ''
+  /* ---------------- QUIZ COMPLETED MESSAGE ---------------- */
+  completedMessage = ''
 
   /* ---------------- PDF & OTHER EXISTING CODE ---------------- */
   printCV() {
@@ -148,3 +147,4 @@ completedMessage = ''
   }
 
 }
+
