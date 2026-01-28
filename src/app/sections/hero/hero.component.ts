@@ -20,6 +20,7 @@ export class HeroComponent implements AfterViewInit {
   userAnswer: number | null = null;
   feedback = '';
   isCorrect = false;
+  imageLoaded = false;
   quizCompleted = false;
   totalCorrect = 0;
 
@@ -29,6 +30,8 @@ export class HeroComponent implements AfterViewInit {
 
   subjectsDropdownOpen = false;
 
+
+
   /* ---------------- QUIZ QUESTIONS ---------------- */
   quizQuestions = [
     {
@@ -36,9 +39,11 @@ export class HeroComponent implements AfterViewInit {
       answer: +(10 * Math.sin(30 * Math.PI / 180)).toFixed(2),
       image: '/images/img1.png'
     },
-    { text: 'In a right-angled triangle, the opposite side is 5 units and the hypotenuse is 13 units. Find sin θ.',
-      answer: +(5 / 13).toFixed(2), 
-      image: '/images/img2.png' },
+    {
+      text: 'In a right-angled triangle, the opposite side is 5 units and the hypotenuse is 13 units. Find sin θ.',
+      answer: +(5 / 13).toFixed(2),
+      image: '/images/img2.png'
+    },
     {
       text: 'In a right-angled triangle, if angle θ is 60° and the hypotenuse is 12 units, find the length of the adjacent side.',
       answer: +(12 * Math.cos(60 * Math.PI / 180)).toFixed(2),
@@ -56,15 +61,19 @@ export class HeroComponent implements AfterViewInit {
     { text: 'In a right-angled triangle, angle θ is 50° and hypotenuse is 15 units. Find the opposite side.', answer: +(15 * Math.sin(50 * Math.PI / 180)).toFixed(2) }
   ];
 
-  ngAfterViewInit() { }
-
+  ngAfterViewInit() {
+    this.quizQuestions.forEach(q => {
+      if (q.image) {
+        const img = new Image();
+        img.src = q.image;
+      }
+    });
+  }
   /* ---------------- QUIZ METHODS ---------------- */
   openQuiz() {
-    this.showQuiz = true;
-    this.quizCompleted = false;
-    this.totalCorrect = 0;
     this.currentQuestionIndex = 0;
     this.loadQuestion();
+    this.showQuiz = true;
   }
 
   closeQuiz() {
@@ -80,6 +89,7 @@ export class HeroComponent implements AfterViewInit {
     this.userAnswer = null;
     this.feedback = '';
     this.isCorrect = false;
+    this.imageLoaded = false; // ✅ RESET IMAGE STATE
   }
 
   checkAnswer() {

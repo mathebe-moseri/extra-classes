@@ -110,8 +110,8 @@
 
       <!-- Question Image (UNDER question, only if available) -->
       <div *ngIf="currentQuestion?.image" class="mb-4 flex justify-center">
-        <img [src]="currentQuestion.image" alt="Triangle diagram"
-          class="max-w-full max-h-48 border border-gray-300 rounded-md" />
+        <img [src]="currentQuestion.image" (load)="imageLoaded = true" [class.opacity-0]="!imageLoaded" class="max-w-full max-h-48 border border-gray-300 rounded-md
+           transition-opacity duration-300" />
       </div>
 
       <input [(ngModel)]="userAnswer" type="number" placeholder="Enter your answer"
@@ -152,3 +152,4 @@
   </div>
 
 </div>
+
