@@ -149,5 +149,15 @@ export class HeroComponent implements AfterViewInit {
     this.subjectsDropdownOpen = false;
   }
 
+  scrollToAbout() {
+  const el = document.getElementById('about-us');
+  if (el) {
+    el.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
+  }
+}
+
 }
 
