@@ -1,34 +1,69 @@
-<header class="w-full bg-gray-300 py-2 flex items-center justify-between fixed top-0 z-50 shadow-md
-               px-4 md:px-6 lg:px-8">
+<header class="w-full bg-gray-300 py-2 fixed top-0 z-50 shadow-md px-4 md:px-6 lg:px-8">
+  <div class="flex items-center justify-between">
 
-  <!-- Navbar brand -->
-  <a class="inline-block transition-all duration-300 font-semibold text-gray-800 py-1 text-center 
-            text-[12px] md:text-[14px] lg:text-[16px]"
-     href="#hero">
-    <span class="block text-[8px] md:text-[10px] lg:text-[12px]">Sesi Mathebe</span>
-    <span class="block mt-[-2px] md:mt-[-1px] lg:mt-0">Remote Extra Classes</span>
-  </a>
+    <!-- Brand -->
+    <a href="#hero"
+       class="font-semibold text-gray-800 text-[12px] md:text-[14px] lg:text-[16px]">
+      <span class="block text-[8px] md:text-[10px] lg:text-[12px] px-9">Sesi Mathebe</span>
+      <span>Remote Extra Classes</span>
+    </a>
 
-  <!-- Mobile / Tablet / Desktop buttons -->
-  <div class="relative flex items-center justify-end">
-    
-    <!-- contactUS button -->
-    <div class="absolute right-24 md:right-32 lg:right-40 top-1/2 -translate-y-1/2 cursor-pointer contact-toggle z-50 px-2 flex"
-         (click)="openContactForm()">
-      <div class="w-14 h-8 md:w-16 lg:w-20 bg-white-50 rounded-full flex items-center justify-center px-1 text-gray-800 text-[9px] md:text-[10px] lg:text-[12px]">
-        contactUS
-      </div>
+    <!-- DESKTOP BUTTONS -->
+    <div class="hidden md:flex items-center gap-3">
+
+      <!-- Info -->
+      <button (click)="scrollToAbout()"
+        class="bg-white-50 hover:bg-blue-600 text-gray-600 px-4 rounded-full font-bold transition">
+        info !!
+      </button>
+
+      <!-- Join -->
+      <button (click)="toggleMobileMenu()"
+        class="w-28 bg-gray-600 border border-gray-700 rounded-full py-2 text-white font-bold shadow-lg">
+        Join Our Classes
+      </button>
+
     </div>
 
-    <!-- Join Our Classes button -->
-    <button (click)="toggleMobileMenu()"
-            class="mobile-menu-toggle w-24 md:w-28 lg:w-32 bg-gray-600 border border-gray-700 rounded-full 
-                   flex flex-col shadow-lg py-2 md:py-3 lg:py-4 z-50 text-white-50 text-[12px] md:text-[14px] lg:text-[16px] 
-                   font-bold cursor-pointer select-none">
-      Join<br>Our Classes
+    <!-- MOBILE MENU BUTTON -->
+    <button (click)="toggleNavMenu()"
+      class="md:hidden text-2xl font-bold text-gray-800">
+      ☰
     </button>
+
   </div>
 </header>
+
+<!-- MOBILE MENU -->
+<div *ngIf="isNavMenuOpen"
+     class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm">
+
+  <div class="absolute top-12 right-0 bg-white rounded-xl shadow-xl w-60 p-4 space-y-2"
+       (click)="$event.stopPropagation()">
+
+    <!-- Info -->
+    <button
+      (click)="scrollToAbout(); closeNavMenu()"
+      class="w-full text-left px-4 py-2 rounded bg-white-50 font-bold text-gray-600">
+      What We Offer
+    </button>
+
+    <!-- Join -->
+    <button
+      (click)="toggleMobileMenu(); closeNavMenu()"
+      class="w-full text-left px-4 py-2 rounded bg-white-50 font-bold text-gray-600">
+      Join Our Classes
+    </button>
+
+    <!-- Contact -->
+    <button
+      (click)="openContactForm(); closeNavMenu()"
+      class="w-full text-left px-4 py-2 rounded bg-white-50 font-bold text-gray-600">
+      Contact Us
+    </button>
+
+  </div>
+</div>
 
 <!-- Join Form Popup -->
 <div *ngIf="isMobileMenuOpen" class="fixed inset-0 flex items-center justify-center popup px-3 md:px-6 lg:px-8">

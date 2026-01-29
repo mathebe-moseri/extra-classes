@@ -41,6 +41,7 @@ export class NavComponent {
   emailAddress = '';
   emailMessage = '';
 
+  isNavMenuOpen = false;
 constructor(
 private learnerApiService: LearnerAPiService,
 private http: HttpClient
@@ -184,29 +185,27 @@ sendEmailMessage() {
     setTimeout(() => this.isMobileMenuOpen = false, delay);
   }
 
-  // --- Click outside to close ---
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: Event) {
-    const clickedElement = event.target as HTMLElement;
-
-    // Join form
-    if (
-      this.isMobileMenuOpen &&
-      !clickedElement.closest('.form-popup') &&
-      !clickedElement.closest('.mobile-menu-toggle')
-    ) {
-      this.isMobileMenuOpen = false;
-    }
-
-    // Contact form
-    if (
-      this.isContactFormOpen &&
-      !clickedElement.closest('.contact-form-popup') &&
-      !clickedElement.closest('.contact-toggle')
-    ) {
-      this.isContactFormOpen = false;
-    }
+  scrollToAbout() {
+  const el = document.getElementById('about-us');
+  if (el) {
+    el.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    });
   }
+}
+
+toggleNavMenu() {
+  this.isNavMenuOpen = !this.isNavMenuOpen;
+}
+
+closeNavMenu() {
+  this.isNavMenuOpen = false;
+}
+
+
+
+
 
   
 }
