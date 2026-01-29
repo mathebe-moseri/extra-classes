@@ -15,13 +15,13 @@ body {
   color: white;
   scroll-behavior: smooth;
   font-family: "Mona Sans", sans-serif;
-  scrollbar-width: none;        /* Firefox */
-  -ms-overflow-style: none;     /* IE & Edge */
+  scrollbar-width: none;    
+  -ms-overflow-style: none;   
 }
 
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
-  display: none;                /* Chrome, Safari */
+  display: none;             
 }
 
 .blur-background {
@@ -30,7 +30,6 @@ body::-webkit-scrollbar {
   transition: filter 0.3s ease;
 }
 
-/* Popups appear above everything */
 .popup, .form-popup, .contact-form-popup {
   pointer-events: auto;
   z-index: 60;

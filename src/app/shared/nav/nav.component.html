@@ -22,7 +22,7 @@
 
     <!-- Join Our Classes button -->
     <button (click)="toggleMobileMenu()"
-            class="mobile-menu-toggle w-24 md:w-28 lg:w-32 bg-gray-800 border border-gray-700 rounded-full 
+            class="mobile-menu-toggle w-24 md:w-28 lg:w-32 bg-gray-600 border border-gray-700 rounded-full 
                    flex flex-col shadow-lg py-2 md:py-3 lg:py-4 z-50 text-white-50 text-[12px] md:text-[14px] lg:text-[16px] 
                    font-bold cursor-pointer select-none">
       Join<br>Our Classes
@@ -76,10 +76,10 @@
 
     <div class="flex justify-center gap-4 mb-4">
       <button (click)="contactFormType='whatsapp'"
-              [ngClass]="contactFormType==='whatsapp' ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-800'"
+              [ngClass]="contactFormType==='whatsapp' ? 'bg-green-500 text-white' : 'bg-gray-600 text-gray-800'"
               class="px-3 py-1 md:py-2 rounded font-bold">WhatsApp</button>
       <button (click)="contactFormType='email'"
-              [ngClass]="contactFormType==='email' ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-800'"
+              [ngClass]="contactFormType==='email' ? 'bg-green-500 text-white' : 'bg-gray-600 text-gray-800'"
               class="px-3 py-1 md:py-2 rounded font-bold">Email</button>
     </div>
 
