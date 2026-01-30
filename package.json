@@ -20,6 +20,7 @@
     "@angular/router": "^18.2.0",
     "gsap": "^3.13.0",
     "html2pdf.js": "^0.12.1",
+    "jsxgraph": "^1.12.2",
     "rxjs": "~7.8.0",
     "three": "^0.181.0",
     "tslib": "^2.3.0",
