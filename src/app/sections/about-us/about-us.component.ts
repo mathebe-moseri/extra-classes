@@ -39,3 +39,4 @@ export class AboutUSComponent implements AfterViewInit {
     elements.forEach((el: HTMLElement) => observer.observe(el));
   }
 }
+

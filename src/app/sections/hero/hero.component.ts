@@ -148,8 +148,6 @@ export class HeroComponent implements AfterViewInit {
   closeSubjectsDropdown() {
     this.subjectsDropdownOpen = false;
   }
-
-
-
+  
 }
 

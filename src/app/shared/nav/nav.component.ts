@@ -203,9 +203,5 @@ closeNavMenu() {
   this.isNavMenuOpen = false;
 }
 
-
-
-
-
-  
 }
+
