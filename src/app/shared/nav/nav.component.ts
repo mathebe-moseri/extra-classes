@@ -203,5 +203,15 @@ closeNavMenu() {
   this.isNavMenuOpen = false;
 }
 
+selectedMenu: string = '';
+
+selectMenu(menuId: string) {
+  this.selectedMenu = menuId;
+  this.closeNavMenu(); // optional if you want menu to close on click
+}
+
+
+
+
 }
 
