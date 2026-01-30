@@ -211,7 +211,18 @@ selectMenu(menuId: string) {
 }
 
 
-
+  scrollToHero() {
+    const hero = document.getElementById('hero');
+    if (hero) {
+      // Adjust for fixed header height (e.g., 60px)
+      const offset = 60;
+      const top = hero.getBoundingClientRect().top + window.pageYOffset - offset;
+      window.scrollTo({
+        top,
+        behavior: 'smooth'
+      });
+    }
+  }
 
 }
 
