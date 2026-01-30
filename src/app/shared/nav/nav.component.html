@@ -43,12 +43,12 @@
        (click)="$event.stopPropagation()"> <!-- <-- clicking inside does NOT close -->
 
     <!-- Buttons -->
-    <button
-      (click)="selectMenu('about'); scrollToAbout()"
-      [ngClass]="selectedMenu === 'about' ? 'bg-green-300' : 'bg-white-50'"
-      class="w-full text-left px-4 py-2 rounded-2xl font-bold text-gray-600 bg-blue-400 transition">
-      What We Offer
-    </button>
+<button
+  (click)="selectMenu('about'); scrollToAbout()"
+  [ngClass]="selectedMenu === 'about' ? 'bg-green-300' : 'bg-blue-400'"
+  class="w-full text-left px-4 py-2 rounded-2xl font-bold text-gray-600 transition">
+  What We Offer
+</button>
 
     <button
       (click)="selectMenu('apply')"
