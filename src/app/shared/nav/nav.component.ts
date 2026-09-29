@@ -5,6 +5,7 @@ import { LearnerAPiService } from '../../learner-api.service';
 import { HttpClientModule } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
+import { JoinFormService } from '../../join-form.service';
 
 @Component({
   selector: 'app-nav',
@@ -42,11 +43,13 @@ export class NavComponent {
   emailMessage = '';
 
   isNavMenuOpen = false;
+
 constructor(
-private learnerApiService: LearnerAPiService,
-private http: HttpClient
+  private learnerApiService: LearnerAPiService,
+  private http: HttpClient,
+  private joinForm: JoinFormService
 ) {
-document.body.style.backgroundColor = '#9CA3AF';
+  document.body.style.backgroundColor = '#9CA3AF';
 }
   ngOnInit() {
     this. learnerApiService.getLearnerInfo()
@@ -111,6 +114,11 @@ submitForm() {
 }
 
 loadLearners() {
+
+this.joinForm.openRequested$.subscribe(() => {
+  this.isMobileMenuOpen = true;
+});
+
   this.learnerApiService.getLearnerInfo().subscribe({
     next: (data) => this.joinedLearners = data,
     error: (err) => console.error('Error fetching learners:', err)

@@ -20,7 +20,6 @@
       <!-- Join -->
       <button (click)="toggleMobileMenu()"
         class="w-28 bg-gray-600 border border-gray-700 rounded-full py-2 text-white font-bold shadow-lg">
-        Join Our Classes
       </button>
 
     </div>
@@ -57,12 +56,18 @@
       How To Apply
     </button>
 
-    <button
-      (click)="selectMenu('join'); toggleMobileMenu()"
-      [ngClass]="selectedMenu === 'join' ? 'bg-blue-400' : 'bg-blue-400'"
-      class="w-full text-left px-4 py-2 rounded-2xl font-bold text-gray-600 transition">
-      Join Our Classes
-    </button>
+<button
+  (click)="selectMenu('join'); closeNavMenu(); toggleMobileMenu()"
+  class="w-full text-left px-4 py-2 rounded-2xl font-bold text-white bg-red-500 hover:bg-red-600 transition">
+  Sign Up
+</button>
+
+<button
+  routerLink="/login"
+  (click)="selectMenu('login'); closeNavMenu()"
+  class="w-full text-left px-4 py-2 rounded-2xl font-bold text-gray-600 border-2 border-gray-600 transition">
+  Log In
+</button>
 
     <button
       (click)="selectMenu('contact'); openContactForm()"
@@ -83,27 +88,27 @@
               p-4 md:p-6 lg:p-8 relative"
        (click)="$event.stopPropagation()">
     <button (click)="closeForm()" class="absolute top-2 right-2 text-gray-800 font-bold text-lg">&times;</button>
-    <h3 class="text-center font-bold text-lg mb-4">Join Our Classes</h3>
+    <h3 class="text-center font-bold text-lg mb-4"></h3>
 
-    <form (ngSubmit)="submitForm()" class="flex flex-col gap-3">
-      <input name="learnerFirstName" [(ngModel)]="learnerFirstName" required type="text" placeholder="Learner First Name"
+<form (ngSubmit)="submitForm()" class="flex flex-col gap-3 mt-9">
+      <input name="learnerFirstName" [(ngModel)]="learnerFirstName" required type="text" placeholder="Learner Name(s)"
              class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
       <input name="learnerSurname" [(ngModel)]="learnerSurname" required type="text" placeholder="Learner Surname"
              class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
-      <input name="grade" [(ngModel)]="grade" required type="text" placeholder="Grade"
+      <input name="grade" [(ngModel)]="grade" required type="text" placeholder="Learner Grade"
              class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
-      <input name="email" [(ngModel)]="email" required type="email" placeholder="Email"
+      <input name="email" [(ngModel)]="email" required type="email" placeholder="Learner Email"
              class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
-      <input name="schoolName" [(ngModel)]="schoolName" required type="text" placeholder="School Name"
+      <input name="schoolName" [(ngModel)]="schoolName" required type="text" placeholder="Learner School-Name"
              class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
-      <input name="parentFullName" [(ngModel)]="parentFullName" required type="text" placeholder="Parent/Guardian Full Name"
+      <input name="parentFullName" [(ngModel)]="parentFullName" required type="text" placeholder="Parent/Guardian Full Names"
              class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
       <input name="parentCell" [(ngModel)]="parentCell" required type="text" placeholder="Parent/Guardian Cell"
              class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
       <button type="submit"
               [disabled]="!learnerFirstName || !learnerSurname || !grade || !email || !schoolName || !parentFullName || !parentCell"
               class="mt-2 w-full bg-gray-800 hover:bg-gray-700 transition-colors rounded py-2 md:py-3 lg:py-4 font-bold text-white-50">
-        JOIN
+        Sign Up
       </button>
     </form>
   </div>

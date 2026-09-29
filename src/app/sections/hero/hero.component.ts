@@ -2,12 +2,13 @@ import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavComponent } from '../../shared/nav/nav.component';
 import { FormsModule } from '@angular/forms';
+import { JoinFormService } from '../../join-form.service';
 
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, NavComponent, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css']
 })
@@ -29,7 +30,11 @@ export class HeroComponent implements AfterViewInit {
 
   subjectsDropdownOpen = false;
 
+constructor(private joinForm: JoinFormService) {}
 
+openJoin() {
+  this.joinForm.open();
+}
 
   /* ---------------- QUIZ QUESTIONS ---------------- */
   quizQuestions = [
