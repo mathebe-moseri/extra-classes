@@ -87,9 +87,9 @@
               p-4 md:p-6 lg:p-8 relative"
        (click)="$event.stopPropagation()">
     <button (click)="closeForm()" class="absolute top-2 right-2 text-gray-800 font-bold text-lg">&times;</button>
-    <h3 class="text-center font-bold text-lg mb-4"></h3>
+    <h3 class="text-center font-bold text-lg mb-4">Sign Up</h3>
 
-<form (ngSubmit)="submitForm()" class="flex flex-col gap-3 mt-14">
+<form (ngSubmit)="submitForm()" class="flex flex-col gap-3">
       <input name="learnerFirstName" [(ngModel)]="learnerFirstName" required type="text" placeholder="Learner Name(s)"
              class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
       <input name="learnerSurname" [(ngModel)]="learnerSurname" required type="text" placeholder="Learner Surname"
