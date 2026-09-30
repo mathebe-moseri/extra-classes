@@ -6,7 +6,13 @@ export class JoinFormService {
   private openSubject = new Subject<void>();
   openRequested$ = this.openSubject.asObservable();
 
-  open() {
-    this.openSubject.next();
-  }
+  private contactSubject = new Subject<void>();
+  contactRequested$ = this.contactSubject.asObservable();
+
+  private loginSubject = new Subject<void>();
+  loginRequested$ = this.loginSubject.asObservable();
+
+  open() { this.openSubject.next(); }
+  openContact() { this.contactSubject.next(); }
+  openLogin() { this.loginSubject.next(); }
 }

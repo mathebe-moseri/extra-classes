@@ -17,9 +17,8 @@ import { JoinFormService } from '../../join-form.service';
 })
 export class NavComponent {
 
-  
   //learner info from API
- joinedLearners: any = []; 
+  joinedLearners: any = [];
   // Navbar state
   isMobileMenuOpen = false;
   isContactFormOpen = false;
@@ -44,15 +43,40 @@ export class NavComponent {
 
   isNavMenuOpen = false;
 
-constructor(
-  private learnerApiService: LearnerAPiService,
-  private http: HttpClient,
-  private joinForm: JoinFormService
-) {
-  document.body.style.backgroundColor = '#9CA3AF';
-}
+  // Login form state
+  isLoginFormOpen = false;
+  loginEmail = '';
+  loginPassword = '';
+
+  constructor(
+    private learnerApiService: LearnerAPiService,
+    private http: HttpClient,
+    private joinForm: JoinFormService
+  ) {
+    document.body.style.backgroundColor = '#9CA3AF';
+  }
+
   ngOnInit() {
-    this. learnerApiService.getLearnerInfo()
+    // Hero "Sign up" button -> open the join form
+    this.joinForm.openRequested$.subscribe(() => {
+      this.isMobileMenuOpen = true;
+    });
+
+    // "Book a special request session" button -> open the contact form
+    this.joinForm.contactRequested$.subscribe(() => {
+      this.contactFormType = 'whatsapp';
+      if (!this.whatsappMessage) {
+        this.whatsappMessage = 'Hi, I would like to book a special request class.';
+      }
+      this.isContactFormOpen = true;
+    });
+
+    // Hero "Log in" button -> open the login form
+    this.joinForm.loginRequested$.subscribe(() => {
+      this.isLoginFormOpen = true;
+    });
+
+    this.learnerApiService.getLearnerInfo()
       .pipe(
         tap(data => {
           this.joinedLearners = data;
@@ -61,122 +85,125 @@ constructor(
       )
       .subscribe();
 
-
-
-       this.loadLearners()
+    this.loadLearners();
   }
 
   // --- Join form ---
   toggleMobileMenu() { this.isMobileMenuOpen = true; }
   closeForm() { this.isMobileMenuOpen = false; }
 
-submitForm() {
-  if (
-    this.learnerFirstName && this.learnerSurname &&
-    this.grade && this.email && this.schoolName &&
-    this.parentFullName && this.parentCell
-  ) {
-    const learnerData = {
-      LearnerFirstName: this.learnerFirstName,
-      LearnerSurname: this.learnerSurname,
-      Grade: this.grade,
-      Email: this.email,
-      SchoolName: this.schoolName,
-      ParentFullName: this.parentFullName,
-      ParentCell: this.parentCell // match backend property
-    };
+  submitForm() {
+    if (
+      this.learnerFirstName && this.learnerSurname &&
+      this.grade && this.email && this.schoolName &&
+      this.parentFullName && this.parentCell
+    ) {
+      const learnerData = {
+        LearnerFirstName: this.learnerFirstName,
+        LearnerSurname: this.learnerSurname,
+        Grade: this.grade,
+        Email: this.email,
+        SchoolName: this.schoolName,
+        ParentFullName: this.parentFullName,
+        ParentCell: this.parentCell // match backend property
+      };
 
-    this.learnerApiService.addLearner(learnerData).subscribe({
-      next: () => {
-        alert('Welcome to Sesi Mathebe Extra Classes! Your registration was successful. Please check your spam email for further details.');
-        this.isMobileMenuOpen = false;
+      this.learnerApiService.addLearner(learnerData).subscribe({
+        next: () => {
+          alert('Welcome to Sesi Mathebe Extra Classes! Your registration was successful. Please check your spam email for further details.');
+          this.isMobileMenuOpen = false;
 
-        // Reset fields
-        this.learnerFirstName = '';
-        this.learnerSurname = '';
-        this.grade = '';
-        this.email = '';
-        this.schoolName = '';
-        this.parentFullName = '';
-        this.parentCell = '';
+          // Reset fields
+          this.learnerFirstName = '';
+          this.learnerSurname = '';
+          this.grade = '';
+          this.email = '';
+          this.schoolName = '';
+          this.parentFullName = '';
+          this.parentCell = '';
 
-        // Optionally refresh list
-        this.loadLearners();
-      },
-      error: (err) => {
-        console.error('Error adding learner:', err);
-        alert('Failed to add learner. Please try again.');
-      }
-    });
-  } else {
-    alert('Please fill all fields.');
+          // Optionally refresh list
+          this.loadLearners();
+        },
+        error: (err) => {
+          console.error('Error adding learner:', err);
+          alert('Failed to add learner. Please try again.');
+        }
+      });
+    } else {
+      alert('Please fill all fields.');
+    }
   }
-}
 
-loadLearners() {
+  loadLearners() {
+    this.learnerApiService.getLearnerInfo().subscribe({
+      next: (data) => this.joinedLearners = data,
+      error: (err) => console.error('Error fetching learners:', err)
+    });
+  }
 
-this.joinForm.openRequested$.subscribe(() => {
-  this.isMobileMenuOpen = true;
-});
+  // --- Login form ---
+  openLoginForm() { this.isLoginFormOpen = true; }
+  closeLoginForm() { this.isLoginFormOpen = false; }
 
-  this.learnerApiService.getLearnerInfo().subscribe({
-    next: (data) => this.joinedLearners = data,
-    error: (err) => console.error('Error fetching learners:', err)
-  });
-}
+  submitLogin() {
+    // Login is not connected yet, so this only closes the form
+    this.loginPassword = '';
+    this.isLoginFormOpen = false;
+  }
 
   // --- Contact form ---
   openContactForm() { this.isContactFormOpen = true; }
   closeContactForm() { this.isContactFormOpen = false; }
 
-sendWhatsappMessage() {
-  if (!this.whatsappNumber || !this.whatsappMessage) {
-    alert('Please fill all fields.');
-    return;
+  sendWhatsappMessage() {
+    if (!this.whatsappNumber || !this.whatsappMessage) {
+      alert('Please fill all fields.');
+      return;
+    }
+
+    const payload = {
+      whatsappNumber: this.whatsappNumber,
+      message: this.whatsappMessage
+    };
+
+    this.learnerApiService.sendContactWhatsapp(payload).subscribe({
+      next: () => {
+        alert('Thank you! We will contact you shortly on WhatsApp.');
+        this.whatsappNumber = '';
+        this.whatsappMessage = '';
+        this.closeContactForm();
+      },
+      error: (err) => {
+        console.error('Failed to send WhatsApp message:', err);
+        alert('Failed to send message. Please try again.');
+      }
+    });
   }
 
-  const payload = {
-    whatsappNumber: this.whatsappNumber,
-    message: this.whatsappMessage
-  };
-
-  this.learnerApiService.sendContactWhatsapp(payload).subscribe({
-    next: () => {
-      alert('Thank you! We will contact you shortly on WhatsApp.');
-      this.whatsappNumber = '';
-      this.whatsappMessage = '';
-      this.closeContactForm();
-    },
-    error: (err) => {
-      console.error('Failed to send WhatsApp message:', err);
-      alert('Failed to send message. Please try again.');
+  sendEmailMessage() {
+    if (!this.emailMessage) {
+      alert('Please enter a message.');
+      return;
     }
-  });
-}
 
-sendEmailMessage() {
-  if (!this.emailMessage) {
-    alert('Please enter a message.');
-    return;
+    const payload = {
+      email: 'mathebemoseri@gmail.com', // fixed recipient
+      message: this.emailMessage
+    };
+
+    this.learnerApiService.sendContactEmail(payload).subscribe({
+      next: (res: any) => {
+        alert(res.message);  // success alert
+        this.emailMessage = '';
+        this.closeContactForm();
+      },
+      error: (err) => {
+        console.error('Failed to send message:', err);
+        alert('Failed to send message. Please try again.');
+      }
+    });
   }
-
-  const payload = {
-    email: 'mathebemoseri@gmail.com', // fixed recipient
-    message: this.emailMessage
-  };
-
-  this.learnerApiService.sendContactEmail(payload).subscribe({
-    next: (res: any) => {
-      alert(res.message);  // success alert
-      this.emailMessage = '';
-      this.closeContactForm();
-    },
-    error: (err) => {
-      console.error('Failed to send message:', err);
-      alert('Failed to send message. Please try again.');
-    }
-  });
-}
 
   // --- Navbar toggle ---
   toggleBg() {
@@ -194,30 +221,29 @@ sendEmailMessage() {
   }
 
   scrollToAbout() {
-  const el = document.getElementById('about-us');
-  if (el) {
-    el.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
+    const el = document.getElementById('about-us');
+    if (el) {
+      el.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
   }
-}
 
-toggleNavMenu() {
-  this.isNavMenuOpen = !this.isNavMenuOpen;
-}
+  toggleNavMenu() {
+    this.isNavMenuOpen = !this.isNavMenuOpen;
+  }
 
-closeNavMenu() {
-  this.isNavMenuOpen = false;
-}
+  closeNavMenu() {
+    this.isNavMenuOpen = false;
+  }
 
-selectedMenu: string = '';
+  selectedMenu: string = '';
 
-selectMenu(menuId: string) {
-  this.selectedMenu = menuId;
-  this.closeNavMenu(); // optional if you want menu to close on click
-}
-
+  selectMenu(menuId: string) {
+    this.selectedMenu = menuId;
+    this.closeNavMenu(); // optional if you want menu to close on click
+  }
 
   scrollToHero() {
     const hero = document.getElementById('hero');
@@ -233,4 +259,3 @@ selectMenu(menuId: string) {
   }
 
 }
-

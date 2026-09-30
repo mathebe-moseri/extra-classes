@@ -36,6 +36,10 @@ openJoin() {
   this.joinForm.open();
 }
 
+openLogin() {
+  this.joinForm.openLogin();
+}
+
   /* ---------------- QUIZ QUESTIONS ---------------- */
   quizQuestions = [
     {
@@ -155,4 +159,3 @@ openJoin() {
   }
   
 }
-
