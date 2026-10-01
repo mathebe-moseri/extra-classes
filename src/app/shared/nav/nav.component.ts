@@ -33,6 +33,7 @@ export class NavComponent {
   schoolName = '';
   parentFullName = '';
   parentCell = '';
+  isSubmitting = false;
 
   // Contact form state
   contactFormType: 'whatsapp' | 'email' = 'whatsapp';
@@ -93,6 +94,9 @@ export class NavComponent {
   closeForm() { this.isMobileMenuOpen = false; }
 
   submitForm() {
+    // Stop double sign-ups: ignore clicks while a sign-up is already being sent
+    if (this.isSubmitting) return;
+
     if (
       this.learnerFirstName && this.learnerSurname &&
       this.grade && this.email && this.schoolName &&
@@ -108,8 +112,11 @@ export class NavComponent {
         ParentCell: this.parentCell // match backend property
       };
 
+      this.isSubmitting = true;
+
       this.learnerApiService.addLearner(learnerData).subscribe({
         next: () => {
+          this.isSubmitting = false;
           alert('Welcome to Sesi Mathebe Extra Classes! Your registration was successful. Please check your email for further details.');
           this.isMobileMenuOpen = false;
 
@@ -126,6 +133,7 @@ export class NavComponent {
           this.loadLearners();
         },
         error: (err) => {
+          this.isSubmitting = false;
           console.error('Error adding learner:', err);
           alert('Failed to add learner. Please try again.');
         }
@@ -188,7 +196,7 @@ export class NavComponent {
     }
 
     const payload = {
-      email: 'mathebemoseri@gmail.com', // fixed recipient
+      email: 'sesimathebe.remote.extraclasses@gmail.com', // fixed recipient
       message: this.emailMessage
     };
 

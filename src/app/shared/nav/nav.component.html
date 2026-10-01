@@ -98,10 +98,13 @@
       <input name="parentCell" [(ngModel)]="parentCell" required type="text" placeholder="Parent/Guardian Cell"
         class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
       <button type="submit"
-        [disabled]="!learnerFirstName || !learnerSurname || !grade || !email || !schoolName || !parentFullName || !parentCell"
-        class="mt-2 w-full bg-gray-800 hover:bg-gray-700 transition-colors rounded py-2 md:py-3 lg:py-4 font-bold text-white-50">
-        Sign Up
+        [disabled]="isSubmitting || !learnerFirstName || !learnerSurname || !grade || !email || !schoolName || !parentFullName || !parentCell"
+        class="mt-2 w-full bg-gray-800 hover:bg-gray-700 transition-colors rounded py-2 md:py-3 lg:py-4 font-bold text-white-50 disabled:opacity-60 disabled:cursor-not-allowed">
+        {{ isSubmitting ? 'Please wait...' : 'Sign Up' }}
       </button>
+      <p *ngIf="isSubmitting" class="text-center text-sm text-gray-600">
+        Registering you and sending your email. Please don't close this page.
+      </p>
     </form>
 
     <p class="text-center text-sm mt-4">
