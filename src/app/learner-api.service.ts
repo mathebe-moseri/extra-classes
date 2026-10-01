@@ -13,7 +13,7 @@ export class LearnerAPiService {
   private emailUrl = `${this.baseUrl}/send_contact_email`;
   private whatsappUrl = `${this.baseUrl}/send_contact_whatsapp`; // <-- new
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getLearnerInfo(): Observable<any> {
     return this.http.get<any>(this.getUrl);
@@ -31,4 +31,3 @@ export class LearnerAPiService {
     return this.http.post<any>(this.whatsappUrl, payload);
   }
 }
-

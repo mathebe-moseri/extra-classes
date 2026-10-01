@@ -230,7 +230,7 @@ export class NavComponent {
     }
   }
 
-    scrollToApply() {
+  scrollToApply() {
     const el = document.getElementById('how-to-apply');
     if (el) {
       el.scrollIntoView({

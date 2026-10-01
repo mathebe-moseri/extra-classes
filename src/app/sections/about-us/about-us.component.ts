@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 })
 export class AboutUSComponent implements AfterViewInit {
 
-  constructor(private el: ElementRef) {}
+  constructor(private el: ElementRef) { }
 
   ngAfterViewInit(): void {
     const elements = this.el.nativeElement.querySelectorAll('[data-animate]');
@@ -39,4 +39,3 @@ export class AboutUSComponent implements AfterViewInit {
     elements.forEach((el: HTMLElement) => observer.observe(el));
   }
 }
-

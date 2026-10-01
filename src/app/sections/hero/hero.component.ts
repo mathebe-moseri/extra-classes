@@ -30,25 +30,25 @@ export class HeroComponent implements AfterViewInit {
 
   subjectsDropdownOpen = false;
 
-constructor(private joinForm: JoinFormService) {}
+  constructor(private joinForm: JoinFormService) { }
 
-openJoin() {
-  this.joinForm.open();
-}
-
-openLogin() {
-  this.joinForm.openLogin();
-}
-
-scrollToApply() {
-  const el = document.getElementById('apply-video');
-  if (el) {
-    el.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center'
-    });
+  openJoin() {
+    this.joinForm.open();
   }
-}
+
+  openLogin() {
+    this.joinForm.openLogin();
+  }
+
+  scrollToApply() {
+    const el = document.getElementById('apply-video');
+    if (el) {
+      el.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  }
 
   /* ---------------- QUIZ QUESTIONS ---------------- */
   quizQuestions = [
@@ -167,5 +167,5 @@ scrollToApply() {
   closeSubjectsDropdown() {
     this.subjectsDropdownOpen = false;
   }
-  
+
 }

@@ -2,11 +2,11 @@
   <div class="flex items-center justify-between">
 
     <!-- Brand -->
-<a (click)="scrollToHero()"
-   class="font-semibold text-gray-800 text-[12px] md:text-[14px] lg:text-[16px] cursor-pointer">
-  <span class="block text-[8px] md:text-[10px] lg:text-[12px] px-9">Sesi Mathebe</span>
-  <span>Remote Extra Classes</span>
-</a>
+    <a (click)="scrollToHero()"
+      class="font-semibold text-gray-800 text-[12px] md:text-[14px] lg:text-[16px] cursor-pointer">
+      <span class="block text-[8px] md:text-[10px] lg:text-[12px] px-9">Sesi Mathebe</span>
+      <span>Remote Extra Classes</span>
+    </a>
 
     <!-- DESKTOP BUTTONS -->
     <div class="hidden md:flex items-center gap-3">
@@ -25,8 +25,7 @@
     </div>
 
     <!-- MOBILE MENU BUTTON -->
-    <button (click)="toggleNavMenu()"
-      class="md:hidden text-2xl font-bold text-gray-800">
+    <button (click)="toggleNavMenu()" class="md:hidden text-2xl font-bold text-gray-800">
       ☰
     </button>
 
@@ -34,42 +33,36 @@
 </header>
 
 <!-- MOBILE MENU -->
-<div *ngIf="isNavMenuOpen"
-     class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
-     (click)="closeNavMenu()"> <!-- <-- clicking the overlay closes menu -->
+<div *ngIf="isNavMenuOpen" class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" (click)="closeNavMenu()">
+  <!-- <-- clicking the overlay closes menu -->
 
   <div class="absolute top-16 right-2 bg-white-50 rounded-xl shadow-xl w-60 p-4 space-y-2"
-       (click)="$event.stopPropagation()"> <!-- <-- clicking inside does NOT close -->
+    (click)="$event.stopPropagation()"> <!-- <-- clicking inside does NOT close -->
 
     <!-- Buttons -->
-<button
-  (click)="selectMenu('about'); scrollToAbout()"
-  [ngClass]="selectedMenu === 'about' ? 'bg-blue-400' : 'bg-blue-400'"
-  class="w-full text-left px-4 py-2 rounded-2xl font-bold text-gray-600 transition">
-  What We Offer
-</button>
+    <button (click)="selectMenu('about'); scrollToAbout()"
+      [ngClass]="selectedMenu === 'about' ? 'bg-blue-400' : 'bg-blue-400'"
+      class="w-full text-left px-4 py-2 rounded-2xl font-bold text-gray-600 transition">
+      What We Offer
+    </button>
 
-    <button
-      (click)="selectMenu('apply'); scrollToApply()"
+    <button (click)="selectMenu('apply'); scrollToApply()"
       [ngClass]="selectedMenu === 'apply' ? 'bg-blue-400' : 'bg-blue-400'"
       class="w-full text-left px-4 py-2 rounded-2xl font-bold text-gray-600 transition">
       How To Apply
     </button>
 
-<button
-  (click)="selectMenu('join'); closeNavMenu(); toggleMobileMenu()"
-  class="w-full text-left px-4 py-2 rounded-2xl font-bold text-white bg-red-500 hover:bg-red-600 transition">
-  Sign Up
-</button>
+    <button (click)="selectMenu('join'); closeNavMenu(); toggleMobileMenu()"
+      class="w-full text-left px-4 py-2 rounded-2xl font-bold text-white bg-red-500 hover:bg-red-600 transition">
+      Sign Up
+    </button>
 
-<button
-  (click)="selectMenu('login'); openLoginForm()"
-  class="w-full text-left px-4 py-2 rounded-2xl font-bold text-gray-600 border-2 border-gray-600 transition">
-  Log In
-</button>
+    <button (click)="selectMenu('login'); openLoginForm()"
+      class="w-full text-left px-4 py-2 rounded-2xl font-bold text-gray-600 border-2 border-gray-600 transition">
+      Log In
+    </button>
 
-    <button
-      (click)="selectMenu('contact'); openContactForm()"
+    <button (click)="selectMenu('contact'); openContactForm()"
       [ngClass]="selectedMenu === 'contact' ? 'bg-blue-400' : 'bg-blue-400'"
       class="w-full text-left px-4 py-2 rounded-2xl font-bold text-gray-600 transition">
       Contact Us
@@ -84,34 +77,34 @@
   <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" (click)="closeForm()"></div>
 
   <div class="form-popup bg-white-50 text-gray-800 rounded-lg shadow-lg w-full max-w-sm md:max-w-md lg:max-w-lg 
-              p-4 md:p-6 lg:p-8 relative"
-       (click)="$event.stopPropagation()">
+              p-4 md:p-6 lg:p-8 relative" (click)="$event.stopPropagation()">
     <button (click)="closeForm()" class="absolute top-2 right-2 text-gray-800 font-bold text-lg">&times;</button>
     <h3 class="text-center font-bold text-lg mb-4">Sign Up</h3>
 
-<form (ngSubmit)="submitForm()" class="flex flex-col gap-3">
+    <form (ngSubmit)="submitForm()" class="flex flex-col gap-3">
       <input name="learnerFirstName" [(ngModel)]="learnerFirstName" required type="text" placeholder="Learner Name(s)"
-             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+        class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
       <input name="learnerSurname" [(ngModel)]="learnerSurname" required type="text" placeholder="Learner Surname"
-             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+        class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
       <input name="grade" [(ngModel)]="grade" required type="text" placeholder="Learner Grade"
-             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+        class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
       <input name="email" [(ngModel)]="email" required type="email" placeholder="Learner Email"
-             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+        class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
       <input name="schoolName" [(ngModel)]="schoolName" required type="text" placeholder="Learner School-Name"
-             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
-      <input name="parentFullName" [(ngModel)]="parentFullName" required type="text" placeholder="Parent/Guardian Full Names"
-             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+        class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+      <input name="parentFullName" [(ngModel)]="parentFullName" required type="text"
+        placeholder="Parent/Guardian Full Names"
+        class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
       <input name="parentCell" [(ngModel)]="parentCell" required type="text" placeholder="Parent/Guardian Cell"
-             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+        class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
       <button type="submit"
-              [disabled]="!learnerFirstName || !learnerSurname || !grade || !email || !schoolName || !parentFullName || !parentCell"
-              class="mt-2 w-full bg-gray-800 hover:bg-gray-700 transition-colors rounded py-2 md:py-3 lg:py-4 font-bold text-white-50">
+        [disabled]="!learnerFirstName || !learnerSurname || !grade || !email || !schoolName || !parentFullName || !parentCell"
+        class="mt-2 w-full bg-gray-800 hover:bg-gray-700 transition-colors rounded py-2 md:py-3 lg:py-4 font-bold text-white-50">
         Sign Up
       </button>
     </form>
 
-        <p class="text-center text-sm mt-4">
+    <p class="text-center text-sm mt-4">
       Already have an account?
       <button type="button" class="font-bold underline" (click)="closeForm(); openLoginForm()">Log in</button>
     </p>
@@ -123,19 +116,19 @@
   <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" (click)="closeLoginForm()"></div>
 
   <div class="form-popup bg-white-50 text-gray-800 rounded-lg shadow-lg w-full max-w-sm md:max-w-md lg:max-w-lg
-              p-4 md:p-6 lg:p-8 relative"
-       (click)="$event.stopPropagation()">
-    <button (click)="closeLoginForm()" class="absolute top-2 right-3 text-gray-800 font-bold text-2xl leading-none px-2">&times;</button>
+              p-4 md:p-6 lg:p-8 relative" (click)="$event.stopPropagation()">
+    <button (click)="closeLoginForm()"
+      class="absolute top-2 right-3 text-gray-800 font-bold text-2xl leading-none px-2">&times;</button>
 
     <h3 class="text-center font-bold text-lg mt-6 mb-4">Log In</h3>
 
     <form (ngSubmit)="submitLogin()" class="flex flex-col gap-3">
       <input name="loginEmail" [(ngModel)]="loginEmail" required type="email" placeholder="Email"
-             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+        class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
       <input name="loginPassword" [(ngModel)]="loginPassword" required type="password" placeholder="Password"
-             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+        class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
       <button type="submit" [disabled]="!loginEmail || !loginPassword"
-              class="mt-2 w-full bg-gray-800 hover:bg-gray-700 transition-colors rounded py-2 md:py-3 lg:py-4 font-bold text-white-50">
+        class="mt-2 w-full bg-gray-800 hover:bg-gray-700 transition-colors rounded py-2 md:py-3 lg:py-4 font-bold text-white-50">
         Log In
       </button>
     </form>
@@ -153,28 +146,27 @@
   <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" (click)="closeContactForm()"></div>
 
   <div class="contact-form-popup form-popup bg-white-50 text-gray-800 rounded-lg shadow-lg w-full max-w-sm md:max-w-md lg:max-w-lg 
-              p-4 md:p-6 lg:p-8 relative"
-       (click)="$event.stopPropagation()">
+              p-4 md:p-6 lg:p-8 relative" (click)="$event.stopPropagation()">
     <button (click)="closeContactForm()" class="absolute top-2 right-2 text-gray-800 font-bold text-lg">&times;</button>
     <h3 class="text-center font-bold text-lg mb-4">Contact Us</h3>
 
     <div class="flex justify-center gap-4 mb-4">
       <button (click)="contactFormType='whatsapp'"
-              [ngClass]="contactFormType==='whatsapp' ? 'bg-green-500 text-white' : 'bg-gray-600 text-gray-800'"
-              class="px-3 py-1 md:py-2 rounded font-bold">WhatsApp</button>
+        [ngClass]="contactFormType==='whatsapp' ? 'bg-green-500 text-white' : 'bg-gray-600 text-gray-800'"
+        class="px-3 py-1 md:py-2 rounded font-bold">WhatsApp</button>
       <button (click)="contactFormType='email'"
-              [ngClass]="contactFormType==='email' ? 'bg-green-500 text-white' : 'bg-gray-600 text-gray-800'"
-              class="px-3 py-1 md:py-2 rounded font-bold">Email</button>
+        [ngClass]="contactFormType==='email' ? 'bg-green-500 text-white' : 'bg-gray-600 text-gray-800'"
+        class="px-3 py-1 md:py-2 rounded font-bold">Email</button>
     </div>
 
     <!-- WhatsApp Form -->
     <form *ngIf="contactFormType==='whatsapp'" (ngSubmit)="sendWhatsappMessage()" class="flex flex-col gap-3">
       <input name="whatsappNumber" [(ngModel)]="whatsappNumber" required type="text" placeholder="Your WhatsApp Number"
-             class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
+        class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50">
       <textarea name="whatsappMessage" [(ngModel)]="whatsappMessage" required placeholder="Your Message"
-                class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50"></textarea>
+        class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50"></textarea>
       <button type="submit" [disabled]="!whatsappNumber || !whatsappMessage"
-              class="mt-2 w-full bg-green-500 hover:bg-green-600 transition-colors rounded py-2 md:py-3 lg:py-4 font-bold text-white">
+        class="mt-2 w-full bg-green-500 hover:bg-green-600 transition-colors rounded py-2 md:py-3 lg:py-4 font-bold text-white">
         Send via WhatsApp
       </button>
     </form>
@@ -182,12 +174,11 @@
     <!-- Email Form -->
     <form *ngIf="contactFormType==='email'" (ngSubmit)="sendEmailMessage()" class="flex flex-col gap-3">
       <textarea name="emailMessage" [(ngModel)]="emailMessage" required placeholder="Your Message"
-                class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50"></textarea>
+        class="px-3 py-2 rounded-md border border-gray-300 text-gray-800 bg-white-50"></textarea>
       <button type="submit" [disabled]="!emailMessage"
-              class="mt-2 w-full bg-green-500 hover:bg-blue-600 transition-colors rounded py-2 md:py-3 lg:py-4 font-bold text-white">
+        class="mt-2 w-full bg-green-500 hover:bg-blue-600 transition-colors rounded py-2 md:py-3 lg:py-4 font-bold text-white">
         Send via Email
       </button>
     </form>
   </div>
 </div>
-
