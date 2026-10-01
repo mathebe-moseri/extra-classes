@@ -196,7 +196,7 @@ export class NavComponent {
     }
 
     const payload = {
-      email: 'sesimathebe.remote.extraclasses@gmail.com', // fixed recipient
+      email: 'mathebemoseri@gmail.com', // fixed recipient
       message: this.emailMessage
     };
 
