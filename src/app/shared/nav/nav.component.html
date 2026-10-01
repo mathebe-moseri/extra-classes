@@ -50,7 +50,7 @@
 </button>
 
     <button
-      (click)="selectMenu('apply')"
+      (click)="selectMenu('apply'); scrollToApply()"
       [ngClass]="selectedMenu === 'apply' ? 'bg-blue-400' : 'bg-blue-400'"
       class="w-full text-left px-4 py-2 rounded-2xl font-bold text-gray-600 transition">
       How To Apply

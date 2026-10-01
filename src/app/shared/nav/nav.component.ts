@@ -110,7 +110,7 @@ export class NavComponent {
 
       this.learnerApiService.addLearner(learnerData).subscribe({
         next: () => {
-          alert('Welcome to Sesi Mathebe Extra Classes! Your registration was successful. Please check your spam email for further details.');
+          alert('Welcome to Sesi Mathebe Extra Classes! Your registration was successful. Please check your email for further details.');
           this.isMobileMenuOpen = false;
 
           // Reset fields
@@ -222,6 +222,16 @@ export class NavComponent {
 
   scrollToAbout() {
     const el = document.getElementById('about-us');
+    if (el) {
+      el.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }
+
+    scrollToApply() {
+    const el = document.getElementById('how-to-apply');
     if (el) {
       el.scrollIntoView({
         behavior: 'smooth',

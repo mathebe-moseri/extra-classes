@@ -40,6 +40,16 @@ openLogin() {
   this.joinForm.openLogin();
 }
 
+scrollToApply() {
+  const el = document.getElementById('apply-video');
+  if (el) {
+    el.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    });
+  }
+}
+
   /* ---------------- QUIZ QUESTIONS ---------------- */
   quizQuestions = [
     {
