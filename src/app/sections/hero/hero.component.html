@@ -22,7 +22,7 @@
 
     <button type="button" (click)="scrollToApply()"
       class="mt-4 mb-4 w-full max-w-xs sm:max-w-md mx-auto block px-4 py-1 rounded-lg bg-blue-400 text-gray-800 text-center font-semibold hover:bg-blue-500 transition-all duration-300 text-sm">
-      🎥 How to apply: watch the video
+      🎥 How to JOIN / Apply: watch the video
     </button>
 
     <p class="text-gray-800 text-base md:text-xl max-w-xl mx-auto mb-6">
@@ -76,7 +76,7 @@
         <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
           <div class="aspect-video">
             <video class="w-full h-full" controls playsinline preload="metadata" title="Testimonials Video">
-              <!-- <source src="https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial.mp4" type="video/mp4"> -->
+              <source src="https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial1.mp4" type="video/mp4">
               Your browser does not support the video tag.
             </video>
           </div>
@@ -122,7 +122,7 @@
       <button (click)="closeQuiz()"
         class="absolute top-3 right-3 text-gray-800 font-bold text-xl hover:text-red-600 transition-colors">&times;</button>
 
-      <h3 class="text-2xl font-bold mb-4 text-center">Trig Quiz</h3>
+      <h3 class="text-xl font-bold mb-4 text-center">Introduction to Trigonometry</h3>
       <!-- Question Text (TOP) -->
       <p class="mb-4 text-center font-medium">
         {{ currentQuestion?.text }}

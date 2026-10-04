@@ -53,7 +53,7 @@ export class HeroComponent implements AfterViewInit {
   /* ---------------- QUIZ QUESTIONS ---------------- */
   quizQuestions = [
     {
-      text: 'In a right-angled triangle, if angle θ is 30° and the hypotenuse is 10 units, find the length of the opposite side.',
+      text: 'What is a triangle?',
       answer: +(10 * Math.sin(30 * Math.PI / 180)).toFixed(2),
       image: '/images/img1.png'
     },
