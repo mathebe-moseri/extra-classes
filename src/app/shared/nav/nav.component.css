@@ -18,3 +18,26 @@
 .remote-classes-btn:hover span:nth-child(2) {
   transform: translateY(-5px);
 }
+
+header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+
+  width: 100% !important;
+
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+
+  opacity: 1 !important;
+
+  z-index: 99999 !important;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+}
+
+.hero-bg {
+  background-color: #1e3a8a;
+  color: #fff;
+}

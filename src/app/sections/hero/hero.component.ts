@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavComponent } from '../../shared/nav/nav.component';
 import { FormsModule } from '@angular/forms';
@@ -12,7 +12,7 @@ import { JoinFormService } from '../../join-form.service';
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css']
 })
-export class HeroComponent implements AfterViewInit {
+export class HeroComponent implements OnInit, AfterViewInit {
 
   /* ---------------- QUIZ STATE ---------------- */
   showQuiz = false;
@@ -31,6 +31,11 @@ export class HeroComponent implements AfterViewInit {
   subjectsDropdownOpen = false;
 
   constructor(private joinForm: JoinFormService) { }
+
+  ngOnInit() {
+    // Hamburger menu "Testimonials" -> open the testimonials popup
+    this.joinForm.testimonialsRequested$.subscribe(() => this.openTestimonials());
+  }
 
   openJoin() {
     this.joinForm.open();
@@ -167,5 +172,33 @@ export class HeroComponent implements AfterViewInit {
   closeSubjectsDropdown() {
     this.subjectsDropdownOpen = false;
   }
+
+showTestimonials = false;
+currentTestimonial = 0;
+
+testimonials = [
+  { label: 'Learner · Grade 10', src: 'https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial1.mp4' },
+  { label: 'Learner · Grade 11', src: '' },
+  { label: 'Learner · Grade 12', src: '' },
+  { label: 'Learner · Grade 12', src: '' },
+];
+
+openTestimonials() {
+  this.currentTestimonial = 0;
+  this.showTestimonials = true;
+}
+closeTestimonials() {
+  this.showTestimonials = false;
+}
+selectTestimonial(i: number) {
+  this.currentTestimonial = i;
+}
+nextTestimonial() {
+  this.currentTestimonial = (this.currentTestimonial + 1) % this.testimonials.length;
+}
+prevTestimonial() {
+  this.currentTestimonial =
+    (this.currentTestimonial - 1 + this.testimonials.length) % this.testimonials.length;
+}
 
 }

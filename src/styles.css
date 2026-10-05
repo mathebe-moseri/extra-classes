@@ -5,13 +5,14 @@
 @tailwind  utilities;
 
 :root {
-  --gradient: radial-gradient(circle, #e5e5e5 0%, #fff 100%);
+  --gradient: radial-gradient(circle, #fff 100%, #fff );
 }
 
 html,
 body {
   width: 100dvw;
   overflow-x: hidden;
+  background: #fff;
   color: white;
   scroll-behavior: smooth;
   font-family: "Mona Sans", sans-serif;
@@ -22,12 +23,6 @@ body {
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
   display: none;             
-}
-
-.blur-background {
-  filter: blur(6px);
-  pointer-events: none;
-  transition: filter 0.3s ease;
 }
 
 .popup, .form-popup, .contact-form-popup {

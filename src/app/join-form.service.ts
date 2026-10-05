@@ -15,4 +15,10 @@ export class JoinFormService {
   open() { this.openSubject.next(); }
   openContact() { this.contactSubject.next(); }
   openLogin() { this.loginSubject.next(); }
+
+  // join-form.service.ts
+private testimonialsRequestedSubject = new Subject<void>();
+
+testimonialsRequested$ = this.testimonialsRequestedSubject.asObservable();
+requestTestimonials() { this.testimonialsRequestedSubject.next(); }
 }

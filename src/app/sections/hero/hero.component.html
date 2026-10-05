@@ -1,33 +1,254 @@
-<div class="mt-16">
+<div class="mt-14">
+
 
   <!-- Hero Section -->
-  <section class="px-5 pt-8 pb-4 text-center">
-    <h1 class="text-white text-2xl md:text-5xl font-bold mb-3">
-      Learn Mathematics Online
-    </h1>
-    <!-- <p class="text-gray-800 text-base md:text-xl max-w-xl mx-auto mb-6">
-    Live lessons that follow the CAPS syllabus, taught step by step.
-  </p> -->
+  <section class="relative overflow-hidden px-4 pt-4 pb-5 text-center bg-[#1e3a8a] rounded-b-3xl">
 
-    <div class="flex flex-row gap-3 max-w-xs sm:max-w-md mx-auto">
-      <button type="button" (click)="openJoin()"
-        class="flex-1 px-4 py-1 rounded-lg bg-red-500 text-white text-center font-semibold hover:bg-red-600 transition-all duration-300">
-        Sign up
-      </button>
-      <button type="button" (click)="openLogin()"
-        class="flex-1 px-4 py-1 rounded-lg border-2 border-gray-800 text-gray-800 text-center font-semibold hover:bg-gray-800 hover:text-white transition-all duration-300">
-        Log in
-      </button>
+    <!-- Faint math symbols -->
+    <span aria-hidden="true" class="absolute z-0 top-6 left-4 font-serif text-4xl select-none pointer-events-none"
+      style="color: rgba(255,255,255,0.08);">π</span>
+    <span aria-hidde n="true" class="absolute z-0 top-20 right-3 font-serif text-5xl select-none pointer-events-none"
+      style="color: rgba(255,255,255,0.08);">Σ</span>
+    <span aria-hidden="true" class="absolute z-0 top-20 left-3 font-serif text-2xl select-none pointer-events-none"
+      style="color: rgba(255,255,255,0.08);">e - 1</span>
+
+    <div class="relative z-10">
+
+      <!-- Laptop with graph -->
+      <svg viewBox="0 0 200 120" class="h-[90px] md:h-[120px] mx-auto" role="img" aria-label="Laptop showing a graph">
+        <rect x="30" y="8" width="140" height="84" rx="8" fill="#1f2937" stroke="#9ca3af" stroke-width="3" />
+        <path d="M44 50H156M100 20V80" stroke="#6b7280" stroke-width="1.5" />
+        <path d="M44 50C58 14 72 14 86 50S114 86 128 50 150 22 156 36" fill="none" stroke="#60a5fa" stroke-width="3"
+          stroke-linecap="round" />
+        <circle cx="86" cy="50" r="4" fill="#ef4444" />
+        <path d="M14 100H186L176 112H24Z" fill="#9ca3af" />
+      </svg>
+
+      <!-- Applications pill -->
+      <span class="inline-block mt-2 px-3 py-0.5 rounded-full bg-green-600 text-white text-[11px] md:text-sm font-bold">
+        Applications OPEN
+      </span>
+
+      <h1 class="text-white text-2xl md:text-5xl font-bold mt-2 mb-1">
+        Learn Mathematics Online
+      </h1>
+
+      <p class="text-blue-100 text-sm md:text-xl max-w-xl mx-auto mb-4 font-semibold">
+        CAPS-aligned · Grades 10, 11 and 12
+      </p>
+
+      <!-- Sign up / Log in -->
+      <div class="mt-16">
+
+        <div class="flex flex-row gap-3 max-w-xs sm:max-w-md mx-auto">
+          <button type="button" (click)="openJoin()"
+            class="flex-1 py-2.5 rounded-xl bg-emerald-400 text-slate-900 font-bold transition-all duration-300">
+            Sign up
+          </button>
+          <button type="button" (click)="openLogin()"
+            class="flex-1 py-2.5 rounded-xl border-2 border-white text-white font-bold hover:bg-white hover:text-[#1e3a8a] transition-all duration-300">
+            Log in
+          </button>
+        </div>
+
+
+        <!-- Apply video button -->
+        <button type="button" (click)="scrollToApply()"
+          class="mt-3 w-full max-w-xs sm:max-w-md mx-auto block py-2.5 rounded-xl bg-sky-100 text-slate-900 font-bold text-sm hover:bg-sky-300 transition-all duration-300">
+        How to apply: watch the video
+        </button>
+      </div>
+
     </div>
+  </section>
 
-    <button type="button" (click)="scrollToApply()"
-      class="mt-4 mb-4 w-full max-w-xs sm:max-w-md mx-auto block px-4 py-1 rounded-lg bg-blue-400 text-gray-800 text-center font-semibold hover:bg-blue-500 transition-all duration-300 text-sm">
-      🎥 How to JOIN / Apply: watch the video
-    </button>
+  <!-- ABOUT / SUMMARY -->
+  <section id="about-us" class="max-w-[1100px] mx-auto px-4 scroll-mt-20">
+    <div class="p-5 md:p-7 rounded-3xl shadow-lg reveal mt-4 bg-[#ffffff]" data-animate>
 
-    <p class="text-gray-800 text-base md:text-xl max-w-xl mx-auto mb-6">
-      CAPS-aligned · Grades 10, 11 and 12 · Online classes.
-    </p>
+      <h2 class="text-2xl font-bold text-slate-900 mb-3">What We Offer</h2>
+
+      <p class="text-slate-600 text-base md:text-lg mb-4">
+        Online Mathematics for Grades 10, 11 and 12.
+      </p>
+
+      <ul class="space-y-3 mb-5 text-slate-600 text-base md:text-lg">
+        <li class="flex items-center gap-3">
+          <svg class="h-6 w-6 shrink-0 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M10 8l6 4-6 4z" />
+          </svg>
+          Video lessons
+        </li>
+        <li class="flex items-center gap-3">
+          <svg class="h-6 w-6 shrink-0 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z" />
+          </svg>
+          Exercises to practise
+        </li>
+        <li class="flex items-center gap-3">
+          <svg class="h-6 w-6 shrink-0 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 6L9 17l-5-5" />
+          </svg>
+          Worked solutions to the exercises
+        </li>
+        <li class="flex items-center gap-3">
+          <svg class="h-6 w-6 shrink-0 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8zM14 3v5h5M9 13h6M9 17h6" />
+          </svg>
+          Explained solutions to past question papers
+        </li>
+      </ul>
+
+      <button type="button" (click)="openTestimonials()"
+        class="w-full py-3 rounded-xl border-2 border-[#1e3a8a] text-[#1e3a8a] font-bold transition-all duration-300">
+        ▶ Hear from our learners
+      </button>
+
+      <p class="text-slate-500 text-sm mt-3">
+        Live or one-on-one classes with the tutor are not included. They are booked and paid for separately.
+      </p>
+
+    </div>
+  </section>
+
+
+    <!-- DEMO LESSON -->
+  <section id="demo-lesson" class="max-w-[1100px] mx-auto px-4 scroll-mt-20">
+    <div class="p-5 md:p-7 rounded-3xl shadow-lg mt-4 bg-white">
+
+      <h2 class="text-2xl font-bold text-slate-900 mb-3">Free Demo Lesson</h2>
+
+      <!-- Video -->
+      <div class="relative aspect-video rounded-xl overflow-hidden bg-[#1f2937] mb-3">
+        <span class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
+          Demo video
+        </span>
+        <iframe class="relative w-full h-full" src="" title="Demo Lesson Video" frameborder="0"
+          allow="autoplay; encrypted-media; fullscreen" allowfullscreen>
+        </iframe>
+      </div>
+
+      <p class="text-slate-600 mb-4">After this lesson, try the questions below.</p>
+
+      <button type="button" (click)="openQuiz()"
+        class="w-full py-3 rounded-xl bg-[#1e3a8a] text-white font-bold bg-emerald-400 transition-all duration-300">
+        Test Your Knowledge
+      </button>
+
+    </div>
+  </section>
+
+
+    <!-- HOW TO APPLY -->
+  <section id="how-to-apply" class="max-w-[1100px] mx-auto px-4 scroll-mt-20">
+    <div class="p-5 md:p-7 rounded-3xl shadow-lg bg-white">
+
+      <h2 class="text-2xl font-bold text-slate-900 mb-3">How To Apply</h2>
+
+      <p class="bg-sky-100 text-slate-700 rounded-xl px-4 py-3 mb-4 text-sm md:text-base">
+        Watch the short video below or follow the 5 steps.
+      </p>
+
+      <ol class="space-y-3 mb-5 text-slate-600 text-base md:text-lg">
+        <li class="flex items-start gap-3">
+          <span class="flex-none w-8 h-8 rounded-full bg-emerald-400 text-slate-900 font-bold flex items-center justify-center">1</span>
+          <p><strong class="text-slate-900">Sign up</strong> with learner and parent details.</p>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="flex-none w-8 h-8 rounded-full bg-emerald-400 text-slate-900 font-bold flex items-center justify-center">2</span>
+          <p><strong class="text-slate-900">Check your email</strong>, print and sign the contract.</p>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="flex-none w-8 h-8 rounded-full bg-emerald-400 text-slate-900 font-bold flex items-center justify-center">3</span>
+          <p><strong class="text-slate-900">Pay R200</strong>, reply with 3 documents.</p>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="flex-none w-8 h-8 rounded-full bg-emerald-400 text-slate-900 font-bold flex items-center justify-center">4</span>
+          <p><strong class="text-slate-900">Wait about an hour</strong> for login details.</p>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="flex-none w-8 h-8 rounded-full bg-emerald-400 text-slate-900 font-bold flex items-center justify-center">5</span>
+          <p><strong class="text-slate-900">Log in and enjoy.</strong></p>
+        </li>
+      </ol>
+
+      <!-- Apply video (the hero button scrolls here) -->
+      <div id="apply-video" class="mb-5 bg-[#1f2937] rounded-xl overflow-hidden">
+        <div class="aspect-video">
+          <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+            title="How to join Sesi Mathebe Remote Extra Classes" frameborder="0"
+            allow="autoplay; encrypted-media; fullscreen" allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+
+      <!-- <a href="/how-to-apply.pdf" download="How-To-Apply-Sesi-Mathebe.pdf"
+        class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-emerald-400 text-slate-900 font-bold transition-all duration-300">
+        ⬇ Download the PDF instructions
+      </a> -->
+
+    </div>
+  </section>
+
+    <!-- PAYMENT -->
+  <section id="payment" class="max-w-[1100px] mx-auto px-4 scroll-mt-20">
+    <div class="p-5 md:p-7 rounded-3xl shadow-lg mt-4 bg-white">
+
+      <h2 class="text-2xl font-bold text-slate-900 mb-3">Payment Details</h2>
+
+      <div class="space-y-3 mb-4 text-slate-600 text-base md:text-lg">
+        <div class="flex justify-between gap-4">
+          <span>Bank</span>
+          <strong class="text-slate-900">ABSA</strong>
+        </div>
+        <div class="flex justify-between gap-4">
+          <span>Account Type</span>
+          <strong class="text-slate-900">Savings</strong>
+        </div>
+        <div class="flex justify-between gap-4">
+          <span>Account Number</span>
+          <strong class="text-slate-900">9388 3059 91</strong>
+        </div>
+        <div class="flex justify-between gap-4">
+          <span>Reference</span>
+          <strong class="text-slate-900 text-right">Your sign-up email</strong>
+        </div>
+      </div>
+
+      <p class="bg-sky-100 text-slate-700 rounded-xl px-4 py-3 text-sm md:text-base">
+        Use your sign-up email as the payment reference.
+      </p>
+
+    </div>
+  </section>
+
+  <!-- SPECIAL REQUEST CLASSES -->
+  <section id="special-classes" class="max-w-[1100px] mx-auto px-4 scroll-mt-20 pb-8">
+    <div class="p-5 md:p-7 rounded-3xl shadow-lg mt-4 bg-white">
+
+      <h2 class="text-2xl font-bold text-slate-900 mb-2">Special Request Classes</h2>
+      <p class="text-slate-600 mb-4">Booked and paid for separately.</p>
+
+      <div class="space-y-3">
+        <div class="p-4 rounded-xl bg-sky-100">
+          <h3 class="font-bold text-slate-900">Monday – Thursday</h3>
+          <p class="font-bold text-sky-700">18h00 – 22h00</p>
+          <p class="font-bold text-slate-900">R60 per hour</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-sky-100">
+          <h3 class="font-bold text-slate-900">Fridays &amp; Weekends</h3>
+          <p class="font-bold text-sky-700">14h00 – 17h00</p>
+          <p class="font-bold text-slate-900">R100 per hour</p>
+        </div>
+      </div>
+
+    </div>
   </section>
 
   <!-- Header Buttons -->
@@ -35,15 +256,7 @@
 
     <!-- Subjects Dropdown -->
     <div class="relative z-30 fxed">
-      <!-- <button (click)="subjectsDropdownOpen = !subjectsDropdownOpen"
-        class="bg-white-50 text-gray-800 px-4 py-2 rounded flex items-center text-[12px] lg:text-[14px] transition-all duration-300 relative z-50 font-bold">
-        Subjects Offered
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1 transition-transform duration-200"
-          [class.rotate-180]="subjectsDropdownOpen" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-          stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-        </svg>
-      </button> -->
+
 
       <!-- Blur overlay behind dropdown -->
       <div *ngIf="subjectsDropdownOpen" class="fixed inset-0 z-40" (click)="closeSubjectsDropdown()">
@@ -65,49 +278,6 @@
           <span class="block text-sm text-gray-500">(Grades 12 - Matric Rewrite)</span>
         </a>
       </div>
-    </div>
-  </div>
-
-  <!-- Testimonials Section -->
-  <div class="rounded-xl p-5">
-    <div class="w-full flex flex-col items-center justify-center bg-gray-600 px-4 py-12 rounded-xl">
-      <h2 class="text-white text-3xl md:text-4xl font-bold mb-8 text-center">Testimonials</h2>
-      <div class="w-full max-w-5xl px-4">
-        <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
-          <div class="aspect-video">
-            <video class="w-full h-full" controls playsinline preload="metadata" title="Testimonials Video">
-              <source src="https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial1.mp4" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Demo Lesson Section -->
-  <div class="rounded-xl p-5">
-    <div class="w-full flex flex-col items-center justify-center bg-gray-600 px-4 py-12 rounded-xl">
-      <h2 class="text-white text-3xl md:text-4xl font-bold mb-8 text-center">Demo Lesson</h2>
-      <div class="w-full max-w-5xl px-4">
-        <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl border border-gray-700">
-          <div class="aspect-video">
-            <iframe class="w-full h-full" src="" title="Demo Lesson Video" frameborder="0"
-              allow="autoplay; encrypted-media; fullscreen" allowfullscreen>
-            </iframe>
-          </div>
-        </div>
-      </div>
-
-      <p class="mt-6 text-center text-gray-300 text-lg max-w-2xl">
-        After going through this demo lesson, you can try to solve the following questions.
-      </p>
-
-      <!-- Test Your Knowledge Button -->
-      <button (click)="openQuiz()"
-        class="mt-4 px-6 py-3 bg-white-50 text-gray-800 font-semibold rounded-lg shadow-lg hover:bg-blue-700 transition-all duration-300">
-        Test Your Knowledge
-      </button>
     </div>
   </div>
 
@@ -168,6 +338,50 @@
         <button (click)="closeQuizCompletedPopup()"
           class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all duration-200">Close</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Testimonials Popup -->
+  <div *ngIf="showTestimonials" class="fixed inset-0 flex items-center justify-center z-[100000] px-4">
+    <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm" (click)="closeTestimonials()"></div>
+
+    <div class="relative w-full max-w-sm rounded-3xl p-4 shadow-2xl bg-[#1f2937]" (click)="$event.stopPropagation()">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-3 text-[#ffffff] font-bold">
+        <span>Testimonials</span>
+        <span class="flex items-center gap-3">
+          {{ currentTestimonial + 1 }} of {{ testimonials.length }}
+          <button type="button" (click)="closeTestimonials()" aria-label="Close"
+            class="text-2xl leading-none">&times;</button>
+        </span>
+      </div>
+
+      <!-- Video -->
+      <div class="h-60 rounded-xl overflow-hidden flex items-center justify-center bg-[#111827]">
+        <video *ngIf="testimonials[currentTestimonial].src" class="w-full h-full object-contain" controls playsinline
+          preload="metadata" [src]="testimonials[currentTestimonial].src"></video>
+        <span *ngIf="!testimonials[currentTestimonial].src" class="text-gray-400">Video coming soon</span>
+      </div>
+
+      <!-- Arrows + label -->
+      <div class="flex items-center justify-between mt-9">
+        <button type="button" (click)="prevTestimonial()" aria-label="Previous"
+          class="w-10 h-10 rounded-full bg-emerald-400 text-slate-900 font-extrabold text-xl flex items-center justify-center">‹</button>
+        <span class="text-[#ffffff] text-sm">{{ testimonials[currentTestimonial].label }}</span>
+        <button type="button" (click)="nextTestimonial()" aria-label="Next"
+          class="w-10 h-10 rounded-full bg-emerald-400 text-slate-900 font-extrabold text-xl flex items-center justify-center">›</button>
+      </div>
+
+      <!-- Thumbnails -->
+      <div class="grid grid-cols-4 gap-2 mt-3">
+        <button *ngFor="let t of testimonials; let i = index" type="button" (click)="selectTestimonial(i)"
+          class="h-11 rounded-lg text-sm border-2 bg-[#374151]"
+          [ngClass]="i === currentTestimonial ? 'bg-emerald-400 text-[#ffffff]' : 'border-transparent text-gray-300'">
+          {{ i + 1 }}
+        </button>
+      </div>
+
     </div>
   </div>
 
