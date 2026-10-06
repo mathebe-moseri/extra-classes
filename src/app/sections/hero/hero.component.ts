@@ -1,14 +1,13 @@
-import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NavComponent } from '../../shared/nav/nav.component';
 import { FormsModule } from '@angular/forms';
 import { JoinFormService } from '../../join-form.service';
-
+import { RevealDirective } from '../../shared/reveal.directive';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RevealDirective],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css']
 })
@@ -20,15 +19,16 @@ export class HeroComponent implements OnInit, AfterViewInit {
   userAnswer: number | null = null;
   feedback = '';
   isCorrect = false;
+  answered = false;            // NEW: true once the learner has checked an answer
   imageLoaded = false;
   quizCompleted = false;
   totalCorrect = 0;
 
   currentQuestionIndex = 0;
   currentQuestion: any;
-  completedMessage = ''
+  completedMessage = '';
 
-  subjectsDropdownOpen = false;
+  copied = false;              // NEW: shows "Copied" on the account number button
 
   constructor(private joinForm: JoinFormService) { }
 
@@ -46,13 +46,31 @@ export class HeroComponent implements OnInit, AfterViewInit {
   }
 
   scrollToApply() {
-    const el = document.getElementById('apply-video');
-    if (el) {
-      el.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
+    document.getElementById('apply-video')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // NEW
+  scrollToAbout() {
+    document.getElementById('about-us')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // NEW
+  async copyAccount() {
+    try {
+      await navigator.clipboard.writeText('9388305991');
+      this.copied = true;
+      setTimeout(() => (this.copied = false), 2000);
+    } catch {
+      /* clipboard blocked: the number is still on screen to copy by hand */
     }
+  }
+
+  // NEW: Escape closes whichever popup is open
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.showQuiz) this.closeQuiz();
+    else if (this.showQuizCompletedPopup) this.closeQuizCompletedPopup();
+    else if (this.showTestimonials) this.closeTestimonials();
   }
 
   /* ---------------- QUIZ QUESTIONS ---------------- */
@@ -85,16 +103,18 @@ export class HeroComponent implements OnInit, AfterViewInit {
   ];
 
   ngAfterViewInit() {
-    this.quizQuestions.forEach(q => {
+    this.quizQuestions.forEach((q: any) => {
       if (q.image) {
         const img = new Image();
         img.src = q.image;
       }
     });
   }
+
   /* ---------------- QUIZ METHODS ---------------- */
   openQuiz() {
     this.currentQuestionIndex = 0;
+    this.totalCorrect = 0;
     this.loadQuestion();
     this.showQuiz = true;
   }
@@ -104,6 +124,7 @@ export class HeroComponent implements OnInit, AfterViewInit {
     this.feedback = '';
     this.userAnswer = null;
     this.isCorrect = false;
+    this.answered = false;
     this.quizCompleted = false;
   }
 
@@ -112,18 +133,20 @@ export class HeroComponent implements OnInit, AfterViewInit {
     this.userAnswer = null;
     this.feedback = '';
     this.isCorrect = false;
-    this.imageLoaded = false; // ✅ RESET IMAGE STATE
+    this.answered = false;
+    this.imageLoaded = false;
   }
 
   checkAnswer() {
-    if (this.userAnswer === null) return;
+    if (this.userAnswer === null || this.answered) return;
+    this.answered = true;
 
     if (Math.abs(this.userAnswer - this.currentQuestion.answer) < 0.05) {
       this.feedback = '✅ Correct! Well done.';
       this.isCorrect = true;
       this.totalCorrect++;
     } else {
-      this.feedback = `❌ Incorrect. Correct answer is ${this.currentQuestion.answer}`;
+      this.feedback = `❌ Not quite. The answer is ${this.currentQuestion.answer}`;
       this.isCorrect = false;
     }
   }
@@ -133,17 +156,12 @@ export class HeroComponent implements OnInit, AfterViewInit {
       this.currentQuestionIndex++;
       this.loadQuestion();
     } else {
-      // Quiz completed
       this.quizCompleted = true;
       const scorePercent = (this.totalCorrect / this.quizQuestions.length) * 100;
-
-      // Hide the normal quiz content and show the completed popup
       this.showQuiz = false;
       this.showQuizCompletedPopup = true;
-
-
-      // Set feedback message for the popup
-      this.completedMessage = `🎉 You completed the quiz! You passed with ${scorePercent.toFixed(0)}%`;
+      this.completedMessage =
+        `You got ${this.totalCorrect} out of ${this.quizQuestions.length} (${scorePercent.toFixed(0)}%).`;
     }
   }
 
@@ -153,9 +171,10 @@ export class HeroComponent implements OnInit, AfterViewInit {
     this.currentQuestionIndex = 0;
     this.loadQuestion();
   }
+
   closeQuizCompletedPopup() {
     this.showQuizCompletedPopup = false;
-    this.tryAgain(); // resets quiz if needed
+    this.tryAgain();
   }
 
   downloadPDF() {
@@ -165,40 +184,32 @@ export class HeroComponent implements OnInit, AfterViewInit {
     link.click();
   }
 
-  toggleSubjectsDropdown() {
-    this.subjectsDropdownOpen = !this.subjectsDropdownOpen;
+  /* ---------------- TESTIMONIALS ---------------- */
+  showTestimonials = false;
+  currentTestimonial = 0;
+
+  testimonials = [
+    { label: 'Learner · Grade 10', src: 'https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial1.mp4' },
+    { label: 'Learner · Grade 11', src: '' },
+    { label: 'Learner · Grade 12', src: '' },
+    { label: 'Learner · Grade 12', src: '' },
+  ];
+
+  openTestimonials() {
+    this.currentTestimonial = 0;
+    this.showTestimonials = true;
   }
-
-  closeSubjectsDropdown() {
-    this.subjectsDropdownOpen = false;
+  closeTestimonials() {
+    this.showTestimonials = false;
   }
-
-showTestimonials = false;
-currentTestimonial = 0;
-
-testimonials = [
-  { label: 'Learner · Grade 10', src: 'https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial1.mp4' },
-  { label: 'Learner · Grade 11', src: '' },
-  { label: 'Learner · Grade 12', src: '' },
-  { label: 'Learner · Grade 12', src: '' },
-];
-
-openTestimonials() {
-  this.currentTestimonial = 0;
-  this.showTestimonials = true;
-}
-closeTestimonials() {
-  this.showTestimonials = false;
-}
-selectTestimonial(i: number) {
-  this.currentTestimonial = i;
-}
-nextTestimonial() {
-  this.currentTestimonial = (this.currentTestimonial + 1) % this.testimonials.length;
-}
-prevTestimonial() {
-  this.currentTestimonial =
-    (this.currentTestimonial - 1 + this.testimonials.length) % this.testimonials.length;
-}
-
+  selectTestimonial(i: number) {
+    this.currentTestimonial = i;
+  }
+  nextTestimonial() {
+    this.currentTestimonial = (this.currentTestimonial + 1) % this.testimonials.length;
+  }
+  prevTestimonial() {
+    this.currentTestimonial =
+      (this.currentTestimonial - 1 + this.testimonials.length) % this.testimonials.length;
+  }
 }

@@ -1,392 +1,270 @@
 <div class="mt-14">
 
+  <!-- ============ HERO ============ -->
+  <section class="snap relative overflow-hidden px-4 pt-4 pb-4 text-center bg-[#1e3a8a] rounded-b-3xl flex flex-col"
+    style="min-height: calc(100vh - 3.5rem); min-height: calc(100svh - 3.5rem);">
 
-  <!-- Hero Section -->
-  <section class="relative overflow-hidden px-4 pt-4 pb-5 text-center bg-[#1e3a8a] rounded-b-3xl">
-
-    <!-- Faint math symbols -->
-    <span aria-hidden="true" class="absolute z-0 top-6 left-4 font-serif text-4xl select-none pointer-events-none"
+    <span aria-hidden="true" class="absolute top-6 left-4 font-serif text-4xl select-none pointer-events-none"
       style="color: rgba(255,255,255,0.08);">π</span>
-    <span aria-hidde n="true" class="absolute z-0 top-20 right-3 font-serif text-5xl select-none pointer-events-none"
+    <span aria-hidden="true" class="absolute top-20 right-3 font-serif text-5xl select-none pointer-events-none"
       style="color: rgba(255,255,255,0.08);">Σ</span>
-    <span aria-hidden="true" class="absolute z-0 top-20 left-3 font-serif text-2xl select-none pointer-events-none"
+    <span aria-hidden="true" class="absolute top-20 left-3 font-serif text-2xl select-none pointer-events-none"
       style="color: rgba(255,255,255,0.08);">e - 1</span>
 
-    <div class="relative z-10">
+    <div class="relative z-10 flex-1 flex flex-col justify-center">
 
-      <!-- Laptop with graph -->
-      <svg viewBox="0 0 200 120" class="h-[90px] md:h-[120px] mx-auto" role="img" aria-label="Laptop showing a graph">
+      <svg viewBox="0 0 200 120" class="rise h-[110px] md:h-[140px] mx-auto" role="img"
+        aria-label="Laptop showing a graph" style="--d: .05s">
         <rect x="30" y="8" width="140" height="84" rx="8" fill="#1f2937" stroke="#9ca3af" stroke-width="3" />
         <path d="M44 50H156M100 20V80" stroke="#6b7280" stroke-width="1.5" />
-        <path d="M44 50C58 14 72 14 86 50S114 86 128 50 150 22 156 36" fill="none" stroke="#60a5fa" stroke-width="3"
-          stroke-linecap="round" />
+        <path d="M44 50C58 14 72 14 86 50S114 86 128 50 150 22 156 36" fill="none" stroke="#60a5fa"
+          stroke-width="3" stroke-linecap="round" />
         <circle cx="86" cy="50" r="4" fill="#ef4444" />
         <path d="M14 100H186L176 112H24Z" fill="#9ca3af" />
       </svg>
 
-      <!-- Applications pill -->
-      <span class="inline-block mt-2 px-3 py-0.5 rounded-full bg-green-600 text-white text-[11px] md:text-sm font-bold">
-        Applications OPEN
-      </span>
+      <div class="rise" style="--d: .15s">
+        <span class="inline-block mt-3 px-3 py-0.5 rounded-full bg-green-600 text-white text-[11px] md:text-sm font-bold">
+          Applications OPEN
+        </span>
+      </div>
 
-      <h1 class="text-white text-2xl md:text-5xl font-bold mt-2 mb-1">
+      <h1 class="rise text-white text-3xl md:text-5xl font-bold mt-3 mb-2" style="--d: .25s">
         Learn Mathematics Online
       </h1>
 
-      <p class="text-blue-100 text-sm md:text-xl max-w-xl mx-auto mb-4 font-semibold">
+      <p class="rise !text-blue-100 text-sm md:text-xl max-w-xl mx-auto font-semibold" style="--d: .35s">
         CAPS-aligned · Grades 10, 11 and 12
       </p>
 
-      <!-- Sign up / Log in -->
-      <div class="mt-16">
-
+      <div class="rise mt-8" style="--d: .5s">
         <div class="flex flex-row gap-3 max-w-xs sm:max-w-md mx-auto">
-          <button type="button" (click)="openJoin()"
-            class="flex-1 py-2.5 rounded-xl bg-emerald-400 text-slate-900 font-bold transition-all duration-300">
-            Sign up
-          </button>
-          <button type="button" (click)="openLogin()"
-            class="flex-1 py-2.5 rounded-xl border-2 border-white text-white font-bold hover:bg-white hover:text-[#1e3a8a] transition-all duration-300">
-            Log in
-          </button>
+          <button type="button" (click)="openJoin()" class="btn btn-primary flex-1">Sign up</button>
+          <button type="button" (click)="openLogin()" class="btn btn-light flex-1">Log in</button>
         </div>
-
-
-        <!-- Apply video button -->
         <button type="button" (click)="scrollToApply()"
-          class="mt-3 w-full max-w-xs sm:max-w-md mx-auto block py-2.5 rounded-xl bg-sky-100 text-slate-900 font-bold text-sm hover:bg-sky-300 transition-all duration-300">
+          class="btn btn-soft mt-3 w-full max-w-xs sm:max-w-md mx-auto text-sm">
           How to apply: watch the video
         </button>
       </div>
-
     </div>
+
+    <button type="button" (click)="scrollToAbout()"
+      class="relative z-10 mx-auto mt-4 flex flex-col items-center text-blue-100 text-xs font-semibold">
+      What we offer
+      <span class="scroll-cue text-lg leading-none" aria-hidden="true">⌄</span>
+    </button>
   </section>
 
-  <!-- ABOUT / SUMMARY -->
-  <section id="about-us" class="max-w-[1100px] mx-auto px-4 scroll-mt-20">
-    <div class="p-5 md:p-7 rounded-3xl shadow-lg reveal mt-4 bg-[#ffffff]" data-animate>
+  <!-- ============ WHAT WE OFFER ============ -->
+  <section id="about-us" class="screen screen-fill snap">
+    <div class="card" appReveal>
+      <h2>What we offer</h2>
+      <p class="lead">Online Mathematics for Grades 10, 11 and 12.</p>
 
-      <h2 class="text-2xl font-bold text-slate-900 mb-3">What We Offer</h2>
-
-      <p class="text-slate-600 text-base md:text-lg mb-4">
-        Online Mathematics for Grades 10, 11 and 12.
-      </p>
-
-      <ul class="space-y-3 mb-5 text-slate-600 text-base md:text-lg">
-        <li class="flex items-center gap-3">
-          <svg class="h-6 w-6 shrink-0 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M10 8l6 4-6 4z" />
-          </svg>
+      <ul class="mb-5">
+        <li class="feature">
+          <span class="ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M10 8l6 4-6 4z" /></svg></span>
           Video lessons
         </li>
-        <li class="flex items-center gap-3">
-          <svg class="h-6 w-6 shrink-0 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z" />
-          </svg>
+        <li class="feature">
+          <span class="ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z" /></svg></span>
           Exercises to practise
         </li>
-        <li class="flex items-center gap-3">
-          <svg class="h-6 w-6 shrink-0 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 6L9 17l-5-5" />
-          </svg>
+        <li class="feature">
+          <span class="ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg></span>
           Worked solutions to the exercises
         </li>
-        <li class="flex items-center gap-3">
-          <svg class="h-6 w-6 shrink-0 text-sky-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8zM14 3v5h5M9 13h6M9 17h6" />
-          </svg>
+        <li class="feature">
+          <span class="ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8zM14 3v5h5M9 13h6M9 17h6" /></svg></span>
           Explained solutions to past question papers
         </li>
       </ul>
 
-      <button type="button" (click)="openTestimonials()"
-        class="w-full py-3 rounded-xl border-2 border-[#1e3a8a] text-[#1e3a8a] font-bold transition-all duration-300">
-        ▶ Hear from our learners
-      </button>
+      <button type="button" (click)="openTestimonials()" class="btn btn-outline w-full">▶ Hear from our learners</button>
 
-      <p class="text-slate-500 text-sm mt-3">
+      <p class="text-slate-500 text-sm mt-4">
         Live or one-on-one classes with the tutor are not included. They are booked and paid for separately.
       </p>
-
     </div>
   </section>
 
+  <!-- ============ FREE DEMO ============ -->
+  <section id="demo-lesson" class="screen screen-fill snap">
+    <div class="card" appReveal>
+      <h2>Free demo lesson</h2>
+      <p class="lead">Watch one lesson, then test yourself.</p>
 
-  <!-- DEMO LESSON -->
-  <section id="demo-lesson" class="max-w-[1100px] mx-auto px-4 scroll-mt-20">
-    <div class="p-5 md:p-7 rounded-3xl shadow-lg mt-4 bg-white">
-
-      <h2 class="text-2xl font-bold text-slate-900 mb-3">Free Demo Lesson</h2>
-
-      <!-- Video -->
-      <div class="relative aspect-video rounded-xl overflow-hidden bg-[#1f2937] mb-3">
-        <span class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">
-          Demo video
-        </span>
-        <iframe class="relative w-full h-full" src="" title="Demo Lesson Video" frameborder="0"
-          allow="autoplay; encrypted-media; fullscreen" allowfullscreen>
-        </iframe>
+      <div class="relative aspect-video rounded-2xl overflow-hidden bg-[#1f2937] mb-4">
+        <span class="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">Demo video</span>
+        <iframe class="relative w-full h-full" src="" title="Demo Lesson Video" frameborder="0" loading="lazy"
+          allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
       </div>
 
-      <p class="text-slate-600 mb-4">After this lesson, try the questions below.</p>
-
-      <button type="button" (click)="openQuiz()"
-        class="w-full py-3 rounded-xl bg-[#1e3a8a] text-white font-bold bg-emerald-400 transition-all duration-300">
-        Test Your Knowledge
-      </button>
-
+      <button type="button" (click)="openQuiz()" class="btn btn-primary w-full">Test your knowledge</button>
     </div>
   </section>
 
+  <!-- ============ HOW TO APPLY ============ -->
+  <section id="how-to-apply" class="screen screen-fill snap">
+    <div class="card" appReveal>
+      <h2>How to apply</h2>
+      <p class="note mb-5">Follow the 5 steps, or watch the short video below.</p>
 
-  <!-- HOW TO APPLY -->
-  <section id="how-to-apply" class="max-w-[1100px] mx-auto px-4 scroll-mt-20">
-    <div class="p-5 md:p-7 rounded-3xl shadow-lg bg-white">
-
-      <h2 class="text-2xl font-bold text-slate-900 mb-3">How To Apply</h2>
-
-      <p class="bg-sky-100 text-slate-700 rounded-xl px-4 py-3 mb-4 text-sm md:text-base">
-        Watch the short video below or follow the 5 steps.
-      </p>
-
-      <ol class="space-y-3 mb-5 text-slate-600 text-base md:text-lg">
-        <li class="flex items-start gap-3">
-          <span
-            class="flex-none w-8 h-8 rounded-full bg-emerald-400 text-slate-900 font-bold flex items-center justify-center">1</span>
-          <p><strong class="text-slate-900">Sign up</strong> with learner and parent details.</p>
-        </li>
-        <li class="flex items-start gap-3">
-          <span
-            class="flex-none w-8 h-8 rounded-full bg-emerald-400 text-slate-900 font-bold flex items-center justify-center">2</span>
-          <p><strong class="text-slate-900">Check your email</strong>, print and sign the contract.</p>
-        </li>
-        <li class="flex items-start gap-3">
-          <span
-            class="flex-none w-8 h-8 rounded-full bg-emerald-400 text-slate-900 font-bold flex items-center justify-center">3</span>
-          <p><strong class="text-slate-900">Pay R200</strong>, reply with 3 documents.</p>
-        </li>
-        <li class="flex items-start gap-3">
-          <span
-            class="flex-none w-8 h-8 rounded-full bg-emerald-400 text-slate-900 font-bold flex items-center justify-center">4</span>
-          <p><strong class="text-slate-900">Wait about an hour</strong> for login details.</p>
-        </li>
-        <li class="flex items-start gap-3">
-          <span
-            class="flex-none w-8 h-8 rounded-full bg-emerald-400 text-slate-900 font-bold flex items-center justify-center">5</span>
-          <p><strong class="text-slate-900">Log in and enjoy.</strong></p>
-        </li>
+      <ol class="mb-5 text-base md:text-lg">
+        <li class="step"><span class="step-dot">1</span>
+          <p><strong class="text-slate-900">Sign up</strong> with learner and parent details.</p></li>
+        <li class="step"><span class="step-dot">2</span>
+          <p><strong class="text-slate-900">Check your email</strong>, print and sign the contract.</p></li>
+        <li class="step"><span class="step-dot">3</span>
+          <p><strong class="text-slate-900">Pay R200</strong>, reply with 3 documents.</p></li>
+        <li class="step"><span class="step-dot">4</span>
+          <p><strong class="text-slate-900">Wait about an hour</strong> for login details.</p></li>
+        <li class="step"><span class="step-dot">5</span>
+          <p><strong class="text-slate-900">Log in and enjoy.</strong></p></li>
       </ol>
 
-      <!-- Apply video (the hero button scrolls here) -->
-      <div id="apply-video" class="mb-5 bg-[#1f2937] rounded-xl overflow-hidden">
+      <div id="apply-video" class="mb-4 bg-[#1f2937] rounded-2xl overflow-hidden">
         <div class="aspect-video">
-          <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+          <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID" loading="lazy"
             title="How to join Sesi Mathebe Remote Extra Classes" frameborder="0"
-            allow="autoplay; encrypted-media; fullscreen" allowfullscreen>
-          </iframe>
+            allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
         </div>
       </div>
 
-      <!-- <a href="/how-to-apply.pdf" download="How-To-Apply-Sesi-Mathebe.pdf"
-        class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-emerald-400 text-slate-900 font-bold transition-all duration-300">
-        ⬇ Download the PDF instructions
-      </a> -->
-
+      <button type="button" (click)="openJoin()" class="btn btn-primary w-full">Start step 1: Sign up</button>
     </div>
   </section>
 
-  <!-- PAYMENT -->
-  <section id="payment" class="max-w-[1100px] mx-auto px-4 scroll-mt-20">
-    <div class="p-5 md:p-7 rounded-3xl shadow-lg mt-4 bg-white">
+  <!-- ============ PAYMENT ============ -->
+  <section id="payment" class="screen screen-fill snap">
+    <div class="card" appReveal>
+      <h2>Payment details</h2>
+      <p class="lead">Registration is R200. Pay by EFT.</p>
 
-      <h2 class="text-2xl font-bold text-slate-900 mb-3">Payment Details</h2>
-
-      <div class="space-y-3 mb-4 text-slate-600 text-base md:text-lg">
-        <div class="flex justify-between gap-4">
-          <span>Bank</span>
-          <strong class="text-slate-900">ABSA</strong>
+      <div class="mb-4">
+        <div class="row"><span>Bank</span><strong>ABSA</strong></div>
+        <div class="row"><span>Account type</span><strong>Savings</strong></div>
+        <div class="row">
+          <span>Account number</span>
+          <span class="flex items-center gap-2">
+            <strong>9388 3059 91</strong>
+            <button type="button" class="copy-btn" [class.done]="copied" (click)="copyAccount()">
+              {{ copied ? 'Copied' : 'Copy' }}
+            </button>
+          </span>
         </div>
-        <div class="flex justify-between gap-4">
-          <span>Account Type</span>
-          <strong class="text-slate-900">Savings</strong>
-        </div>
-        <div class="flex justify-between gap-4">
-          <span>Account Number</span>
-          <strong class="text-slate-900">9388 3059 91</strong>
-        </div>
-        <div class="flex justify-between gap-4">
-          <span>Reference</span>
-          <strong class="text-slate-900 text-right">Your sign-up email</strong>
-        </div>
+        <div class="row"><span>Reference</span><strong>Your sign-up email</strong></div>
       </div>
 
-      <p class="bg-sky-100 text-slate-700 rounded-xl px-4 py-3 text-sm md:text-base">
-        Use your sign-up email as the payment reference.
-      </p>
-
+      <p class="note">Use your sign-up email as the payment reference so we can match your payment.</p>
     </div>
   </section>
 
-  <!-- SPECIAL REQUEST CLASSES -->
-  <section id="special-classes" class="max-w-[1100px] mx-auto px-4 scroll-mt-20 pb-8">
-    <div class="p-5 md:p-7 rounded-3xl shadow-lg mt-4 bg-white">
-
-      <h2 class="text-2xl font-bold text-slate-900 mb-2">Special Request Classes</h2>
-      <p class="text-slate-600 mb-4">Booked and paid for separately.</p>
+  <!-- ============ SPECIAL REQUEST CLASSES ============ -->
+  <section id="special-classes" class="screen screen-fill snap">
+    <div class="card" appReveal>
+      <h2>Special request classes</h2>
+      <p class="lead">Live classes with the tutor. Booked and paid for separately.</p>
 
       <div class="space-y-3">
-        <div class="p-4 rounded-xl bg-sky-100">
+        <div class="p-4 rounded-2xl bg-sky-100">
           <h3 class="font-bold text-slate-900">Monday – Thursday</h3>
           <p class="font-bold text-sky-700">18h00 – 22h00</p>
           <p class="font-bold text-slate-900">R60 per hour</p>
         </div>
-
-        <div class="p-4 rounded-xl bg-sky-100">
-          <h3 class="font-bold text-slate-900">Fridays &amp; Weekends</h3>
+        <div class="p-4 rounded-2xl bg-sky-100">
+          <h3 class="font-bold text-slate-900">Fridays &amp; weekends</h3>
           <p class="font-bold text-sky-700">14h00 – 17h00</p>
           <p class="font-bold text-slate-900">R100 per hour</p>
         </div>
       </div>
-
     </div>
   </section>
 
-  <!-- Header Buttons -->
-  <div id="hero" class="px-3 md:py-6 lg:py-8 flex space-x-2 items-center">
+  <!-- ============ QUIZ ============ -->
+  <div *ngIf="showQuiz" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
+    <div class="modal-backdrop" (click)="closeQuiz()"></div>
+    <div class="sheet">
+      <button type="button" class="sheet-close" (click)="closeQuiz()" aria-label="Close quiz">&times;</button>
 
-    <!-- Subjects Dropdown -->
-    <div class="relative z-30 fxed">
-
-
-      <!-- Blur overlay behind dropdown -->
-      <div *ngIf="subjectsDropdownOpen" class="fixed inset-0 z-40" (click)="closeSubjectsDropdown()">
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+      <h3 id="quiz-title">Introduction to Trigonometry</h3>
+      <p class="text-sm text-slate-500 mt-1 mb-2">Question {{ currentQuestionIndex + 1 }} of {{ quizQuestions.length }}</p>
+      <div class="h-1.5 rounded-full bg-slate-100 mb-4 overflow-hidden">
+        <div class="h-full bg-emerald-400 transition-all duration-500"
+          [style.width.%]="((currentQuestionIndex + 1) / quizQuestions.length) * 100"></div>
       </div>
 
-      <!-- Dropdown Menu -->
-      <div *ngIf="subjectsDropdownOpen"
-        class="absolute mt-2 w-72 bg-white-50 text-gray-800 rounded-md shadow-lg z-50 border border-gray-200 text-[13px] left-[-2px]"
-        (click)="$event.stopPropagation()">
-        <a href="#grades101112" class="block px-4 py-2 hover:bg-gray-200" (click)="closeSubjectsDropdown()">
-          Grades 10, 11, 12 –
-          <span class="block">Mathematics</span>
-          <span class="block">Physical Sciences</span>
-          <span class="block">Computer Applications Technology</span>
-        </a>
-        <a href="#mathsUpgrade" class="block px-4 py-2 hover:bg-gray-200" (click)="closeSubjectsDropdown()">
-          Mathematics Upgrading
-          <span class="block text-sm text-gray-500">(Grades 12 - Matric Rewrite)</span>
-        </a>
-      </div>
-    </div>
-  </div>
+      <p class="mb-4 font-medium">{{ currentQuestion?.text }}</p>
 
-  <!-- ------------------ QUIZ MODALS ------------------ -->
-
-  <!-- Quiz Modal -->
-  <div *ngIf="showQuiz" class="fixed inset-0 flex items-center justify-center z-[60]">
-    <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" (click)="closeQuiz()"></div>
-
-    <div class="relative bg-white-50 text-gray-900 rounded-xl p-8 m-[10px] w-full max-w-sm shadow-2xl z-[70]"
-      (click)="$event.stopPropagation()">
-      <button (click)="closeQuiz()"
-        class="absolute top-3 right-3 text-gray-800 font-bold text-xl hover:text-red-600 transition-colors">&times;</button>
-
-      <h3 class="text-xl font-bold mb-4 text-center">Introduction to Trigonometry</h3>
-      <!-- Question Text (TOP) -->
-      <p class="mb-4 text-center font-medium">
-        {{ currentQuestion?.text }}
-      </p>
-
-      <!-- Question Image (UNDER question, only if available) -->
       <div *ngIf="currentQuestion?.image" class="mb-4 flex justify-center">
-        <img [src]="currentQuestion.image" (load)="imageLoaded = true" [class.opacity-0]="!imageLoaded" class="max-w-full max-h-48 border border-gray-300 rounded-md
-           transition-opacity duration-300" />
+        <img [src]="currentQuestion.image" alt="Diagram for this question" (load)="imageLoaded = true"
+          [class.opacity-0]="!imageLoaded"
+          class="max-w-full max-h-48 border border-slate-200 rounded-xl transition-opacity duration-300" />
       </div>
 
-      <input [(ngModel)]="userAnswer" type="number" placeholder="Enter your answer"
-        class="w-full px-3 py-2 rounded border border-gray-600 mb-4 text-gray-900">
+      <label class="field-label" for="quiz-answer">Your answer</label>
+      <input id="quiz-answer" [(ngModel)]="userAnswer" (keyup.enter)="checkAnswer()" type="number" inputmode="decimal"
+        placeholder="e.g. 4.5" class="field mb-4" [disabled]="answered">
 
-      <div class="flex justify-between mb-2">
-        <button (click)="checkAnswer()"
-          class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-all duration-200">Submit</button>
-        <button (click)="nextQuestion()" [disabled]="!isCorrect"
-          class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all duration-200 disabled:opacity-50">Next
-          Question</button>
-      </div>
+      <p *ngIf="feedback" class="mb-4 text-center font-semibold" aria-live="polite"
+        [ngClass]="isCorrect ? 'text-emerald-600' : 'text-red-600'">{{ feedback }}</p>
 
-      <p *ngIf="feedback" class="mt-4 text-center font-semibold"
-        [ngClass]="{'text-green-500': isCorrect, 'text-red-500': !isCorrect}">
-        {{ feedback }}
-      </p>
-    </div>
-  </div>
-
-  <!-- Quiz Completed Popup -->
-  <div *ngIf="showQuizCompletedPopup" class="fixed inset-0 flex items-center justify-center z-50">
-    <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" (click)="closeQuizCompletedPopup()"></div>
-
-    <div class="relative bg-white-50 text-gray-900 rounded-xl p-8 w-full max-w-sm shadow-2xl z-10 m-5"
-      (click)="$event.stopPropagation()">
-      <button (click)="closeQuizCompletedPopup()"
-        class="absolute top-3 right-3 text-gray-800 font-bold text-xl hover:text-red-600 transition-colors">&times;</button>
-
-      <h3 class="text-2xl font-bold mb-4 text-center">Quiz Completed!</h3>
-      <p class="text-center text-lg font-semibold">{{ completedMessage }}</p>
-
-      <div class="flex justify-center mt-6">
-        <button (click)="closeQuizCompletedPopup()"
-          class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all duration-200">Close</button>
+      <div class="flex gap-3">
+        <button type="button" (click)="checkAnswer()" [disabled]="answered || userAnswer === null"
+          class="btn btn-navy flex-1">Check answer</button>
+        <button type="button" (click)="nextQuestion()" [disabled]="!answered"
+          class="btn btn-primary flex-1">{{ currentQuestionIndex === quizQuestions.length - 1 ? 'Finish' : 'Next' }}</button>
       </div>
     </div>
   </div>
 
-  <!-- Testimonials Popup -->
-  <div *ngIf="showTestimonials" class="fixed inset-0 flex items-center justify-center z-[100000] px-4">
-    <div class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm" (click)="closeTestimonials()"></div>
+  <!-- ============ QUIZ COMPLETE ============ -->
+  <div *ngIf="showQuizCompletedPopup" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="done-title">
+    <div class="modal-backdrop" (click)="closeQuizCompletedPopup()"></div>
+    <div class="sheet text-center">
+      <button type="button" class="sheet-close" (click)="closeQuizCompletedPopup()" aria-label="Close">&times;</button>
+      <h3 id="done-title" class="mb-3">Quiz complete</h3>
+      <p class="text-lg font-semibold mb-5">{{ completedMessage }}</p>
+      <button type="button" (click)="closeQuizCompletedPopup(); openJoin()" class="btn btn-primary w-full mb-3">Sign up to keep learning</button>
+      <button type="button" (click)="closeQuizCompletedPopup()" class="btn btn-soft w-full">Close</button>
+    </div>
+  </div>
 
-    <div class="relative w-full max-w-sm rounded-3xl p-4 shadow-2xl bg-[#1f2937]" (click)="$event.stopPropagation()">
+  <!-- ============ TESTIMONIALS ============ -->
+  <div *ngIf="showTestimonials" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="testi-title">
+    <div class="modal-backdrop" (click)="closeTestimonials()"></div>
+    <div class="sheet sheet-dark">
+      <button type="button" class="sheet-close" (click)="closeTestimonials()" aria-label="Close">&times;</button>
 
-      <!-- Header -->
-      <div class="flex items-center justify-between mb-3 text-[#ffffff] font-bold">
-        <span>Testimonials</span>
-        <span class="flex items-center gap-3">
-          {{ currentTestimonial + 1 }} of {{ testimonials.length }}
-          <button type="button" (click)="closeTestimonials()" aria-label="Close"
-            class="text-2xl leading-none">&times;</button>
-        </span>
-      </div>
+      <h3 id="testi-title">Testimonials</h3>
+      <p class="text-sm text-gray-300 mb-3">{{ currentTestimonial + 1 }} of {{ testimonials.length }}</p>
 
-      <!-- Video -->
-      <div class="h-60 rounded-xl overflow-hidden flex items-center justify-center bg-[#111827]">
+      <div class="h-60 rounded-2xl overflow-hidden flex items-center justify-center bg-[#111827]">
         <video *ngIf="testimonials[currentTestimonial].src" class="w-full h-full object-contain" controls playsinline
           preload="metadata" [src]="testimonials[currentTestimonial].src"></video>
         <span *ngIf="!testimonials[currentTestimonial].src" class="text-gray-400">Video coming soon</span>
       </div>
 
-      <!-- Arrows + label -->
-      <div class="flex items-center justify-between mt-9">
-        <button type="button" (click)="prevTestimonial()" aria-label="Previous"
-          class="w-10 h-10 rounded-full bg-emerald-400 text-slate-900 font-extrabold text-xl flex items-center justify-center">‹</button>
-        <span class="text-[#ffffff] text-sm">{{ testimonials[currentTestimonial].label }}</span>
-        <button type="button" (click)="nextTestimonial()" aria-label="Next"
-          class="w-10 h-10 rounded-full bg-emerald-400 text-slate-900 font-extrabold text-xl flex items-center justify-center">›</button>
+      <div class="flex items-center justify-between mt-5">
+        <button type="button" (click)="prevTestimonial()" aria-label="Previous testimonial"
+          class="w-12 h-12 rounded-full bg-emerald-400 text-slate-900 font-extrabold text-xl">‹</button>
+        <span class="text-sm">{{ testimonials[currentTestimonial].label }}</span>
+        <button type="button" (click)="nextTestimonial()" aria-label="Next testimonial"
+          class="w-12 h-12 rounded-full bg-emerald-400 text-slate-900 font-extrabold text-xl">›</button>
       </div>
 
-      <!-- Thumbnails -->
-      <div class="grid grid-cols-4 gap-2 mt-3">
+      <div class="grid grid-cols-4 gap-2 mt-4">
         <button *ngFor="let t of testimonials; let i = index" type="button" (click)="selectTestimonial(i)"
-          class="h-11 rounded-lg text-sm border-2 bg-[#374151]"
-          [ngClass]="i === currentTestimonial ? 'bg-emerald-400 text-[#ffffff]' : 'border-transparent text-gray-300'">
+          class="h-11 rounded-xl text-sm font-bold transition-colors"
+          [ngClass]="i === currentTestimonial ? 'bg-emerald-400 text-slate-900' : 'bg-[#374151] text-gray-300'">
           {{ i + 1 }}
         </button>
       </div>
-
     </div>
   </div>
 

@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms'; // Required for ngModel
 import { LearnerAPiService } from '../../learner-api.service';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
 import { JoinFormService } from '../../join-form.service';
 
 @Component({
@@ -15,16 +14,29 @@ import { JoinFormService } from '../../join-form.service';
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.css']
 })
-export class NavComponent {
+export class NavComponent implements OnInit {
 
-  //learner info from API
+  // learner info from API
   joinedLearners: any = [];
-  // Navbar state
-  isMobileMenuOpen = false;
+
+  // Popup / menu state
+  isMobileMenuOpen = false;   // (this is the Sign up popup)
   isContactMenuOpen = false;
   isContactFormOpen = false;
-  currentBg = true;
-  selectedMenuItem = '';
+  isNavMenuOpen = false;
+  isLoginFormOpen = false;
+
+  // NEW: navigation helpers
+  sections = [
+    { id: 'about-us',        label: 'What we offer' },
+    { id: 'demo-lesson',     label: 'Free demo lesson' },
+    { id: 'how-to-apply',    label: 'How to apply' },
+    { id: 'payment',         label: 'Payment details' },
+    { id: 'special-classes', label: 'Special request classes' },
+  ];
+  activeSection = '';
+  progress = 0;
+  showBar = false;
 
   // Join form fields
   learnerFirstName = '';
@@ -43,10 +55,7 @@ export class NavComponent {
   emailAddress = '';
   emailMessage = '';
 
-  isNavMenuOpen = false;
-
   // Login form state
-  isLoginFormOpen = false;
   loginEmail = '';
   loginPassword = '';
 
@@ -54,9 +63,7 @@ export class NavComponent {
     private learnerApiService: LearnerAPiService,
     private http: HttpClient,
     private joinForm: JoinFormService
-  ) {
-    document.body.style.backgroundColor = 'white';
-  }
+  ) { }   // (removed: document.body.style.backgroundColor = 'white')
 
   ngOnInit() {
     // Hero "Sign up" button -> open the join form
@@ -79,23 +86,40 @@ export class NavComponent {
     });
 
     this.learnerApiService.getLearnerInfo()
-      .pipe(
-        tap(data => {
-          this.joinedLearners = data;
-          // console.log('Fetched learner info:', data);
-        })
-      )
+      .pipe(tap(data => { this.joinedLearners = data; }))
       .subscribe();
 
     this.loadLearners();
   }
 
-  // --- Join form ---
+  /* ---------------- NEW: scroll tracking + keyboard ---------------- */
+  @HostListener('window:scroll')
+  onScroll() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    this.progress = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+    this.showBar = window.scrollY > window.innerHeight * 0.7;
+
+    let current = '';
+    for (const s of this.sections) {
+      const el = document.getElementById(s.id);
+      if (el && el.getBoundingClientRect().top <= window.innerHeight * 0.35) current = s.id;
+    }
+    this.activeSection = current;
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape() {
+    if (this.isLoginFormOpen) this.closeLoginForm();
+    else if (this.isMobileMenuOpen) this.closeForm();
+    else if (this.isContactFormOpen) this.closeContactForm();
+    else if (this.isNavMenuOpen) this.closeNavMenu();
+  }
+
+  /* ---------------- Join form ---------------- */
   toggleMobileMenu() { this.isMobileMenuOpen = true; }
   closeForm() { this.isMobileMenuOpen = false; }
 
   submitForm() {
-    // Stop double sign-ups: ignore clicks while a sign-up is already being sent
     if (this.isSubmitting) return;
 
     if (
@@ -110,7 +134,7 @@ export class NavComponent {
         Email: this.email,
         SchoolName: this.schoolName,
         ParentFullName: this.parentFullName,
-        ParentCell: this.parentCell // match backend property
+        ParentCell: this.parentCell
       };
 
       this.isSubmitting = true;
@@ -121,7 +145,6 @@ export class NavComponent {
           alert('Welcome to Sesi Mathebe Extra Classes! Your registration was successful. Please check your email for further details.');
           this.isMobileMenuOpen = false;
 
-          // Reset fields
           this.learnerFirstName = '';
           this.learnerSurname = '';
           this.grade = '';
@@ -130,7 +153,6 @@ export class NavComponent {
           this.parentFullName = '';
           this.parentCell = '';
 
-          // Optionally refresh list
           this.loadLearners();
         },
         error: (err) => {
@@ -151,7 +173,7 @@ export class NavComponent {
     });
   }
 
-  // --- Login form ---
+  /* ---------------- Login form ---------------- */
   openLoginForm() { this.isLoginFormOpen = true; }
   closeLoginForm() { this.isLoginFormOpen = false; }
 
@@ -161,7 +183,7 @@ export class NavComponent {
     this.isLoginFormOpen = false;
   }
 
-  // --- Contact form ---
+  /* ---------------- Contact form ---------------- */
   openContactForm() { this.isContactFormOpen = true; }
   closeContactForm() { this.isContactFormOpen = false; }
 
@@ -203,7 +225,7 @@ export class NavComponent {
 
     this.learnerApiService.sendContactEmail(payload).subscribe({
       next: (res: any) => {
-        alert(res.message);  // success alert
+        alert(res.message);
         this.emailMessage = '';
         this.closeContactForm();
       },
@@ -214,41 +236,7 @@ export class NavComponent {
     });
   }
 
-  // --- Navbar toggle ---
-  toggleBg() {
-    this.currentBg = !this.currentBg;
-    document.body.style.backgroundColor = 'white';
-  }
-
-  selectMenuItem(item: string, delay: number = 100) {
-    this.selectedMenuItem = item;
-    setTimeout(() => this.isMobileMenuOpen = false, delay);
-  }
-
-  closeMobileMenuWithDelay(delay: number = 500) {
-    setTimeout(() => this.isMobileMenuOpen = false, delay);
-  }
-
-  scrollToAbout() {
-    const el = document.getElementById('about-us');
-    if (el) {
-      el.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  }
-
-  scrollToApply() {
-    const el = document.getElementById('how-to-apply');
-    if (el) {
-      el.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start'
-      });
-    }
-  }
-
+  /* ---------------- Navigation ---------------- */
   toggleNavMenu() {
     this.isNavMenuOpen = !this.isNavMenuOpen;
   }
@@ -258,24 +246,9 @@ export class NavComponent {
     this.isContactMenuOpen = false;
   }
 
-  selectedMenu: string = '';
-
-  selectMenu(menuId: string) {
-    this.selectedMenu = menuId;
-    this.closeNavMenu(); // optional if you want menu to close on click
-  }
-
+  // FIXED: the old version looked for #hero, which sits at the bottom of the page
   scrollToHero() {
-    const hero = document.getElementById('hero');
-    if (hero) {
-      // Adjust for fixed header height (e.g., 60px)
-      const offset = 60;
-      const top = hero.getBoundingClientRect().top + window.pageYOffset - offset;
-      window.scrollTo({
-        top,
-        behavior: 'smooth'
-      });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // Close the menu, then scroll to a section by its id
@@ -283,7 +256,7 @@ export class NavComponent {
     this.closeNavMenu();
     setTimeout(() => {
       document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 50);
+    }, 80);
   }
 
   openContactFrom(type: 'whatsapp' | 'email') {
@@ -296,5 +269,4 @@ export class NavComponent {
     this.closeNavMenu();
     this.joinForm.requestTestimonials();
   }
-
 }
