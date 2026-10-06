@@ -26,6 +26,15 @@ export class NavComponent implements OnInit {
   isNavMenuOpen = false;
   isLoginFormOpen = false;
 
+  // NEW: messages shown inside the popups (replaces alert boxes)
+  signupDone = false;
+  signupError = '';
+  loginNotice = '';
+  contactDone = false;
+  contactDoneText = '';
+  contactError = '';
+  contactSending = false;
+
   // NEW: navigation helpers
   sections = [
     { id: 'about-us',        label: 'What we offer' },
@@ -116,54 +125,52 @@ export class NavComponent implements OnInit {
   }
 
   /* ---------------- Join form ---------------- */
-  toggleMobileMenu() { this.isMobileMenuOpen = true; }
-  closeForm() { this.isMobileMenuOpen = false; }
+  toggleMobileMenu() { this.signupDone = false; this.signupError = ''; this.isMobileMenuOpen = true; }
+  closeForm() { this.isMobileMenuOpen = false; this.signupDone = false; this.signupError = ''; }
 
   submitForm() {
     if (this.isSubmitting) return;
 
-    if (
-      this.learnerFirstName && this.learnerSurname &&
-      this.grade && this.email && this.schoolName &&
-      this.parentFullName && this.parentCell
-    ) {
-      const learnerData = {
-        LearnerFirstName: this.learnerFirstName,
-        LearnerSurname: this.learnerSurname,
-        Grade: this.grade,
-        Email: this.email,
-        SchoolName: this.schoolName,
-        ParentFullName: this.parentFullName,
-        ParentCell: this.parentCell
-      };
-
-      this.isSubmitting = true;
-
-      this.learnerApiService.addLearner(learnerData).subscribe({
-        next: () => {
-          this.isSubmitting = false;
-          alert('Welcome to Sesi Mathebe Extra Classes! Your registration was successful. Please check your email for further details.');
-          this.isMobileMenuOpen = false;
-
-          this.learnerFirstName = '';
-          this.learnerSurname = '';
-          this.grade = '';
-          this.email = '';
-          this.schoolName = '';
-          this.parentFullName = '';
-          this.parentCell = '';
-
-          this.loadLearners();
-        },
-        error: (err) => {
-          this.isSubmitting = false;
-          console.error('Error adding learner:', err);
-          alert('Failed to add learner. Please try again.');
-        }
-      });
-    } else {
-      alert('Please fill all fields.');
+    if (!(this.learnerFirstName && this.learnerSurname && this.grade && this.email &&
+          this.schoolName && this.parentFullName && this.parentCell)) {
+      this.signupError = 'Please fill in every field.';
+      return;
     }
+
+    this.signupError = '';
+    this.isSubmitting = true;
+
+    const learnerData = {
+      LearnerFirstName: this.learnerFirstName,
+      LearnerSurname: this.learnerSurname,
+      Grade: this.grade,
+      Email: this.email,
+      SchoolName: this.schoolName,
+      ParentFullName: this.parentFullName,
+      ParentCell: this.parentCell
+    };
+
+    this.learnerApiService.addLearner(learnerData).subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        this.signupDone = true;   // popup switches to the success panel
+
+        this.learnerFirstName = '';
+        this.learnerSurname = '';
+        this.grade = '';
+        this.email = '';
+        this.schoolName = '';
+        this.parentFullName = '';
+        this.parentCell = '';
+
+        this.loadLearners();
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        console.error('Error adding learner:', err);
+        this.signupError = 'We could not sign you up. Check your internet connection and try again.';
+      }
+    });
   }
 
   loadLearners() {
@@ -174,64 +181,70 @@ export class NavComponent implements OnInit {
   }
 
   /* ---------------- Login form ---------------- */
-  openLoginForm() { this.isLoginFormOpen = true; }
-  closeLoginForm() { this.isLoginFormOpen = false; }
+  openLoginForm() { this.loginNotice = ''; this.isLoginFormOpen = true; }
+  closeLoginForm() { this.isLoginFormOpen = false; this.loginNotice = ''; }
 
   submitLogin() {
-    // Login is not connected yet, so this only closes the form
+    // Login is not connected yet. Replace this message when the real login is added.
     this.loginPassword = '';
-    this.isLoginFormOpen = false;
+    this.loginNotice = 'Log in is not available on this page yet.';
   }
 
   /* ---------------- Contact form ---------------- */
-  openContactForm() { this.isContactFormOpen = true; }
-  closeContactForm() { this.isContactFormOpen = false; }
+  openContactForm() { this.contactDone = false; this.contactError = ''; this.isContactFormOpen = true; }
+  closeContactForm() { this.isContactFormOpen = false; this.contactDone = false; this.contactError = ''; }
 
   sendWhatsappMessage() {
+    if (this.contactSending) return;
     if (!this.whatsappNumber || !this.whatsappMessage) {
-      alert('Please fill all fields.');
+      this.contactError = 'Add your WhatsApp number and a message.';
       return;
     }
+    this.contactError = '';
+    this.contactSending = true;
 
-    const payload = {
+    this.learnerApiService.sendContactWhatsapp({
       whatsappNumber: this.whatsappNumber,
       message: this.whatsappMessage
-    };
-
-    this.learnerApiService.sendContactWhatsapp(payload).subscribe({
+    }).subscribe({
       next: () => {
-        alert('Thank you! We will contact you shortly on WhatsApp.');
+        this.contactSending = false;
+        this.contactDone = true;
+        this.contactDoneText = 'We will contact you shortly on WhatsApp.';
         this.whatsappNumber = '';
         this.whatsappMessage = '';
-        this.closeContactForm();
       },
       error: (err) => {
+        this.contactSending = false;
         console.error('Failed to send WhatsApp message:', err);
-        alert('Failed to send message. Please try again.');
+        this.contactError = 'The message was not sent. Check your connection and try again.';
       }
     });
   }
 
   sendEmailMessage() {
+    if (this.contactSending) return;
     if (!this.emailMessage) {
-      alert('Please enter a message.');
+      this.contactError = 'Write a message first.';
       return;
     }
+    this.contactError = '';
+    this.contactSending = true;
 
-    const payload = {
+    this.learnerApiService.sendContactEmail({
       email: 'mathebemoseri@gmail.com', // fixed recipient
       message: this.emailMessage
-    };
-
-    this.learnerApiService.sendContactEmail(payload).subscribe({
+    }).subscribe({
       next: (res: any) => {
-        alert(res.message);
+        this.contactSending = false;
+        this.contactDone = true;
+        this.contactDoneText = res?.message || 'Thank you. We have received your message.';
         this.emailMessage = '';
-        this.closeContactForm();
       },
       error: (err) => {
+        this.contactSending = false;
         console.error('Failed to send message:', err);
-        alert('Failed to send message. Please try again.');
+        this.contactError = 'The message was not sent. Check your connection and try again.';
       }
     });
   }

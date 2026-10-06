@@ -30,8 +30,7 @@
 <div class="progress" [style.transform]="'scaleX(' + progress + ')'" aria-hidden="true"></div>
 
 <!-- ============ MOBILE MENU ============ -->
-<div *ngIf="isNavMenuOpen" class="modal-layer menu-panel md:hidden !z-[99990] !items-stretch bg-[#1e3a8a]"
-  style="top: 3.5rem;">
+<div *ngIf="isNavMenuOpen" class="menu-layer menu-panel">
   <div class="flex flex-col w-full min-h-full px-5 pt-3 pb-6 overflow-y-auto">
 
     <nav class="text-white">
@@ -75,62 +74,83 @@
   <div class="modal-backdrop" (click)="closeForm()"></div>
   <div class="sheet">
     <button type="button" class="sheet-close" (click)="closeForm()" aria-label="Close">&times;</button>
-    <h3 id="signup-title">Create your account</h3>
-    <p class="text-sm text-slate-500 mt-1 mb-4">Step 1 of 5. Add the learner's and parent's details.</p>
 
-    <form (ngSubmit)="submitForm()" class="flex flex-col gap-3">
-      <div>
-        <label class="field-label" for="f-first">Learner name(s)</label>
-        <input id="f-first" name="learnerFirstName" [(ngModel)]="learnerFirstName" required type="text"
-          autocomplete="given-name" class="field">
-      </div>
-      <div>
-        <label class="field-label" for="f-last">Learner surname</label>
-        <input id="f-last" name="learnerSurname" [(ngModel)]="learnerSurname" required type="text"
-          autocomplete="family-name" class="field">
-      </div>
-      <div>
-        <label class="field-label" for="f-grade">Grade</label>
-        <select id="f-grade" name="grade" [(ngModel)]="grade" required class="field">
-          <option value="" disabled>Choose a grade</option>
-          <option value="10">Grade 10</option>
-          <option value="11">Grade 11</option>
-          <option value="12">Grade 12</option>
-        </select>
-      </div>
-      <div>
-        <label class="field-label" for="f-email">Learner email</label>
-        <input id="f-email" name="email" [(ngModel)]="email" required type="email" inputmode="email"
-          autocomplete="email" class="field">
-      </div>
-      <div>
-        <label class="field-label" for="f-school">School name</label>
-        <input id="f-school" name="schoolName" [(ngModel)]="schoolName" required type="text" class="field">
-      </div>
-      <div>
-        <label class="field-label" for="f-parent">Parent/guardian full names</label>
-        <input id="f-parent" name="parentFullName" [(ngModel)]="parentFullName" required type="text"
-          autocomplete="name" class="field">
-      </div>
-      <div>
-        <label class="field-label" for="f-cell">Parent/guardian cell number</label>
-        <input id="f-cell" name="parentCell" [(ngModel)]="parentCell" required type="tel" inputmode="tel"
-          autocomplete="tel" class="field">
-      </div>
+    <!-- Form -->
+    <ng-container *ngIf="!signupDone; else signupSuccess">
+      <h3 id="signup-title">Create your account</h3>
+      <p class="text-sm text-slate-500 mt-1 mb-4">Step 1 of 5. Add the learner's and parent's details.</p>
 
-      <button type="submit" class="btn btn-navy w-full mt-2"
-        [disabled]="isSubmitting || !learnerFirstName || !learnerSurname || !grade || !email || !schoolName || !parentFullName || !parentCell">
-        {{ isSubmitting ? 'Signing you up…' : 'Sign up' }}
-      </button>
-      <p *ngIf="isSubmitting" class="text-center text-sm text-slate-500" aria-live="polite">
-        Registering you and sending your email. Please keep this page open.
-      </p>
-    </form>
+      <form (ngSubmit)="submitForm()" class="flex flex-col gap-3">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="field-label" for="f-first">Learner name(s)</label>
+            <input id="f-first" name="learnerFirstName" [(ngModel)]="learnerFirstName" required type="text"
+              autocomplete="given-name" class="field">
+          </div>
+          <div>
+            <label class="field-label" for="f-last">Surname</label>
+            <input id="f-last" name="learnerSurname" [(ngModel)]="learnerSurname" required type="text"
+              autocomplete="family-name" class="field">
+          </div>
+        </div>
+        <div>
+          <label class="field-label" for="f-grade">Grade</label>
+          <select id="f-grade" name="grade" [(ngModel)]="grade" required class="field">
+            <option value="" disabled>Choose a grade</option>
+            <option value="10">Grade 10</option>
+            <option value="11">Grade 11</option>
+            <option value="12">Grade 12</option>
+          </select>
+        </div>
+        <div>
+          <label class="field-label" for="f-email">Learner email</label>
+          <input id="f-email" name="email" [(ngModel)]="email" required type="email" inputmode="email"
+            autocomplete="email" class="field">
+        </div>
+        <div>
+          <label class="field-label" for="f-school">School name</label>
+          <input id="f-school" name="schoolName" [(ngModel)]="schoolName" required type="text" class="field">
+        </div>
+        <div>
+          <label class="field-label" for="f-parent">Parent/guardian full names</label>
+          <input id="f-parent" name="parentFullName" [(ngModel)]="parentFullName" required type="text"
+            autocomplete="name" class="field">
+        </div>
+        <div>
+          <label class="field-label" for="f-cell">Parent/guardian cell number</label>
+          <input id="f-cell" name="parentCell" [(ngModel)]="parentCell" required type="tel" inputmode="tel"
+            autocomplete="tel" class="field">
+        </div>
 
-    <p class="text-center text-sm mt-4">
-      Already have an account?
-      <button type="button" class="font-bold underline" (click)="closeForm(); openLoginForm()">Log in</button>
-    </p>
+        <p *ngIf="signupError" class="msg-error" role="alert">{{ signupError }}</p>
+        <p *ngIf="isSubmitting" class="text-center text-sm text-slate-500" aria-live="polite">
+          Registering you and sending your email. Please keep this page open.
+        </p>
+
+        <div class="sticky-actions">
+          <button type="submit" class="btn btn-navy w-full"
+            [disabled]="isSubmitting || !learnerFirstName || !learnerSurname || !grade || !email || !schoolName || !parentFullName || !parentCell">
+            {{ isSubmitting ? 'Signing you up…' : 'Sign up' }}
+          </button>
+          <p class="text-center text-sm mt-3">
+            Already have an account?
+            <button type="button" class="font-bold underline" (click)="closeForm(); openLoginForm()">Log in</button>
+          </p>
+        </div>
+      </form>
+    </ng-container>
+
+    <!-- Success -->
+    <ng-template #signupSuccess>
+      <div class="text-center">
+        <div class="badge-ok" aria-hidden="true">✓</div>
+        <h3 id="signup-title" class="!pr-0">You're signed up</h3>
+        <p class="text-slate-600 mt-2 mb-5">Step 2: check your email, then print and sign the contract.
+          After that, pay R200 and reply with your 3 documents.</p>
+        <button type="button" class="btn btn-primary w-full mb-3" (click)="closeForm(); goTo('payment')">See payment details</button>
+        <button type="button" class="btn btn-soft w-full" (click)="closeForm()">Close</button>
+      </div>
+    </ng-template>
   </div>
 </div>
 
@@ -152,7 +172,10 @@
         <input id="l-pass" name="loginPassword" [(ngModel)]="loginPassword" required type="password"
           autocomplete="current-password" class="field">
       </div>
-      <button type="submit" [disabled]="!loginEmail || !loginPassword" class="btn btn-navy w-full mt-2">Log in</button>
+
+      <p *ngIf="loginNotice" class="note" role="status">{{ loginNotice }}</p>
+
+      <button type="submit" [disabled]="!loginEmail || !loginPassword" class="btn btn-navy w-full mt-1">Log in</button>
     </form>
 
     <p class="text-center text-sm mt-4">
@@ -167,34 +190,52 @@
   <div class="modal-backdrop" (click)="closeContactForm()"></div>
   <div class="sheet">
     <button type="button" class="sheet-close" (click)="closeContactForm()" aria-label="Close">&times;</button>
-    <h3 id="contact-title" class="mb-4">Contact us</h3>
 
-    <div class="flex gap-2 mb-4">
-      <button type="button" (click)="contactFormType = 'whatsapp'" class="btn flex-1 !min-h-10 text-sm"
-        [ngClass]="contactFormType === 'whatsapp' ? 'bg-[#1e3a8a] text-white' : 'bg-slate-100 text-slate-700'">WhatsApp</button>
-      <button type="button" (click)="contactFormType = 'email'" class="btn flex-1 !min-h-10 text-sm"
-        [ngClass]="contactFormType === 'email' ? 'bg-[#1e3a8a] text-white' : 'bg-slate-100 text-slate-700'">Email</button>
-    </div>
+    <ng-container *ngIf="!contactDone; else contactSuccess">
+      <h3 id="contact-title" class="mb-4">Contact us</h3>
 
-    <form *ngIf="contactFormType === 'whatsapp'" (ngSubmit)="sendWhatsappMessage()" class="flex flex-col gap-3">
-      <div>
-        <label class="field-label" for="c-wa">Your WhatsApp number</label>
-        <input id="c-wa" name="whatsappNumber" [(ngModel)]="whatsappNumber" required type="tel" inputmode="tel"
-          autocomplete="tel" class="field">
+      <div class="flex gap-2 mb-4">
+        <button type="button" (click)="contactFormType = 'whatsapp'; contactError = ''" class="btn flex-1 !min-h-10 text-sm"
+          [ngClass]="contactFormType === 'whatsapp' ? 'bg-[#1e3a8a] text-white' : 'bg-slate-100 text-slate-700'">WhatsApp</button>
+        <button type="button" (click)="contactFormType = 'email'; contactError = ''" class="btn flex-1 !min-h-10 text-sm"
+          [ngClass]="contactFormType === 'email' ? 'bg-[#1e3a8a] text-white' : 'bg-slate-100 text-slate-700'">Email</button>
       </div>
-      <div>
-        <label class="field-label" for="c-wa-msg">Message</label>
-        <textarea id="c-wa-msg" name="whatsappMessage" [(ngModel)]="whatsappMessage" required rows="4" class="field"></textarea>
-      </div>
-      <button type="submit" [disabled]="!whatsappNumber || !whatsappMessage" class="btn btn-primary w-full">Send on WhatsApp</button>
-    </form>
 
-    <form *ngIf="contactFormType === 'email'" (ngSubmit)="sendEmailMessage()" class="flex flex-col gap-3">
-      <div>
-        <label class="field-label" for="c-em-msg">Message</label>
-        <textarea id="c-em-msg" name="emailMessage" [(ngModel)]="emailMessage" required rows="5" class="field"></textarea>
+      <form *ngIf="contactFormType === 'whatsapp'" (ngSubmit)="sendWhatsappMessage()" class="flex flex-col gap-3">
+        <div>
+          <label class="field-label" for="c-wa">Your WhatsApp number</label>
+          <input id="c-wa" name="whatsappNumber" [(ngModel)]="whatsappNumber" required type="tel" inputmode="tel"
+            autocomplete="tel" class="field">
+        </div>
+        <div>
+          <label class="field-label" for="c-wa-msg">Message</label>
+          <textarea id="c-wa-msg" name="whatsappMessage" [(ngModel)]="whatsappMessage" required rows="4" class="field"></textarea>
+        </div>
+        <p *ngIf="contactError" class="msg-error" role="alert">{{ contactError }}</p>
+        <button type="submit" [disabled]="!whatsappNumber || !whatsappMessage || contactSending" class="btn btn-primary w-full">
+          {{ contactSending ? 'Sending…' : 'Send on WhatsApp' }}
+        </button>
+      </form>
+
+      <form *ngIf="contactFormType === 'email'" (ngSubmit)="sendEmailMessage()" class="flex flex-col gap-3">
+        <div>
+          <label class="field-label" for="c-em-msg">Message</label>
+          <textarea id="c-em-msg" name="emailMessage" [(ngModel)]="emailMessage" required rows="5" class="field"></textarea>
+        </div>
+        <p *ngIf="contactError" class="msg-error" role="alert">{{ contactError }}</p>
+        <button type="submit" [disabled]="!emailMessage || contactSending" class="btn btn-primary w-full">
+          {{ contactSending ? 'Sending…' : 'Send email' }}
+        </button>
+      </form>
+    </ng-container>
+
+    <ng-template #contactSuccess>
+      <div class="text-center">
+        <div class="badge-ok" aria-hidden="true">✓</div>
+        <h3 id="contact-title" class="!pr-0">Message sent</h3>
+        <p class="text-slate-600 mt-2 mb-5">{{ contactDoneText }}</p>
+        <button type="button" class="btn btn-soft w-full" (click)="closeContactForm()">Close</button>
       </div>
-      <button type="submit" [disabled]="!emailMessage" class="btn btn-primary w-full">Send email</button>
-    </form>
+    </ng-template>
   </div>
 </div>
