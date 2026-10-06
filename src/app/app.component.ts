@@ -11,6 +11,4 @@ import { RouterOutlet } from '@angular/router';
 })
 export class AppComponent {
   title = 'my-3D-portfolio';
-
-
 }

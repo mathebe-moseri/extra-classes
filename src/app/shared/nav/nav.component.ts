@@ -5,6 +5,7 @@ import { LearnerAPiService } from '../../learner-api.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { JoinFormService } from '../../join-form.service';
+import { smoothScrollToId, smoothScrollToY } from '../smooth-scroll';
 
 @Component({
   selector: 'app-nav',
@@ -24,6 +25,7 @@ export class NavComponent implements OnInit {
   isContactMenuOpen = false;
   isContactFormOpen = false;
   isNavMenuOpen = false;
+  menuClosing = false;   // plays the menu's exit animation
   isLoginFormOpen = false;
 
   // NEW: messages shown inside the popups (replaces alert boxes)
@@ -37,10 +39,10 @@ export class NavComponent implements OnInit {
 
   // NEW: navigation helpers
   sections = [
-    { id: 'about-us',        label: 'What we offer' },
-    { id: 'demo-lesson',     label: 'Free demo lesson' },
-    { id: 'how-to-apply',    label: 'How to apply' },
-    { id: 'payment',         label: 'Payment details' },
+    { id: 'about-us', label: 'What we offer' },
+    { id: 'demo-lesson', label: 'Free demo lesson' },
+    { id: 'how-to-apply', label: 'How to apply' },
+    { id: 'payment', label: 'Payment details' },
     { id: 'special-classes', label: 'Special request classes' },
   ];
   activeSection = '';
@@ -89,6 +91,14 @@ export class NavComponent implements OnInit {
       this.isContactFormOpen = true;
     });
 
+    // Any "Contact us" button on the page -> open the contact form on the chosen tab
+    this.joinForm.contactSheetRequested$.subscribe(type => {
+      this.contactFormType = type;
+      this.contactDone = false;
+      this.contactError = '';
+      this.isContactFormOpen = true;
+    });
+
     // Hero "Log in" button -> open the login form
     this.joinForm.loginRequested$.subscribe(() => {
       this.isLoginFormOpen = true;
@@ -132,7 +142,7 @@ export class NavComponent implements OnInit {
     if (this.isSubmitting) return;
 
     if (!(this.learnerFirstName && this.learnerSurname && this.grade && this.email &&
-          this.schoolName && this.parentFullName && this.parentCell)) {
+      this.schoolName && this.parentFullName && this.parentCell)) {
       this.signupError = 'Please fill in every field.';
       return;
     }
@@ -251,31 +261,41 @@ export class NavComponent implements OnInit {
 
   /* ---------------- Navigation ---------------- */
   toggleNavMenu() {
-    this.isNavMenuOpen = !this.isNavMenuOpen;
+    if (this.isNavMenuOpen) this.closeNavMenuAnimated();
+    else this.isNavMenuOpen = true;
   }
 
   closeNavMenu() {
     this.isNavMenuOpen = false;
     this.isContactMenuOpen = false;
+    this.menuClosing = false;
   }
 
-  // FIXED: the old version looked for #hero, which sits at the bottom of the page
-  scrollToHero() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  // Close the menu, then scroll to a section by its id
-  goTo(id: string) {
-    this.closeNavMenu();
+  // Fades the menu out first, then removes it, then runs the callback
+  closeNavMenuAnimated(after?: () => void) {
+    if (!this.isNavMenuOpen) { if (after) setTimeout(after, 80); return; }   // small wait so a closing popup unlocks the page first
+    this.menuClosing = true;
     setTimeout(() => {
-      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 80);
+      this.closeNavMenu();
+      if (after) setTimeout(after, 30);   // let the page unlock before scrolling
+    }, 220);
   }
 
-  openContactFrom(type: 'whatsapp' | 'email') {
-    this.contactFormType = type;
-    this.closeNavMenu();
-    this.isContactFormOpen = true;
+  scrollToHero() {
+    smoothScrollToY(0);
+  }
+
+  // Menu fades out, then the page glides to the section
+  goTo(id: string) {
+    this.closeNavMenuAnimated(() => smoothScrollToId(id));
+  }
+
+  // Menu "Contact us": fade the menu out, then open the contact popup
+  openContact(type: 'whatsapp' | 'email' = 'whatsapp') {
+    this.closeNavMenuAnimated(() => {
+      this.contactFormType = type;
+      this.openContactForm();
+    });
   }
 
   openTestimonialsFromMenu() {

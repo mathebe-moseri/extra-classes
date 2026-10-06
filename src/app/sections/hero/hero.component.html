@@ -17,14 +17,15 @@
         aria-label="Laptop showing a graph" style="--d: .05s">
         <rect x="30" y="8" width="140" height="84" rx="8" fill="#1f2937" stroke="#9ca3af" stroke-width="3" />
         <path d="M44 50H156M100 20V80" stroke="#6b7280" stroke-width="1.5" />
-        <path d="M44 50C58 14 72 14 86 50S114 86 128 50 150 22 156 36" fill="none" stroke="#60a5fa"
-          stroke-width="3" stroke-linecap="round" />
+        <path d="M44 50C58 14 72 14 86 50S114 86 128 50 150 22 156 36" fill="none" stroke="#60a5fa" stroke-width="3"
+          stroke-linecap="round" />
         <circle cx="86" cy="50" r="4" fill="#ef4444" />
         <path d="M14 100H186L176 112H24Z" fill="#9ca3af" />
       </svg>
 
       <div class="rise" style="--d: .15s">
-        <span class="inline-block mt-3 px-3 py-0.5 rounded-full bg-green-600 text-white text-[11px] md:text-sm font-bold">
+        <span
+          class="inline-block mt-3 px-3 py-0.5 rounded-full bg-green-600 text-white text-[11px] md:text-sm font-bold">
           Applications OPEN
         </span>
       </div>
@@ -46,18 +47,22 @@
           class="btn btn-soft mt-3 w-full max-w-xs sm:max-w-md mx-auto text-sm">
           How to apply: watch the video
         </button>
+        <button type="button" (click)="openContact('whatsapp')" class="mt-4 text-sm font-semibold underline"
+          style="color: #dbeafe;">
+          Questions? Contact us
+        </button>
       </div>
     </div>
 
     <button type="button" (click)="scrollToAbout()"
-      class="relative z-10 mx-auto mt-4 flex flex-col items-center text-blue-100 text-xs font-semibold">
+      class="relative z-10 mx-auto mt-4 flex flex-col items-center text-xs font-semibold" style="color: #dbeafe;">
       What we offer
       <span class="scroll-cue text-lg leading-none" aria-hidden="true">⌄</span>
     </button>
   </section>
 
   <!-- ============ WHAT WE OFFER ============ -->
-  <section id="about-us" class="screen screen-fill snap">
+  <section id="about-us" class="screen snap">
     <div class="card" appReveal>
       <h2>What we offer</h2>
       <p class="lead">Online Mathematics for Grades 10, 11 and 12.</p>
@@ -65,27 +70,37 @@
       <ul class="mb-5">
         <li class="feature">
           <span class="ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M10 8l6 4-6 4z" /></svg></span>
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M10 8l6 4-6 4z" />
+            </svg></span>
           Video lessons
         </li>
         <li class="feature">
           <span class="ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z" /></svg></span>
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z" />
+            </svg></span>
           Exercises to practise
         </li>
         <li class="feature">
           <span class="ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5" /></svg></span>
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 6L9 17l-5-5" />
+            </svg></span>
           Worked solutions to the exercises
         </li>
         <li class="feature">
           <span class="ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8zM14 3v5h5M9 13h6M9 17h6" /></svg></span>
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8zM14 3v5h5M9 13h6M9 17h6" />
+            </svg></span>
           Explained solutions to past question papers
         </li>
       </ul>
 
-      <button type="button" (click)="openTestimonials()" class="btn btn-outline w-full">▶ Hear from our learners</button>
+      <button type="button" (click)="openTestimonials()" class="btn btn-outline w-full">▶ Hear from our
+        learners</button>
 
       <p class="text-slate-500 text-sm mt-4">
         Live or one-on-one classes with the tutor are not included. They are booked and paid for separately.
@@ -94,7 +109,7 @@
   </section>
 
   <!-- ============ FREE DEMO ============ -->
-  <section id="demo-lesson" class="screen screen-fill snap">
+  <section id="demo-lesson" class="screen snap">
     <div class="card" appReveal>
       <h2>Free demo lesson</h2>
       <p class="lead">Watch one lesson, then test yourself.</p>
@@ -110,22 +125,27 @@
   </section>
 
   <!-- ============ HOW TO APPLY ============ -->
-  <section id="how-to-apply" class="screen screen-fill snap">
+  <section id="how-to-apply" class="screen snap">
     <div class="card" appReveal>
       <h2>How to apply</h2>
       <p class="note mb-5">Follow the 5 steps, or watch the short video below.</p>
 
       <ol class="mb-5 text-base md:text-lg">
         <li class="step"><span class="step-dot">1</span>
-          <p><strong class="text-slate-900">Sign up</strong> with learner and parent details.</p></li>
+          <p><strong class="text-slate-900">Sign up</strong> with learner and parent details.</p>
+        </li>
         <li class="step"><span class="step-dot">2</span>
-          <p><strong class="text-slate-900">Check your email</strong>, print and sign the contract.</p></li>
+          <p><strong class="text-slate-900">Check your email</strong>, print and sign the contract.</p>
+        </li>
         <li class="step"><span class="step-dot">3</span>
-          <p><strong class="text-slate-900">Pay R200</strong>, reply with 3 documents.</p></li>
+          <p><strong class="text-slate-900">Pay R200</strong>, reply with 3 documents.</p>
+        </li>
         <li class="step"><span class="step-dot">4</span>
-          <p><strong class="text-slate-900">Wait about an hour</strong> for login details.</p></li>
+          <p><strong class="text-slate-900">Wait about an hour</strong> for login details.</p>
+        </li>
         <li class="step"><span class="step-dot">5</span>
-          <p><strong class="text-slate-900">Log in and enjoy.</strong></p></li>
+          <p><strong class="text-slate-900">Log in and enjoy.</strong></p>
+        </li>
       </ol>
 
       <div id="apply-video" class="mb-4 bg-[#1f2937] rounded-2xl overflow-hidden">
@@ -141,7 +161,7 @@
   </section>
 
   <!-- ============ PAYMENT ============ -->
-  <section id="payment" class="screen screen-fill snap">
+  <section id="payment" class="screen snap">
     <div class="card" appReveal>
       <h2>Payment details</h2>
       <p class="lead">Registration is R200. Pay by EFT.</p>
@@ -166,7 +186,7 @@
   </section>
 
   <!-- ============ SPECIAL REQUEST CLASSES ============ -->
-  <section id="special-classes" class="screen screen-fill snap">
+  <section id="special-classes" class="screen snap">
     <div class="card" appReveal>
       <h2>Special request classes</h2>
       <p class="lead">Live classes with the tutor. Booked and paid for separately.</p>
@@ -186,6 +206,18 @@
     </div>
   </section>
 
+  <!-- ============ CONTACT ============ -->
+  <section id="contact" class="screen snap mb-6">
+    <div class="card" appReveal>
+      <h2>Questions? Talk to us</h2>
+      <p class="lead">Ask about classes, payment or how to apply.</p>
+      <div class="flex gap-3">
+        <button type="button" (click)="openContact('whatsapp')" class="btn btn-primary flex-1">WhatsApp</button>
+        <button type="button" (click)="openContact('email')" class="btn btn-outline flex-1">Email</button>
+      </div>
+    </div>
+  </section>
+
   <!-- ============ QUIZ ============ -->
   <div *ngIf="showQuiz" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
     <div class="modal-backdrop" (click)="closeQuiz()"></div>
@@ -193,7 +225,8 @@
       <button type="button" class="sheet-close" (click)="closeQuiz()" aria-label="Close quiz">&times;</button>
 
       <h3 id="quiz-title">Introduction to Trigonometry</h3>
-      <p class="text-sm text-slate-500 mt-1 mb-2">Question {{ currentQuestionIndex + 1 }} of {{ quizQuestions.length }}</p>
+      <p class="text-sm text-slate-500 mt-1 mb-2">Question {{ currentQuestionIndex + 1 }} of {{ quizQuestions.length }}
+      </p>
       <div class="h-1.5 rounded-full bg-slate-100 mb-4 overflow-hidden">
         <div class="h-full bg-emerald-400 transition-all duration-500"
           [style.width.%]="((currentQuestionIndex + 1) / quizQuestions.length) * 100"></div>
@@ -217,8 +250,8 @@
       <div class="flex gap-3">
         <button type="button" (click)="checkAnswer()" [disabled]="answered || userAnswer === null"
           class="btn btn-navy flex-1">Check answer</button>
-        <button type="button" (click)="nextQuestion()" [disabled]="!answered"
-          class="btn btn-primary flex-1">{{ currentQuestionIndex === quizQuestions.length - 1 ? 'Finish' : 'Next' }}</button>
+        <button type="button" (click)="nextQuestion()" [disabled]="!answered" class="btn btn-primary flex-1">{{
+          currentQuestionIndex === quizQuestions.length - 1 ? 'Finish' : 'Next' }}</button>
       </div>
     </div>
   </div>
@@ -230,7 +263,8 @@
       <button type="button" class="sheet-close" (click)="closeQuizCompletedPopup()" aria-label="Close">&times;</button>
       <h3 id="done-title" class="mb-3">Quiz complete</h3>
       <p class="text-lg font-semibold mb-5">{{ completedMessage }}</p>
-      <button type="button" (click)="closeQuizCompletedPopup(); openJoin()" class="btn btn-primary w-full mb-3">Sign up to keep learning</button>
+      <button type="button" (click)="closeQuizCompletedPopup(); openJoin()" class="btn btn-primary w-full mb-3">Sign up
+        to keep learning</button>
       <button type="button" (click)="closeQuizCompletedPopup()" class="btn btn-soft w-full">Close</button>
     </div>
   </div>

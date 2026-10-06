@@ -6,7 +6,7 @@ import { Directive, ElementRef, OnDestroy, OnInit } from '@angular/core';
 export class RevealDirective implements OnInit, OnDestroy {
   private io?: IntersectionObserver;
 
-  constructor(private el: ElementRef<HTMLElement>) {}
+  constructor(private el: ElementRef<HTMLElement>) { }
 
   ngOnInit() {
     const node = this.el.nativeElement;

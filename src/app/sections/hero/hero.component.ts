@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { JoinFormService } from '../../join-form.service';
 import { RevealDirective } from '../../shared/reveal.directive';
+import { smoothScrollToId } from '../../shared/smooth-scroll';
 
 @Component({
   selector: 'app-hero',
@@ -46,12 +47,16 @@ export class HeroComponent implements OnInit, AfterViewInit {
   }
 
   scrollToApply() {
-    document.getElementById('apply-video')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    smoothScrollToId('apply-video', 'center');
+  }
+
+  openContact(type: 'whatsapp' | 'email') {
+    this.joinForm.openContactSheet(type);
   }
 
   // NEW
   scrollToAbout() {
-    document.getElementById('about-us')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    smoothScrollToId('about-us');
   }
 
   // NEW
