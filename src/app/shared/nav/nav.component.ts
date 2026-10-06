@@ -217,7 +217,7 @@ export class NavComponent {
   // --- Navbar toggle ---
   toggleBg() {
     this.currentBg = !this.currentBg;
-document.body.style.backgroundColor = 'white';
+    document.body.style.backgroundColor = 'white';
   }
 
   selectMenuItem(item: string, delay: number = 100) {
@@ -253,10 +253,10 @@ document.body.style.backgroundColor = 'white';
     this.isNavMenuOpen = !this.isNavMenuOpen;
   }
 
-closeNavMenu() {
-  this.isNavMenuOpen = false;
-  this.isContactMenuOpen = false;
-}
+  closeNavMenu() {
+    this.isNavMenuOpen = false;
+    this.isContactMenuOpen = false;
+  }
 
   selectedMenu: string = '';
 
@@ -279,22 +279,22 @@ closeNavMenu() {
   }
 
   // Close the menu, then scroll to a section by its id
-goTo(id: string) {
-  this.closeNavMenu();
-  setTimeout(() => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 50);
-}
+  goTo(id: string) {
+    this.closeNavMenu();
+    setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }
 
-openContactFrom(type: 'whatsapp' | 'email') {
-  this.contactFormType = type;
-  this.closeNavMenu();
-  this.isContactFormOpen = true;
-}
+  openContactFrom(type: 'whatsapp' | 'email') {
+    this.contactFormType = type;
+    this.closeNavMenu();
+    this.isContactFormOpen = true;
+  }
 
-openTestimonialsFromMenu() {
-  this.closeNavMenu();
-  this.joinForm.requestTestimonials();
-}
+  openTestimonialsFromMenu() {
+    this.closeNavMenu();
+    this.joinForm.requestTestimonials();
+  }
 
 }

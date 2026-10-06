@@ -10,3 +10,4 @@
     return this.sanitizer.bypassSecurityTrustHtml(value);
   }
  }
+ 
