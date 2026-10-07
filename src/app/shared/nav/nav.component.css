@@ -41,3 +41,14 @@ header {
   background-color: #1e3a8a;
   color: #fff;
 }
+
+/* Tablet widths (768px to 1100px): use the phone menu instead of the cramped desktop nav */
+@media (min-width: 768px) and (max-width: 1100px) {
+  header nav[aria-label="Main"] {
+    display: none !important;
+  }
+
+  header button[aria-label="Menu"] {
+    display: block !important;
+  }
+}
