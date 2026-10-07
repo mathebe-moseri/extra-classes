@@ -94,9 +94,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.answered) return;
     this.answered = true;
     this.isCorrect = false;
-    this.feedback = this.isMcq
-      ? `⏰ Time's up! ${this.currentQuestion.explanation}`
-      : `⏰ Time's up! The answer is ${this.currentQuestion.answer}`;
+    this.feedback = "⏰ Time's up! Wrong answer. Tap Next to carry on.";
   }
 
   copied = false;              // shows "Copied" on the account number button
@@ -638,7 +636,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       this.feedback = '✅ Correct! Well done.';
       this.markCorrect();
     } else {
-      this.feedback = `❌ Not quite. The answer is ${this.currentQuestion.answer}`;
+      this.feedback = '❌ Wrong answer. Tap Next to carry on.';
       this.isCorrect = false;
     }
   }
@@ -700,7 +698,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       this.feedback = `✅ Correct! ${this.currentQuestion.explanation}`;
     } else {
       this.isCorrect = false;
-      this.feedback = `❌ Not quite. ${this.currentQuestion.explanation}`;
+      this.feedback = '❌ Wrong answer. Tap Next to carry on.';
     }
   }
 
@@ -708,7 +706,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.answered) {
       return 'border-slate-200 bg-white text-slate-800 hover:border-sky-400';
     }
-    if (i === this.currentQuestion.correct) {
+    if (i === this.selectedOption && i === this.currentQuestion.correct) {
       return 'border-emerald-500 bg-emerald-50 text-emerald-800';
     }
     if (i === this.selectedOption) {
