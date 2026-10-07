@@ -307,11 +307,11 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       text: 'Part 2: The rules of a triangle',
       intro: 'Every triangle follows the same rules:',
       rules: [
-        { text: 'The three angles always add up to 180°.', image: '/images/rule-angles.svg' },
-        { text: 'Any two sides added together are longer than the third side.', image: '/images/rule-sides.svg' },
-        { text: 'The longest side is opposite the largest angle.', image: '/images/rule-longest.svg' },
-        { text: 'Perimeter = a + b + c (the distance around the outside).', image: '/images/rule-perimeter.svg' },
-        { text: 'Area = ½ × base × height.', image: '/images/rule-area.svg' }
+        { title: 'Angles', text: 'The three angles always add up to 180°.', image: '/images/rule-angles.svg' },
+        { title: 'Sides', text: 'Any two sides added together are longer than the third side.', image: '/images/rule-sides.svg' },
+        { title: 'Longest side', text: 'The longest side is opposite the largest angle.', image: '/images/rule-longest.svg' },
+        { title: 'Perimeter', text: 'Perimeter = a + b + c (the distance around the outside).', image: '/images/rule-perimeter.svg' },
+        { title: 'Area', text: 'Area = ½ × base × height.', image: '/images/rule-area.svg' }
       ]
     },
 
@@ -467,6 +467,36 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.currentQuestion?.type === 'mcq';
   }
 
+  
+  /* ---------------- RULE PAGES (Part 2 intro) ---------------- */
+  ruleIndex = 0;   // which rule page is showing (0 = first)
+
+  // true only on the Part 2 intro card that has the list of rules
+  get isRulesIntro(): boolean {
+    return this.isInfoQuestion && !!this.currentQuestion?.rules;
+  }
+
+  get currentRule(): any {
+    return this.currentQuestion?.rules?.[this.ruleIndex];
+  }
+
+  get isLastRule(): boolean {
+    return this.ruleIndex >= (this.currentQuestion?.rules?.length ?? 1) - 1;
+  }
+
+  // on the last rule, "Next" moves on to the first Part 2 question
+  nextRule() {
+    if (this.isLastRule) {
+      this.nextQuestion();
+    } else {
+      this.ruleIndex++;
+    }
+  }
+
+  prevRule() {
+    if (this.ruleIndex > 0) this.ruleIndex--;
+  }
+
   // NEW: which part the learner is in (1 or 2)
   get currentPartNumber(): number {
     return (this.currentQuestion?.part ?? 0) + 1;
@@ -586,6 +616,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isCorrect = false;
     this.answered = false;
     this.imageLoaded = false;
+    this.ruleIndex = 0;
     this.selectedOption = null;
     this.startTimer();
   }

@@ -274,18 +274,41 @@
         {{ currentQuestion.answer }}
       </p>
 
-            <!-- Rules with pictures (Part 2 intro) -->
-      <div *ngIf="isInfoQuestion && currentQuestion.rules" class="mb-4">
+      <!-- Rules, one page at a time (Part 2 intro) -->
+      <div *ngIf="isRulesIntro" class="mb-4">
         <p class="mb-3 font-semibold text-slate-900">{{ currentQuestion.intro }}</p>
-        <div class="grid gap-3">
-          <div *ngFor="let r of currentQuestion.rules; let i = index"
-            class="flex items-center gap-3 p-3 rounded-xl bg-sky-100 border-l-4 border-sky-500 text-left">
-            <img [src]="r.image" [alt]="'Picture for rule ' + (i + 1)"
-              class="w-36 shrink-0 rounded-lg bg-white border border-slate-200" />
-            <p class="font-semibold text-slate-900">
-              <span class="font-extrabold text-sky-700">{{ i + 1 }}.</span> {{ r.text }}
-            </p>
+
+        <div class="rounded-2xl border border-sky-200 bg-sky-50 overflow-hidden text-center">
+          <!-- Header: rule number and title -->
+          <div class="bg-sky-600 text-white px-4 py-2 flex items-center justify-between text-sm font-bold">
+            <span>Rule {{ ruleIndex + 1 }} of {{ currentQuestion.rules.length }}</span>
+            <span>{{ currentRule.title }}</span>
           </div>
+
+          <!-- Picture -->
+          <div class="p-4 bg-white flex justify-center">
+            <img [src]="currentRule.image" [alt]="'Picture for the ' + currentRule.title + ' rule'"
+              class="w-full max-w-xs max-h-56 object-contain" />
+          </div>
+
+          <!-- The rule itself, big and easy to read -->
+          <p class="px-4 pt-3 pb-5 text-xl md:text-2xl font-extrabold text-slate-900">
+            {{ currentRule.text }}
+          </p>
+        </div>
+
+        <!-- Progress dots -->
+        <div class="flex justify-center gap-2 mt-4" aria-hidden="true">
+          <span *ngFor="let r of currentQuestion.rules; let i = index" class="h-2.5 rounded-full transition-all"
+            [ngClass]="i === ruleIndex ? 'w-6 bg-sky-600' : 'w-2.5 bg-slate-300'"></span>
+        </div>
+
+        <!-- Back / Next -->
+        <div class="flex gap-3 mt-4">
+          <button *ngIf="ruleIndex > 0" type="button" (click)="prevRule()" class="btn btn-soft flex-1">← Back</button>
+          <button type="button" (click)="nextRule()" class="btn btn-primary flex-1">
+            {{ isLastRule ? 'Start the questions' : 'Next rule →' }}
+          </button>
         </div>
       </div>
 
@@ -337,7 +360,7 @@
         [ngClass]="isCorrect ? 'text-emerald-600' : 'text-red-600'">{{ feedback }}</p>
 
       <!-- 5. Buttons -->
-      <div class="flex gap-3">
+      <div *ngIf="!isRulesIntro" class="flex gap-3">
         <button *ngIf="!isInfoQuestion && !isMcq" type="button" (click)="checkAnswer()"
           [disabled]="answered || userAnswer === null" class="btn btn-navy flex-1">Check answer</button>
         <button type="button" (click)="nextQuestion()" [disabled]="!isInfoQuestion && !answered"
