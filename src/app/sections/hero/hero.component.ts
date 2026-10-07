@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, AfterViewInit, OnInit, OnDestroy, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { JoinFormService } from '../../join-form.service';
@@ -13,6 +13,25 @@ import { smoothScrollToId } from '../../shared/smooth-scroll';
   styleUrls: ['./hero.component.css']
 })
 export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  /* ---------------- VIDEO CONTROL ---------------- */
+  @ViewChild('applyVideo') applyVideo?: ElementRef<HTMLVideoElement>;
+  private videoObserver?: IntersectionObserver;
+
+  // Only one video may play at a time: when one starts, pause all the others
+  private onAnyPlay = (e: Event) => {
+    const playing = e.target;
+    if (!(playing instanceof HTMLVideoElement)) return;
+    document.querySelectorAll('video').forEach(v => {
+      if (v !== playing && !v.paused) v.pause();
+    });
+  };
+
+  private pauseAllVideos() {
+    document.querySelectorAll('video').forEach(v => {
+      if (!v.paused) v.pause();
+    });
+  }
 
   /* ---------------- QUIZ STATE ---------------- */
   showQuiz = false;
@@ -36,6 +55,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.stopTimer();
+    this.videoObserver?.disconnect();
+    document.removeEventListener('play', this.onAnyPlay, true);
   }
 
   private timeFor(q: any): number {
@@ -288,27 +309,27 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   passMark = 70;
 
-// exact percentage, used to decide pass or fail
-private get rawPercent(): number {
-  return this.scoredTotal ? (this.totalCorrect / this.scoredTotal) * 100 : 0;
-}
+  // exact percentage, used to decide pass or fail
+  private get rawPercent(): number {
+    return this.scoredTotal ? (this.totalCorrect / this.scoredTotal) * 100 : 0;
+  }
 
-// whole number shown to the learner (rounded down so 69.6% never shows as 70%)
-get scorePercent(): number {
-  return Math.floor(this.rawPercent);
-}
+  // whole number shown to the learner (rounded down so 69.6% never shows as 70%)
+  get scorePercent(): number {
+    return Math.floor(this.rawPercent);
+  }
 
-get totalWrong(): number {
-  return this.scoredTotal - this.totalCorrect;
-}
+  get totalWrong(): number {
+    return this.scoredTotal - this.totalCorrect;
+  }
 
-get passed(): boolean {
-  return this.rawPercent >= this.passMark;
-}
+  get passed(): boolean {
+    return this.rawPercent >= this.passMark;
+  }
 
-get marksNeeded(): number {
-  return Math.ceil((this.scoredTotal * this.passMark) / 100);
-}
+  get marksNeeded(): number {
+    return Math.ceil((this.scoredTotal * this.passMark) / 100);
+  }
 
   ngAfterViewInit() {
     this.quizQuestions.forEach((q: any) => {
@@ -317,10 +338,30 @@ get marksNeeded(): number {
         img.src = q.image;
       }
     });
+
+    // Only one video plays at a time
+    document.addEventListener('play', this.onAnyPlay, true);
+
+    // Pause the How to apply video when less than 25% of it is on screen
+    const video = this.applyVideo?.nativeElement;
+    if (video) {
+      this.videoObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach(entry => {
+            if (entry.intersectionRatio < 0.25 && !video.paused) {
+              video.pause();
+            }
+          });
+        },
+        { threshold: [0, 0.25] }
+      );
+      this.videoObserver.observe(video);
+    }
   }
 
   /* ---------------- QUIZ METHODS ---------------- */
   openQuiz() {
+    this.pauseAllVideos();
     this.currentQuestionIndex = 0;
     this.totalCorrect = 0;
     this.loadQuestion();
@@ -346,13 +387,14 @@ get marksNeeded(): number {
     this.answered = false;
     this.imageLoaded = false;
     this.selectedOption = null;
-    this.startTimer();  }
+    this.startTimer();
+  }
 
   checkAnswer() {
     if (this.isInfoQuestion || this.isMcq) return;
     if (this.userAnswer === null || this.answered) return;
     this.answered = true;
-    this.stopTimer()
+    this.stopTimer();
 
     if (Math.abs(this.userAnswer - this.currentQuestion.answer) < 0.05) {
       this.feedback = '✅ Correct! Well done.';
@@ -437,6 +479,7 @@ get marksNeeded(): number {
   ];
 
   openTestimonials() {
+    this.pauseAllVideos();
     this.currentTestimonial = 0;
     this.showTestimonials = true;
   }

@@ -514,7 +514,7 @@ textarea.field {
   background: #1e3a8a;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1101px) {
   .menu-layer {
     display: none;
   }
@@ -595,7 +595,7 @@ textarea.field {
   transform: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1101px) {
   .cta-bar {
     display: none;
   }
@@ -708,5 +708,27 @@ textarea.field {
   [data-reveal] {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* Tablets and up: bigger popups */
+@media (min-width: 640px) {
+  .sheet {
+    width: min(94vw, 760px) !important;
+    max-width: none !important;
+    max-height: 94vh !important;
+    font-size: 1.15rem;
+  }
+  .sheet h3 { font-size: 1.6rem; }
+  .sheet .field,
+  .sheet .btn { font-size: 1.1rem; }
+  .sheet .field-label { font-size: 1rem; }
+}
+
+/* If the popups stick to the bottom of the screen on tablets, centre them */
+@media (min-width: 640px) {
+  .modal-layer {
+    align-items: center !important;
+    justify-content: center !important;
   }
 }

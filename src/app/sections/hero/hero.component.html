@@ -177,7 +177,7 @@
 
       <div id="apply-video" class="mb-4 bg-[#1f2937] rounded-2xl overflow-hidden">
         <div class="aspect-video">
-          <video class="w-full h-full object-contain" controls playsinline preload="metadata"
+          <video #applyVideo class="w-full h-full object-contain" controls playsinline preload="metadata"
             title="How to join Sesi Mathebe Remote Extra Classes"
             src="https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial2.mp4"></video>
         </div>
@@ -265,7 +265,7 @@
       <!-- 3. Image -->
       <div *ngIf="currentQuestion?.image" class="mb-4 flex justify-center">
         <img [src]="currentQuestion.image" alt="Diagram for this question"
-          class="max-w-full max-h-48 border border-slate-200 rounded-xl bg-white" />
+          class="max-w-full max-h-48 md:max-h-80 border border-slate-200 rounded-xl bg-white" />
       </div>
 
       <!-- 4. Progress -->
@@ -275,7 +275,7 @@
           [style.width.%]="((currentQuestionIndex + 1) / quizQuestions.length) * 100"></div>
       </div>
 
-            <!-- Countdown (not shown on the definition) -->
+      <!-- Countdown (not shown on the definition) -->
       <div *ngIf="!isInfoQuestion" class="mb-4">
         <div class="flex items-center justify-between text-xs mb-1"
           [ngClass]="timeLeft <= 5 && !answered ? 'text-red-600' : 'text-slate-500'">
@@ -284,16 +284,15 @@
         </div>
         <div class="h-1.5 rounded-full bg-slate-100 overflow-hidden">
           <div class="h-full transition-all duration-1000 ease-linear"
-            [ngClass]="timeLeft <= 5 ? 'bg-red-500' : 'bg-sky-400'"
-            [style.width.%]="(timeLeft / timeTotal) * 100"></div>
+            [ngClass]="timeLeft <= 5 ? 'bg-red-500' : 'bg-sky-400'" [style.width.%]="(timeLeft / timeTotal) * 100">
+          </div>
         </div>
       </div>
 
       <!-- Multiple choice options -->
       <div *ngIf="isMcq" class="grid gap-2 mb-4">
-        <button *ngFor="let opt of currentQuestion.options; let i = index" type="button"
-          (click)="chooseOption(i)" [disabled]="answered"
-          class="w-full text-left px-4 py-3 rounded-xl border-2 font-semibold transition-colors"
+        <button *ngFor="let opt of currentQuestion.options; let i = index" type="button" (click)="chooseOption(i)"
+          [disabled]="answered" class="w-full text-left px-4 py-3 rounded-xl border-2 font-semibold transition-colors"
           [ngClass]="optionClass(i)">
           {{ opt }}
         </button>
@@ -302,8 +301,8 @@
       <!-- Typed answer (calculation questions only) -->
       <ng-container *ngIf="!isInfoQuestion && !isMcq">
         <label class="field-label" for="quiz-answer">Your answer</label>
-        <input id="quiz-answer" [(ngModel)]="userAnswer" (keyup.enter)="checkAnswer()" type="number"
-          inputmode="decimal" placeholder="e.g. 4.5" class="field mb-4" [disabled]="answered">
+        <input id="quiz-answer" [(ngModel)]="userAnswer" (keyup.enter)="checkAnswer()" type="number" inputmode="decimal"
+          placeholder="e.g. 4.5" class="field mb-4" [disabled]="answered">
       </ng-container>
 
       <!-- Feedback (multiple choice and calculations) -->
@@ -345,8 +344,7 @@
 
       <!-- Bar with the pass mark -->
       <div class="relative h-3 rounded-full bg-slate-100 mb-1 overflow-hidden">
-        <div class="h-full transition-all duration-700"
-          [ngClass]="passed ? 'bg-emerald-400' : 'bg-red-400'"
+        <div class="h-full transition-all duration-700" [ngClass]="passed ? 'bg-emerald-400' : 'bg-red-400'"
           [style.width.%]="scorePercent"></div>
         <div class="absolute top-0 h-full w-0.5 bg-slate-500" [style.left.%]="passMark"></div>
       </div>
@@ -391,7 +389,7 @@
       <h3 id="testi-title">Testimonials</h3>
       <p class="text-sm text-gray-300 mb-3">{{ currentTestimonial + 1 }} of {{ testimonials.length }}</p>
 
-      <div class="h-60 rounded-2xl overflow-hidden flex items-center justify-center bg-[#111827]">
+      <div class="h-60 md:h-96 rounded-2xl overflow-hidden flex items-center justify-center bg-[#111827]">
         <video *ngIf="testimonials[currentTestimonial].src" class="w-full h-full object-contain" controls playsinline
           preload="metadata" [src]="testimonials[currentTestimonial].src"></video>
         <span *ngIf="!testimonials[currentTestimonial].src" class="text-gray-400">Video coming soon</span>
