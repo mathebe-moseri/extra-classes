@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnInit, HostListener } from '@angular/core';
+import { Component, AfterViewInit, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { JoinFormService } from '../../join-form.service';
@@ -12,7 +12,7 @@ import { smoothScrollToId } from '../../shared/smooth-scroll';
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css']
 })
-export class HeroComponent implements OnInit, AfterViewInit {
+export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /* ---------------- QUIZ STATE ---------------- */
   showQuiz = false;
@@ -29,6 +29,52 @@ export class HeroComponent implements OnInit, AfterViewInit {
   currentQuestionIndex = 0;
   currentQuestion: any;
   completedMessage = '';
+
+  timeLeft = 0;
+  timeTotal = 0;
+  private timerId: any = null;
+
+  ngOnDestroy() {
+    this.stopTimer();
+  }
+
+  private timeFor(q: any): number {
+    if (q.time) return q.time;                         // manual override
+    if (q.type === 'mcq') {
+      const words = [q.text, ...q.options].join(' ').split(/\s+/).length;
+      const secs = Math.min(35, Math.max(15, Math.round(8 + words * 0.6)));
+      return secs + (q.image ? 5 : 0);                 // extra time to read a diagram
+    }
+    return 90;                                         // typed calculations
+  }
+
+  startTimer() {
+    this.stopTimer();
+    if (this.isInfoQuestion) return;                   // the definition is not timed
+    this.timeTotal = this.timeFor(this.currentQuestion);
+    this.timeLeft = this.timeTotal;
+    this.timerId = setInterval(() => {
+      this.timeLeft--;
+      if (this.timeLeft <= 0) this.timeUp();
+    }, 1000);
+  }
+
+  stopTimer() {
+    if (this.timerId) {
+      clearInterval(this.timerId);
+      this.timerId = null;
+    }
+  }
+
+  timeUp() {
+    this.stopTimer();
+    if (this.answered) return;
+    this.answered = true;
+    this.isCorrect = false;
+    this.feedback = this.isMcq
+      ? `⏰ Time's up! ${this.currentQuestion.explanation}`
+      : `⏰ Time's up! The answer is ${this.currentQuestion.answer}`;
+  }
 
   copied = false;              // NEW: shows "Copied" on the account number button
 
@@ -240,6 +286,30 @@ export class HeroComponent implements OnInit, AfterViewInit {
     return this.quizQuestions.filter(q => q.type !== 'info').length;
   }
 
+  passMark = 70;
+
+// exact percentage, used to decide pass or fail
+private get rawPercent(): number {
+  return this.scoredTotal ? (this.totalCorrect / this.scoredTotal) * 100 : 0;
+}
+
+// whole number shown to the learner (rounded down so 69.6% never shows as 70%)
+get scorePercent(): number {
+  return Math.floor(this.rawPercent);
+}
+
+get totalWrong(): number {
+  return this.scoredTotal - this.totalCorrect;
+}
+
+get passed(): boolean {
+  return this.rawPercent >= this.passMark;
+}
+
+get marksNeeded(): number {
+  return Math.ceil((this.scoredTotal * this.passMark) / 100);
+}
+
   ngAfterViewInit() {
     this.quizQuestions.forEach((q: any) => {
       if (q.image) {
@@ -255,6 +325,7 @@ export class HeroComponent implements OnInit, AfterViewInit {
     this.totalCorrect = 0;
     this.loadQuestion();
     this.showQuiz = true;
+    this.stopTimer();
   }
 
   closeQuiz() {
@@ -275,12 +346,13 @@ export class HeroComponent implements OnInit, AfterViewInit {
     this.answered = false;
     this.imageLoaded = false;
     this.selectedOption = null;
-  }
+    this.startTimer();  }
 
   checkAnswer() {
     if (this.isInfoQuestion || this.isMcq) return;
     if (this.userAnswer === null || this.answered) return;
     this.answered = true;
+    this.stopTimer()
 
     if (Math.abs(this.userAnswer - this.currentQuestion.answer) < 0.05) {
       this.feedback = '✅ Correct! Well done.';
@@ -297,25 +369,24 @@ export class HeroComponent implements OnInit, AfterViewInit {
       this.currentQuestionIndex++;
       this.loadQuestion();
     } else {
+      this.stopTimer();
       this.quizCompleted = true;
-      const scorePercent = (this.totalCorrect / this.scoredTotal) * 100;
       this.showQuiz = false;
       this.showQuizCompletedPopup = true;
-      this.completedMessage =
-        `You got ${this.totalCorrect} out of ${this.scoredTotal} (${scorePercent.toFixed(0)}%).`;
     }
   }
 
-  tryAgain() {
-    this.quizCompleted = false;
-    this.totalCorrect = 0;
-    this.currentQuestionIndex = 0;
-    this.loadQuestion();
+  retryQuiz() {
+    this.showQuizCompletedPopup = false;
+    this.openQuiz();
   }
 
   closeQuizCompletedPopup() {
+    this.stopTimer();
     this.showQuizCompletedPopup = false;
-    this.tryAgain();
+    this.quizCompleted = false;
+    this.totalCorrect = 0;
+    this.currentQuestionIndex = 0;
   }
 
   downloadPDF() {
@@ -329,6 +400,7 @@ export class HeroComponent implements OnInit, AfterViewInit {
     if (this.answered || !this.isMcq) return;
     this.selectedOption = i;
     this.answered = true;
+    this.stopTimer();
 
     if (i === this.currentQuestion.correct) {
       this.isCorrect = true;
