@@ -247,20 +247,38 @@
 
   <!-- ============ QUIZ ============ -->
   <div *ngIf="showQuiz" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
-    <div class="modal-backdrop" (click)="closeQuiz()"></div>
+    <div class="modal-backdrop"></div>
     <div class="sheet">
       <button type="button" class="sheet-close" (click)="closeQuiz()" aria-label="Close quiz">&times;</button>
 
-      <h3 id="quiz-title" class="mb-3">Introduction to Trigonometry</h3>
+      <h3 id="quiz-title" class="mb-1">Introduction to Trigonometry</h3>
+      <p class="text-sm font-semibold text-sky-700 mb-3">
+        Part {{ currentPartNumber }} of {{ parts.length }}: {{ parts[currentPartNumber - 1] }}
+      </p>
 
       <!-- 1. Question -->
       <p class="mb-4 font-medium">{{ currentQuestion?.text }}</p>
 
-      <!-- 2. Definition (intro question only) -->
-      <p *ngIf="isInfoQuestion"
-        class="mb-4 p-3 rounded-xl bg-sky-100 border-l-4 border-sky-500 text-slate-900 font-semibold">
+      <!-- 2. Definition / rules (intro cards only) -->
+           <p *ngIf="isInfoQuestion && currentQuestion.answer"
+        class="mb-4 p-3 rounded-xl bg-sky-100 border-l-4 border-sky-500 text-slate-900 font-semibold whitespace-pre-line text-left">
         {{ currentQuestion.answer }}
       </p>
+
+            <!-- Rules with pictures (Part 2 intro) -->
+      <div *ngIf="isInfoQuestion && currentQuestion.rules" class="mb-4">
+        <p class="mb-3 font-semibold text-slate-900">{{ currentQuestion.intro }}</p>
+        <div class="grid gap-3">
+          <div *ngFor="let r of currentQuestion.rules; let i = index"
+            class="flex items-center gap-3 p-3 rounded-xl bg-sky-100 border-l-4 border-sky-500 text-left">
+            <img [src]="r.image" [alt]="'Picture for rule ' + (i + 1)"
+              class="w-36 shrink-0 rounded-lg bg-white border border-slate-200" />
+            <p class="font-semibold text-slate-900">
+              <span class="font-extrabold text-sky-700">{{ i + 1 }}.</span> {{ r.text }}
+            </p>
+          </div>
+        </div>
+      </div>
 
       <!-- 3. Image -->
       <div *ngIf="currentQuestion?.image" class="mb-4 flex justify-center">
@@ -275,7 +293,7 @@
           [style.width.%]="((currentQuestionIndex + 1) / quizQuestions.length) * 100"></div>
       </div>
 
-      <!-- Countdown (not shown on the definition) -->
+      <!-- Countdown (not shown on intro cards) -->
       <div *ngIf="!isInfoQuestion" class="mb-4">
         <div class="flex items-center justify-between text-xs mb-1"
           [ngClass]="timeLeft <= 5 && !answered ? 'text-red-600' : 'text-slate-500'">
@@ -314,8 +332,7 @@
         <button *ngIf="!isInfoQuestion && !isMcq" type="button" (click)="checkAnswer()"
           [disabled]="answered || userAnswer === null" class="btn btn-navy flex-1">Check answer</button>
         <button type="button" (click)="nextQuestion()" [disabled]="!isInfoQuestion && !answered"
-          class="btn btn-primary flex-1">{{
-          currentQuestionIndex === quizQuestions.length - 1 ? 'Finish' : 'Next' }}</button>
+          class="btn btn-primary flex-1">{{ nextLabel }}</button>
       </div>
     </div>
   </div>
@@ -359,6 +376,14 @@
         <div class="p-3 rounded-2xl bg-red-50">
           <p class="text-2xl font-extrabold text-red-700">{{ totalWrong }}</p>
           <p class="text-sm font-semibold text-red-800">Questions failed</p>
+        </div>
+      </div>
+
+      <!-- Score for each part -->
+      <div class="grid gap-2 mb-4 text-left">
+        <div *ngFor="let p of partStats" class="flex items-center justify-between p-3 rounded-xl bg-slate-50 text-sm">
+          <span class="font-semibold text-slate-700">Part {{ p.number }}: {{ p.name }}</span>
+          <span class="font-extrabold text-slate-900">{{ p.correct }}/{{ p.total }}</span>
         </div>
       </div>
 

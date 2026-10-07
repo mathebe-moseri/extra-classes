@@ -39,10 +39,11 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   userAnswer: number | null = null;
   feedback = '';
   isCorrect = false;
-  answered = false;            // NEW: true once the learner has checked an answer
+  answered = false;            // true once the learner has checked an answer
   imageLoaded = false;
   quizCompleted = false;
   totalCorrect = 0;
+  correctByPart: number[] = [0, 0];   // NEW: correct answers per part
   selectedOption: number | null = null;
 
   currentQuestionIndex = 0;
@@ -97,7 +98,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       : `⏰ Time's up! The answer is ${this.currentQuestion.answer}`;
   }
 
-  copied = false;              // NEW: shows "Copied" on the account number button
+  copied = false;              // shows "Copied" on the account number button
 
   constructor(private joinForm: JoinFormService) { }
 
@@ -122,12 +123,10 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.joinForm.openContactSheet(type);
   }
 
-  // NEW
   scrollToAbout() {
     smoothScrollToId('about-us');
   }
 
-  // NEW
   async copyAccount() {
     try {
       await navigator.clipboard.writeText('9388305991');
@@ -138,15 +137,20 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  // NEW: Escape closes whichever popup is open
+  // Escape closes whichever popup is open
   @HostListener('document:keydown.escape')
   onEscape() {
-    if (this.showQuiz) this.closeQuiz();
-    else if (this.showQuizCompletedPopup) this.closeQuizCompletedPopup();
+    if (this.showQuizCompletedPopup) this.closeQuizCompletedPopup();
     else if (this.showTestimonials) this.closeTestimonials();
   }
 
-  quizQuestions: any[] = [
+  /* ---------------- QUIZ CONTENT ---------------- */
+
+  // NEW: the parts of "Introduction to Trigonometry"
+  parts: string[] = ['The parts of a triangle', 'Rules of a triangle'];
+
+  /* ===== PART 1: THE PARTS OF A TRIANGLE ===== */
+  private partOneQuestions: any[] = [
     /* ---------- LEARN: what is a triangle? ---------- */
     {
       type: 'info',
@@ -294,6 +298,166 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     },
   ];
 
+  /* ===== PART 2: RULES OF A TRIANGLE ===== */
+  private partTwoQuestions: any[] = [
+    /* ---------- LEARN: the rules ---------- */
+    {
+      type: 'info',
+      text: 'Part 2: The rules of a triangle',
+      intro: 'Every triangle follows the same rules:',
+      rules: [
+        { text: 'The three angles always add up to 180°.', image: '/images/rule-angles.svg' },
+        { text: 'Any two sides added together are longer than the third side.', image: '/images/rule-sides.svg' },
+        { text: 'The longest side is opposite the largest angle.', image: '/images/rule-longest.svg' },
+        { text: 'Perimeter = a + b + c (the distance around the outside).', image: '/images/rule-perimeter.svg' },
+        { text: 'Area = ½ × base × height.', image: '/images/rule-area.svg' }
+      ]
+    },
+
+    /* ---------- ANGLE RULES ---------- */
+    {
+      type: 'mcq',
+      text: 'The three angles inside any triangle always add up to...',
+      options: ['90°', '180°', '270°', '360°'],
+      correct: 1,
+      explanation: 'The interior angles of every triangle add up to 180°.'
+    },
+    {
+      type: 'calc',
+      time: 60,
+      text: 'Two angles of a triangle are 50° and 60°. What is the third angle? (in degrees)',
+      answer: 70
+    },
+    {
+      type: 'mcq',
+      text: 'A learner says a triangle has angles of 80°, 60° and 50°. Is this possible?',
+      options: [
+        'Yes, any three angles make a triangle',
+        'Yes, because all the angles are less than 90°',
+        'No, they add up to 190° and not 180°',
+        'No, a triangle can only have one angle of 80°'
+      ],
+      correct: 2,
+      explanation: '80° + 60° + 50° = 190°. The angles of a triangle must add up to exactly 180°.'
+    },
+    {
+      type: 'mcq',
+      text: 'An exterior angle of a triangle is equal to...',
+      options: [
+        'The sum of the two interior angles it is not next to',
+        'The interior angle next to it',
+        '180° minus the longest side',
+        'The sum of all three interior angles'
+      ],
+      correct: 0,
+      explanation: 'An exterior angle equals the sum of the two opposite (non-adjacent) interior angles.'
+    },
+    {
+      type: 'mcq',
+      text: 'If you take one exterior angle at each vertex, they add up to...',
+      options: ['180°', '270°', '360°', '540°'],
+      correct: 2,
+      explanation: 'The exterior angles of a triangle (one at each vertex) always add up to 360°.'
+    },
+
+    /* ---------- SIDE RULES ---------- */
+    {
+      type: 'mcq',
+      text: 'Which set of side lengths can form a triangle?',
+      options: ['1 cm, 2 cm, 3 cm', '2 cm, 2 cm, 5 cm', '3 cm, 4 cm, 5 cm', '2 cm, 3 cm, 6 cm'],
+      correct: 2,
+      explanation: 'Two shorter sides must add up to MORE than the longest side. 3 + 4 = 7, which is more than 5.'
+    },
+    {
+      type: 'mcq',
+      text: 'Two sides of a triangle are 4 cm and 6 cm. The third side must be...',
+      options: [
+        'Exactly 10 cm',
+        'Between 2 cm and 10 cm',
+        'Less than 2 cm',
+        'More than 10 cm'
+      ],
+      correct: 1,
+      explanation: 'The third side must be shorter than 4 + 6 = 10 and longer than 6 − 4 = 2.'
+    },
+    {
+      type: 'mcq',
+      text: 'In a triangle, the longest side is always opposite the...',
+      options: ['Smallest angle', 'Largest angle', 'Smallest side', 'Vertex at the top'],
+      correct: 1,
+      explanation: 'The longest side is opposite the largest angle.'
+    },
+    {
+      type: 'mcq',
+      text: 'In triangle ABC, angle B is the smallest angle. Which side is the shortest?',
+      options: ['Side AB', 'Side AC', 'Side BC', 'We cannot tell'],
+      correct: 1,
+      explanation: 'The shortest side is opposite the smallest angle. The side opposite B is AC.'
+    },
+
+    /* ---------- PERIMETER AND AREA ---------- */
+    {
+      type: 'calc',
+      time: 60,
+      text: 'A triangle has sides of 5 cm, 7 cm and 9 cm. What is its perimeter? (in cm)',
+      answer: 21
+    },
+    {
+      type: 'mcq',
+      text: 'Which unit do we use for the perimeter of a triangle?',
+      options: ['cm²', 'cm', '°', 'kg'],
+      correct: 1,
+      explanation: 'Perimeter is a length, so it is measured in cm, m or km. Area uses square units.'
+    },
+    {
+      type: 'mcq',
+      text: 'Which formula gives the area of a triangle?',
+      options: ['a + b + c', 'base × height', '½ × base × height', '180° − base'],
+      correct: 2,
+      explanation: 'Area of a triangle = ½ × base × height.'
+    },
+    {
+      type: 'calc',
+      time: 60,
+      text: 'A triangle has a base of 10 cm and a height of 6 cm. What is its area? (in cm²)',
+      answer: 30
+    },
+
+    /* ---------- LINES INSIDE A TRIANGLE ---------- */
+    {
+      type: 'mcq',
+      text: 'A line joins the midpoints of two sides of a triangle. What do we know about it?',
+      options: [
+        'It is parallel to the third side and half its length',
+        'It is parallel to the third side and the same length',
+        'It is perpendicular to the third side',
+        'It is always longer than the third side'
+      ],
+      correct: 0,
+      explanation: 'The midsegment theorem: the line is parallel to the third side and half its length.'
+    },
+
+    /* ---------- CHALLENGE ---------- */
+    {
+      type: 'mcq',
+      text: 'Final check: which statement is TRUE for every triangle?',
+      options: [
+        'The angles add up to 360°',
+        'Two sides added together are longer than the third side',
+        'All three sides are the same length',
+        'The area is base × height'
+      ],
+      correct: 1,
+      explanation: 'The sum of any two sides is always greater than the third side. You know your rules!'
+    },
+  ];
+
+  // All questions in order, each tagged with its part (0 = Part 1, 1 = Part 2)
+  quizQuestions: any[] = [
+    ...this.partOneQuestions.map(q => ({ ...q, part: 0 })),
+    ...this.partTwoQuestions.map(q => ({ ...q, part: 1 })),
+  ];
+
   get isInfoQuestion(): boolean {
     return this.currentQuestion?.type === 'info';
   }
@@ -302,9 +466,32 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.currentQuestion?.type === 'mcq';
   }
 
-  // the intro question is not scored, everything else is
+  // NEW: which part the learner is in (1 or 2)
+  get currentPartNumber(): number {
+    return (this.currentQuestion?.part ?? 0) + 1;
+  }
+
+  // NEW: text on the Next button
+  get nextLabel(): string {
+    if (this.currentQuestionIndex === this.quizQuestions.length - 1) return 'Finish';
+    const next = this.quizQuestions[this.currentQuestionIndex + 1];
+    if (next && next.part !== this.currentQuestion?.part) return `Start Part ${next.part + 1}`;
+    return 'Next';
+  }
+
+  // the intro cards are not scored, everything else is
   get scoredTotal(): number {
     return this.quizQuestions.filter(q => q.type !== 'info').length;
+  }
+
+  // NEW: score for each part, shown on the results screen
+  get partStats(): { number: number; name: string; correct: number; total: number }[] {
+    return this.parts.map((name, p) => ({
+      number: p + 1,
+      name,
+      correct: this.correctByPart[p] ?? 0,
+      total: this.quizQuestions.filter(q => q.part === p && q.type !== 'info').length
+    }));
   }
 
   passMark = 70;
@@ -337,6 +524,11 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
         const img = new Image();
         img.src = q.image;
       }
+
+            q.rules?.forEach((r: any) => {
+        const img = new Image();
+        img.src = r.image;
+      });
     });
 
     // Only one video plays at a time
@@ -364,6 +556,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pauseAllVideos();
     this.currentQuestionIndex = 0;
     this.totalCorrect = 0;
+    this.correctByPart = this.parts.map(() => 0);
     this.loadQuestion();
     this.showQuiz = true;
     this.stopTimer();
@@ -390,6 +583,13 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.startTimer();
   }
 
+  // NEW: one place to count a correct answer, overall and for its part
+  private markCorrect() {
+    this.isCorrect = true;
+    this.totalCorrect++;
+    this.correctByPart[this.currentQuestion.part]++;
+  }
+
   checkAnswer() {
     if (this.isInfoQuestion || this.isMcq) return;
     if (this.userAnswer === null || this.answered) return;
@@ -398,8 +598,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (Math.abs(this.userAnswer - this.currentQuestion.answer) < 0.05) {
       this.feedback = '✅ Correct! Well done.';
-      this.isCorrect = true;
-      this.totalCorrect++;
+      this.markCorrect();
     } else {
       this.feedback = `❌ Not quite. The answer is ${this.currentQuestion.answer}`;
       this.isCorrect = false;
@@ -428,6 +627,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showQuizCompletedPopup = false;
     this.quizCompleted = false;
     this.totalCorrect = 0;
+    this.correctByPart = this.parts.map(() => 0);
     this.currentQuestionIndex = 0;
   }
 
@@ -445,8 +645,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.stopTimer();
 
     if (i === this.currentQuestion.correct) {
-      this.isCorrect = true;
-      this.totalCorrect++;
+      this.markCorrect();
       this.feedback = `✅ Correct! ${this.currentQuestion.explanation}`;
     } else {
       this.isCorrect = false;
