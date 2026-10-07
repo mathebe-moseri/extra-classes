@@ -24,6 +24,7 @@ export class HeroComponent implements OnInit, AfterViewInit {
   imageLoaded = false;
   quizCompleted = false;
   totalCorrect = 0;
+  selectedOption: number | null = null;
 
   currentQuestionIndex = 0;
   currentQuestion: any;
@@ -78,34 +79,166 @@ export class HeroComponent implements OnInit, AfterViewInit {
     else if (this.showTestimonials) this.closeTestimonials();
   }
 
-  /* ---------------- QUIZ QUESTIONS ---------------- */
-  quizQuestions = [
+  quizQuestions: any[] = [
+    /* ---------- LEARN: what is a triangle? ---------- */
     {
+      type: 'info',
       text: 'What is a triangle?',
-      answer: +(10 * Math.sin(30 * Math.PI / 180)).toFixed(2),
-      image: '/images/img1.png'
+      answer: 'A triangle is a closed shape with three straight sides, three vertices (corners), three angles and the space inside it is called its area.',
+      image: '/images/triangle-labelled.svg'
+    },
+
+    /* ---------- UNDERSTAND THE DEFINITION ---------- */
+    {
+      type: 'mcq',
+      text: 'How many straight sides does a triangle have?',
+      options: ['2', '3', '4', 'It depends on the triangle'],
+      correct: 1,
+      explanation: 'Every triangle has exactly 3 straight sides. "Tri" means three!'
     },
     {
-      text: 'In a right-angled triangle, the opposite side is 5 units and the hypotenuse is 13 units. Find sin θ.',
-      answer: +(5 / 13).toFixed(2),
-      image: '/images/img2.png'
+      type: 'mcq',
+      text: 'What is the maths word for a corner?',
+      options: ['Side', 'Area', 'Vertex', 'Degree'],
+      correct: 2,
+      explanation: 'A corner is called a vertex. More than one are called vertices.'
     },
     {
-      text: 'In a right-angled triangle, if angle θ is 60° and the hypotenuse is 12 units, find the length of the adjacent side.',
-      answer: +(12 * Math.cos(60 * Math.PI / 180)).toFixed(2),
-      image: '/images/img3.png'
+      type: 'mcq',
+      text: 'Your friend draws 3 straight lines, but leaves a gap at one corner. Is it a triangle?',
+      options: [
+        'Yes, any 3 lines make a triangle',
+        'Yes, as long as it has 3 corners',
+        'Only if all the lines are equal',
+        'No, a triangle must be a closed shape'
+      ],
+      correct: 3,
+      explanation: 'A triangle is a closed shape, so all three sides must join up with no gaps.'
     },
-    { text: 'In a right-angled triangle, if angle θ is 45° and the hypotenuse is 14 units, find the length of the opposite side.', answer: +(14 * Math.sin(45 * Math.PI / 180)).toFixed(2) },
-    { text: 'In a right-angled triangle, if angle θ is 35° and the adjacent side is 8 units, find the length of the hypotenuse.', answer: +(8 / Math.cos(35 * Math.PI / 180)).toFixed(2) },
-    { text: 'In a right-angled triangle, if the opposite side is 6 units and the adjacent side is 8 units, find tan θ.', answer: +(6 / 8).toFixed(2) },
-    { text: 'In a right-angled triangle, if sin θ = 0.5, find the value of θ.', answer: 30 },
-    { text: 'In a right-angled triangle, if cos θ = 0.866, find the value of θ.', answer: 30 },
-    { text: 'In a right-angled triangle, the hypotenuse is 20 units and angle θ is 25°. Find the length of the adjacent side.', answer: +(20 * Math.cos(25 * Math.PI / 180)).toFixed(2) },
-    { text: 'In a right-angled triangle, the opposite side is 7 units and the hypotenuse is 14 units. Find cos θ.', answer: +(Math.sqrt(14 ** 2 - 7 ** 2) / 14).toFixed(2) },
-    { text: 'In a right-angled triangle, the adjacent side is 9 units and angle θ is 40°. Find the opposite side.', answer: +(9 * Math.tan(40 * Math.PI / 180)).toFixed(2) },
-    { text: 'If sin θ = 0.6 and cos θ = 0.8 in a right-angled triangle, find tan θ.', answer: +(0.6 / 0.8).toFixed(2) },
-    { text: 'In a right-angled triangle, angle θ is 50° and hypotenuse is 15 units. Find the opposite side.', answer: +(15 * Math.sin(50 * Math.PI / 180)).toFixed(2) }
+
+    /* ---------- NAME THE PARTS (triangle ABC) ---------- */
+    {
+      type: 'mcq',
+      text: 'Which of the following lists the vertices of triangle ABC?',
+      options: ['AB, AC and BC', '1, 2 and 3', 'A, B and C', 'Angle, side and area'],
+      correct: 2,
+      explanation: 'The vertices (corners) of triangle ABC are the points A, B and C.',
+      image: '/images/triangle-abc.svg'
+    },
+    {
+      type: 'mcq',
+      text: 'Which of these is a vertex of triangle ABC?',
+      options: ['The line BC', 'The shaded space inside', 'Point C', 'The total of 180°'],
+      correct: 2,
+      explanation: 'Point C is a corner, so it is a vertex.',
+      image: '/images/triangle-abc.svg'
+    },
+    {
+      type: 'mcq',
+      text: 'Which of these is a side of triangle ABC?',
+      options: ['Point A', 'Line AB', 'The shaded space inside', 'The angle at C'],
+      correct: 1,
+      explanation: 'Line AB is a straight line joining two vertices, so it is a side.',
+      image: '/images/triangle-abc.svg'
+    },
+    {
+      type: 'mcq',
+      text: 'Sides AB and AC meet at which vertex?',
+      options: ['Vertex B', 'Vertex C', 'Vertex A', 'They never meet'],
+      correct: 2,
+      explanation: 'Both sides start at A, so that is where they meet.',
+      image: '/images/triangle-abc.svg'
+    },
+
+    /* ---------- SPOT THE PART ---------- */
+    {
+      type: 'mcq',
+      text: 'One side is glowing orange. Which side is it?',
+      options: ['Side AB', 'Side AC', 'Side BC', 'Vertex B'],
+      correct: 2,
+      explanation: 'The orange line runs along the bottom, between B and C. That is side BC.',
+      image: '/images/highlight-side.svg'
+    },
+    {
+      type: 'mcq',
+      text: 'A red dot is glowing on one corner. Which vertex is it?',
+      options: ['Vertex A', 'Vertex B', 'Vertex C', 'It is a side'],
+      correct: 1,
+      explanation: 'The red dot is on the bottom-left corner, which is labelled B.',
+      image: '/images/highlight-vertex.svg'
+    },
+    {
+      type: 'mcq',
+      text: 'What part of the triangle is the orange slice at corner B?',
+      options: ['A side', 'The area', 'A vertex', 'An angle'],
+      correct: 3,
+      explanation: 'The orange slice shows the opening between two sides at a vertex. That is an angle (∠B).',
+      image: '/images/highlight-angle.svg'
+    },
+    {
+      type: 'mcq',
+      text: 'The whole inside of this triangle is coloured in dark blue. What is that called?',
+      options: ['Vertex', 'Area', 'Side', 'Angle'],
+      correct: 1,
+      explanation: 'The space inside a closed shape is its area.',
+      image: '/images/highlight-area.svg'
+    },
+
+    /* ---------- AREA AND ANGLES ---------- */
+    {
+      type: 'mcq',
+      text: 'What does the area of a triangle tell us?',
+      options: [
+        'How many corners it has',
+        'How far it is around the outside edge',
+        'How much space is inside it',
+        'How wide its angles are'
+      ],
+      correct: 2,
+      explanation: 'Area is the amount of space inside the shape.'
+    },
+    {
+      type: 'mcq',
+      text: 'Which unit do we use to measure area?',
+      options: ['cm', 'kg', '°', 'cm²'],
+      correct: 3,
+      explanation: 'Area is measured in square units, like cm² or m².'
+    },
+    {
+      type: 'mcq',
+      text: 'Angles are measured in...',
+      options: ['Square centimetres (cm²)', 'Kilograms (kg)', 'Degrees (°)', 'Litres (ℓ)'],
+      correct: 2,
+      explanation: 'We measure angles in degrees, written with the ° symbol.'
+    },
+
+    /* ---------- CHALLENGE ---------- */
+    {
+      type: 'mcq',
+      text: 'Final check: which sentence about a triangle is TRUE?',
+      options: [
+        'A triangle has 3 sides, 4 vertices and 3 angles',
+        'A triangle has 4 sides, 3 vertices and 3 angles',
+        'A triangle has 3 sides, 3 vertices and 1 angle',
+        'A triangle has 3 sides, 3 vertices and 3 angles'
+      ],
+      correct: 3,
+      explanation: 'Three sides, three vertices and three angles. You know your triangles!'
+    },
   ];
+
+  get isInfoQuestion(): boolean {
+    return this.currentQuestion?.type === 'info';
+  }
+
+  get isMcq(): boolean {
+    return this.currentQuestion?.type === 'mcq';
+  }
+
+  // the intro question is not scored, everything else is
+  get scoredTotal(): number {
+    return this.quizQuestions.filter(q => q.type !== 'info').length;
+  }
 
   ngAfterViewInit() {
     this.quizQuestions.forEach((q: any) => {
@@ -131,6 +264,7 @@ export class HeroComponent implements OnInit, AfterViewInit {
     this.isCorrect = false;
     this.answered = false;
     this.quizCompleted = false;
+    this.selectedOption = null;
   }
 
   loadQuestion() {
@@ -140,9 +274,11 @@ export class HeroComponent implements OnInit, AfterViewInit {
     this.isCorrect = false;
     this.answered = false;
     this.imageLoaded = false;
+    this.selectedOption = null;
   }
 
   checkAnswer() {
+    if (this.isInfoQuestion || this.isMcq) return;
     if (this.userAnswer === null || this.answered) return;
     this.answered = true;
 
@@ -162,11 +298,11 @@ export class HeroComponent implements OnInit, AfterViewInit {
       this.loadQuestion();
     } else {
       this.quizCompleted = true;
-      const scorePercent = (this.totalCorrect / this.quizQuestions.length) * 100;
+      const scorePercent = (this.totalCorrect / this.scoredTotal) * 100;
       this.showQuiz = false;
       this.showQuizCompletedPopup = true;
       this.completedMessage =
-        `You got ${this.totalCorrect} out of ${this.quizQuestions.length} (${scorePercent.toFixed(0)}%).`;
+        `You got ${this.totalCorrect} out of ${this.scoredTotal} (${scorePercent.toFixed(0)}%).`;
     }
   }
 
@@ -187,6 +323,34 @@ export class HeroComponent implements OnInit, AfterViewInit {
     link.href = 'test.pdf';
     link.download = 'SesiMathebe-Extra Classes.pdf';
     link.click();
+  }
+
+  chooseOption(i: number) {
+    if (this.answered || !this.isMcq) return;
+    this.selectedOption = i;
+    this.answered = true;
+
+    if (i === this.currentQuestion.correct) {
+      this.isCorrect = true;
+      this.totalCorrect++;
+      this.feedback = `✅ Correct! ${this.currentQuestion.explanation}`;
+    } else {
+      this.isCorrect = false;
+      this.feedback = `❌ Not quite. ${this.currentQuestion.explanation}`;
+    }
+  }
+
+  optionClass(i: number): string {
+    if (!this.answered) {
+      return 'border-slate-200 bg-white text-slate-800 hover:border-sky-400';
+    }
+    if (i === this.currentQuestion.correct) {
+      return 'border-emerald-500 bg-emerald-50 text-emerald-800';
+    }
+    if (i === this.selectedOption) {
+      return 'border-red-400 bg-red-50 text-red-700';
+    }
+    return 'border-slate-200 bg-white text-slate-400';
   }
 
   /* ---------------- TESTIMONIALS ---------------- */

@@ -251,48 +251,59 @@
     <div class="sheet">
       <button type="button" class="sheet-close" (click)="closeQuiz()" aria-label="Close quiz">&times;</button>
 
-      <h3 id="quiz-title">Introduction to Trigonometry</h3>
-      <p class="text-sm text-slate-500 mt-1 mb-2">Question {{ currentQuestionIndex + 1 }} of {{ quizQuestions.length }}
+      <h3 id="quiz-title" class="mb-3">Introduction to Trigonometry</h3>
+
+      <!-- 1. Question -->
+      <p class="mb-4 font-medium">{{ currentQuestion?.text }}</p>
+
+      <!-- 2. Definition (intro question only) -->
+      <p *ngIf="isInfoQuestion"
+        class="mb-4 p-3 rounded-xl bg-sky-100 border-l-4 border-sky-500 text-slate-900 font-semibold">
+        {{ currentQuestion.answer }}
       </p>
+
+      <!-- 3. Image -->
+      <div *ngIf="currentQuestion?.image" class="mb-4 flex justify-center">
+        <img [src]="currentQuestion.image" alt="Diagram for this question"
+          class="max-w-full max-h-48 border border-slate-200 rounded-xl bg-white" />
+      </div>
+
+      <!-- 4. Progress -->
+      <p class="text-sm text-slate-500 mb-2">Question {{ currentQuestionIndex + 1 }} of {{ quizQuestions.length }}</p>
       <div class="h-1.5 rounded-full bg-slate-100 mb-4 overflow-hidden">
         <div class="h-full bg-emerald-400 transition-all duration-500"
           [style.width.%]="((currentQuestionIndex + 1) / quizQuestions.length) * 100"></div>
       </div>
 
-      <p class="mb-4 font-medium">{{ currentQuestion?.text }}</p>
-
-      <div *ngIf="currentQuestion?.image" class="mb-4 flex justify-center">
-        <img [src]="currentQuestion.image" alt="Diagram for this question" (load)="imageLoaded = true"
-          [class.opacity-0]="!imageLoaded"
-          class="max-w-full max-h-48 border border-slate-200 rounded-xl transition-opacity duration-300" />
+      <!-- Multiple choice options -->
+      <div *ngIf="isMcq" class="grid gap-2 mb-4">
+        <button *ngFor="let opt of currentQuestion.options; let i = index" type="button"
+          (click)="chooseOption(i)" [disabled]="answered"
+          class="w-full text-left px-4 py-3 rounded-xl border-2 font-semibold transition-colors"
+          [ngClass]="optionClass(i)">
+          {{ opt }}
+        </button>
       </div>
 
-      <label class="field-label" for="quiz-answer">Your answer</label>
-      <input id="quiz-answer" [(ngModel)]="userAnswer" (keyup.enter)="checkAnswer()" type="number" inputmode="decimal"
-        placeholder="e.g. 4.5" class="field mb-4" [disabled]="answered">
+      <!-- Typed answer (calculation questions only) -->
+      <ng-container *ngIf="!isInfoQuestion && !isMcq">
+        <label class="field-label" for="quiz-answer">Your answer</label>
+        <input id="quiz-answer" [(ngModel)]="userAnswer" (keyup.enter)="checkAnswer()" type="number"
+          inputmode="decimal" placeholder="e.g. 4.5" class="field mb-4" [disabled]="answered">
+      </ng-container>
 
+      <!-- Feedback (multiple choice and calculations) -->
       <p *ngIf="feedback" class="mb-4 text-center font-semibold" aria-live="polite"
         [ngClass]="isCorrect ? 'text-emerald-600' : 'text-red-600'">{{ feedback }}</p>
 
+      <!-- 5. Buttons -->
       <div class="flex gap-3">
-        <button type="button" (click)="checkAnswer()" [disabled]="answered || userAnswer === null"
-          class="btn btn-navy flex-1">Check answer</button>
-        <button type="button" (click)="nextQuestion()" [disabled]="!answered" class="btn btn-primary flex-1">{{
+        <button *ngIf="!isInfoQuestion && !isMcq" type="button" (click)="checkAnswer()"
+          [disabled]="answered || userAnswer === null" class="btn btn-navy flex-1">Check answer</button>
+        <button type="button" (click)="nextQuestion()" [disabled]="!isInfoQuestion && !answered"
+          class="btn btn-primary flex-1">{{
           currentQuestionIndex === quizQuestions.length - 1 ? 'Finish' : 'Next' }}</button>
       </div>
-    </div>
-  </div>
-
-  <!-- ============ QUIZ COMPLETE ============ -->
-  <div *ngIf="showQuizCompletedPopup" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="done-title">
-    <div class="modal-backdrop" (click)="closeQuizCompletedPopup()"></div>
-    <div class="sheet text-center">
-      <button type="button" class="sheet-close" (click)="closeQuizCompletedPopup()" aria-label="Close">&times;</button>
-      <h3 id="done-title" class="mb-3">Quiz complete</h3>
-      <p class="text-lg font-semibold mb-5">{{ completedMessage }}</p>
-      <button type="button" (click)="closeQuizCompletedPopup(); openJoin()" class="btn btn-primary w-full mb-3">Sign up
-        to keep learning</button>
-      <button type="button" (click)="closeQuizCompletedPopup()" class="btn btn-soft w-full">Close</button>
     </div>
   </div>
 
