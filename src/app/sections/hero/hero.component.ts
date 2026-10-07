@@ -36,6 +36,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   /* ---------------- QUIZ STATE ---------------- */
   showQuiz = false;
   showQuizCompletedPopup = false;
+  showPartBreak = false;       // true while the "Part complete" card is showing
   userAnswer: number | null = null;
   feedback = '';
   isCorrect = false;
@@ -471,11 +472,16 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     return (this.currentQuestion?.part ?? 0) + 1;
   }
 
+    // 0-based part shown as current in the stepper (moves on while the Part complete card is open)
+  get shownPart(): number {
+    return (this.currentQuestion?.part ?? 0) + (this.showPartBreak ? 1 : 0);
+  }
+
   // NEW: text on the Next button
   get nextLabel(): string {
     if (this.currentQuestionIndex === this.quizQuestions.length - 1) return 'Finish';
     const next = this.quizQuestions[this.currentQuestionIndex + 1];
-    if (next && next.part !== this.currentQuestion?.part) return `Start Part ${next.part + 1}`;
+    if (next && next.part !== this.currentQuestion?.part) return `Finish Part ${this.currentPartNumber}`;
     return 'Next';
   }
 
@@ -554,6 +560,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   /* ---------------- QUIZ METHODS ---------------- */
   openQuiz() {
     this.pauseAllVideos();
+        this.showPartBreak = false;
     this.currentQuestionIndex = 0;
     this.totalCorrect = 0;
     this.correctByPart = this.parts.map(() => 0);
@@ -607,6 +614,12 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   nextQuestion() {
     if (this.currentQuestionIndex < this.quizQuestions.length - 1) {
+      const next = this.quizQuestions[this.currentQuestionIndex + 1];
+      if (next.part !== this.currentQuestion.part) {
+        // end of a part: show the Part complete card
+        this.showPartBreak = true;
+        return;
+      }
       this.currentQuestionIndex++;
       this.loadQuestion();
     } else {
@@ -617,8 +630,15 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  continueToNextPart() {
+    this.showPartBreak = false;
+    this.currentQuestionIndex++;
+    this.loadQuestion();
+  }
+
   retryQuiz() {
     this.showQuizCompletedPopup = false;
+    
     this.openQuiz();
   }
 

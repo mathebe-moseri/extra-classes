@@ -252,9 +252,18 @@
       <button type="button" class="sheet-close" (click)="closeQuiz()" aria-label="Close quiz">&times;</button>
 
       <h3 id="quiz-title" class="mb-1">Introduction to Trigonometry</h3>
-      <p class="text-sm font-semibold text-sky-700 mb-3">
-        Part {{ currentPartNumber }} of {{ parts.length }}: {{ parts[currentPartNumber - 1] }}
-      </p>
+      <div class="flex flex-wrap items-center gap-2 mb-1 text-sm font-bold">
+        <ng-container *ngFor="let p of parts; let i = index">
+          <span *ngIf="i > 0" class="text-slate-400" aria-hidden="true">→</span>
+          <span class="px-3 py-1 rounded-full"
+            [ngClass]="i < shownPart ? 'bg-emerald-100 text-emerald-700' : (i === shownPart ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-500')">
+            <span *ngIf="i < shownPart">✓ </span>Part {{ i + 1 }}
+          </span>
+        </ng-container>
+      </div>
+      <p class="text-sm font-semibold text-sky-700 mb-3">{{ parts[shownPart] }}</p>
+
+      <ng-container *ngIf="!showPartBreak">
 
       <!-- 1. Question -->
       <p class="mb-4 font-medium">{{ currentQuestion?.text }}</p>
@@ -333,6 +342,20 @@
           [disabled]="answered || userAnswer === null" class="btn btn-navy flex-1">Check answer</button>
         <button type="button" (click)="nextQuestion()" [disabled]="!isInfoQuestion && !answered"
           class="btn btn-primary flex-1">{{ nextLabel }}</button>
+      </div>
+      </ng-container>
+  
+
+      <!-- Part complete card with arrow to the next part -->
+      <div *ngIf="showPartBreak" class="text-center py-2">
+        <p class="text-lg font-extrabold text-slate-900 mb-1">Part {{ currentPartNumber }} complete</p>
+        <p class="text-4xl font-extrabold text-emerald-600 mb-1">
+          {{ partStats[currentPartNumber - 1].correct }}/{{ partStats[currentPartNumber - 1].total }}
+        </p>
+        <p class="text-sm text-slate-500 mb-5">{{ parts[currentPartNumber - 1] }}</p>
+        <button type="button" (click)="continueToNextPart()" class="btn btn-primary w-full text-lg">
+          Part {{ shownPart + 1 }}: {{ parts[shownPart] }} <span aria-hidden="true">→</span>
+        </button>
       </div>
     </div>
   </div>
