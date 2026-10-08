@@ -41,6 +41,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   feedback = '';
   isCorrect = false;
   answered = false;            // true once the learner has checked an answer
+  answersEnabled = false;      // admin switch: false = answers stay hidden and Check answer is disabled
+  revealed = false;            // true once the learner has used Check answer on this question
   imageLoaded = false;
   quizCompleted = false;
   totalCorrect = 0;
@@ -94,9 +96,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.answered) return;
     this.answered = true;
     this.isCorrect = false;
-    this.feedback = this.isMcq
-      ? `⏰ Time's up! ${this.currentQuestion.explanation}`
-      : `⏰ Time's up! The answer is ${this.currentQuestion.answer}.`;
+    this.feedback = "⏰ Time's up! This question is marked wrong. Tap Next to carry on.";
   }
 
   copied = false;              // shows "Copied" on the account number button
@@ -619,6 +619,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.userAnswer = null;
     this.isCorrect = false;
     this.answered = false;
+    this.revealed = false;
     this.quizCompleted = false;
     this.selectedOption = null;
   }
@@ -629,6 +630,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.feedback = '';
     this.isCorrect = false;
     this.answered = false;
+    this.revealed = false;
     this.imageLoaded = false;
     this.ruleIndex = 0;
     this.selectedOption = null;
@@ -649,10 +651,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.stopTimer();
 
     if (Math.abs(this.userAnswer - this.currentQuestion.answer) < 0.05) {
-      this.feedback = '✅ Correct! Well done.';
       this.markCorrect();
     } else {
-      this.feedback = `❌ Not quite. The answer is ${this.currentQuestion.answer}.`;
       this.isCorrect = false;
     }
   }
@@ -711,10 +711,24 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (i === this.currentQuestion.correct) {
       this.markCorrect();
-      this.feedback = `✅ Correct! ${this.currentQuestion.explanation}`;
     } else {
       this.isCorrect = false;
-      this.feedback = `❌ Not quite. ${this.currentQuestion.explanation}`;
+    }
+  }
+
+  // Only works once an admin has enabled answers. It reveals the result but never changes the mark.
+  revealAnswer() {
+    if (!this.answersEnabled || !this.answered || this.revealed) return;
+    this.revealed = true;
+
+    if (this.isMcq) {
+      this.feedback = this.isCorrect
+        ? `✅ Correct! ${this.currentQuestion.explanation}`
+        : `❌ Wrong. ${this.currentQuestion.explanation}`;
+    } else {
+      this.feedback = this.isCorrect
+        ? '✅ Correct! Well done.'
+        : `❌ Wrong. The answer is ${this.currentQuestion.answer}.`;
     }
   }
 
@@ -722,6 +736,15 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.answered) {
       return 'border-slate-200 bg-white text-slate-800 hover:border-sky-400';
     }
+
+    // Answers hidden: only show which option the learner picked, in a neutral colour
+    if (!this.revealed) {
+      return i === this.selectedOption
+        ? 'border-sky-500 bg-sky-50 text-sky-800'
+        : 'border-slate-200 bg-white text-slate-400';
+    }
+
+    // Answers revealed (admin enabled + learner pressed Check answer)
     if (i === this.currentQuestion.correct) {
       return 'border-emerald-500 bg-emerald-50 text-emerald-800';
     }
