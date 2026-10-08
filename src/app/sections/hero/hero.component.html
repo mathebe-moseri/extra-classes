@@ -92,7 +92,7 @@
   <section id="about-us" class="screen snap">
     <div class="card" appReveal>
       <h2>What we offer</h2>
-      <p class="lead">Online Mathematics for Grades 10, 11 and 12. Two weeks of full access for just R150.</p>
+      <p class="lead">Online Mathematics for Grades 10, 11 and 12. A month of full access for just R100.</p>
 
       <ul class="mb-5">
         <li class="feature">
@@ -165,7 +165,7 @@
           <p><strong class="text-slate-900">Check your email</strong>, print and sign the contract.</p>
         </li>
         <li class="step"><span class="step-dot">3</span>
-          <p><strong class="text-slate-900">Pay R150</strong>, reply with 3 documents.</p>
+          <p><strong class="text-slate-900">Pay R100</strong>, reply with 3 documents.</p>
         </li>
         <li class="step"><span class="step-dot">4</span>
           <p><strong class="text-slate-900">Wait about an hour</strong> for login details.</p>
@@ -178,7 +178,7 @@
       <div id="apply-video" class="mb-4 bg-[#1f2937] rounded-2xl overflow-hidden">
         <div class="aspect-video">
           <video #applyVideo class="w-full h-full object-contain" controls playsinline preload="metadata"
-            title="How to join Sesi Mathebe Remote Extra Classes"
+            title="How to join SM Remote Extra Classes"
             src="https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial2.mp4"></video>
         </div>
       </div>
@@ -191,7 +191,7 @@
   <section id="payment" class="screen snap">
     <div class="card" appReveal>
       <h2>Payment details</h2>
-      <p class="lead">Registration is R150. Pay by EFT.</p>
+      <p class="lead">Registration is R100. Pay by EFT.</p>
 
       <div class="mb-4">
         <div class="row"><span>Bank</span><strong>ABSA</strong></div>
@@ -265,109 +265,109 @@
 
       <ng-container *ngIf="!showPartBreak">
 
-      <!-- 1. Question -->
-      <p class="mb-4 font-medium">{{ currentQuestion?.text }}</p>
+        <!-- 1. Question -->
+        <p class="mb-4 font-medium">{{ currentQuestion?.text }}</p>
 
-      <!-- 2. Definition / rules (intro cards only) -->
-           <p *ngIf="isInfoQuestion && currentQuestion.answer"
-        class="mb-4 p-3 rounded-xl bg-sky-100 border-l-4 border-sky-500 text-slate-900 font-semibold whitespace-pre-line text-left">
-        {{ currentQuestion.answer }}
-      </p>
+        <!-- 2. Definition / rules (intro cards only) -->
+        <p *ngIf="isInfoQuestion && currentQuestion.answer"
+          class="mb-4 p-3 rounded-xl bg-sky-100 border-l-4 border-sky-500 text-slate-900 font-semibold whitespace-pre-line text-left">
+          {{ currentQuestion.answer }}
+        </p>
 
-      <!-- Rules, one page at a time (Part 2 intro) -->
-      <div *ngIf="isRulesIntro" class="mb-4">
-        <p class="mb-3 font-semibold text-slate-900">{{ currentQuestion.intro }}</p>
+        <!-- Rules, one page at a time (Part 2 intro) -->
+        <div *ngIf="isRulesIntro" class="mb-4">
+          <p class="mb-3 font-semibold text-slate-900">{{ currentQuestion.intro }}</p>
 
-        <div class="rounded-2xl border border-sky-200 bg-sky-50 overflow-hidden text-center">
-          <!-- Header: rule number and title -->
-          <div class="bg-sky-600 text-white px-4 py-2 flex items-center justify-between text-sm font-bold">
-            <span>Rule {{ ruleIndex + 1 }} of {{ currentQuestion.rules.length }}</span>
-            <span>{{ currentRule.title }}</span>
+          <div class="rounded-2xl border border-sky-200 bg-sky-50 overflow-hidden text-center">
+            <!-- Header: rule number and title -->
+            <div class="bg-sky-600 text-white px-4 py-2 flex items-center justify-between text-sm font-bold">
+              <span>Rule {{ ruleIndex + 1 }} of {{ currentQuestion.rules.length }}</span>
+              <span>{{ currentRule.title }}</span>
+            </div>
+
+            <!-- Picture -->
+            <div class="p-4 bg-white flex justify-center">
+              <img [src]="currentRule.image" [alt]="'Picture for the ' + currentRule.title + ' rule'"
+                class="w-full max-w-xs max-h-56 object-contain" />
+            </div>
+
+            <!-- The rule itself, big and easy to read -->
+            <p class="px-4 pt-3 pb-5 text-xl md:text-2xl font-extrabold text-slate-900">
+              {{ currentRule.text }}
+            </p>
           </div>
 
-          <!-- Picture -->
-          <div class="p-4 bg-white flex justify-center">
-            <img [src]="currentRule.image" [alt]="'Picture for the ' + currentRule.title + ' rule'"
-              class="w-full max-w-xs max-h-56 object-contain" />
+          <!-- Progress dots -->
+          <div class="flex justify-center gap-2 mt-4" aria-hidden="true">
+            <span *ngFor="let r of currentQuestion.rules; let i = index" class="h-2.5 rounded-full transition-all"
+              [ngClass]="i === ruleIndex ? 'w-6 bg-sky-600' : 'w-2.5 bg-slate-300'"></span>
           </div>
 
-          <!-- The rule itself, big and easy to read -->
-          <p class="px-4 pt-3 pb-5 text-xl md:text-2xl font-extrabold text-slate-900">
-            {{ currentRule.text }}
-          </p>
+          <!-- Back / Next -->
+          <div class="flex gap-3 mt-4">
+            <button *ngIf="ruleIndex > 0" type="button" (click)="prevRule()" class="btn btn-soft flex-1">← Back</button>
+            <button type="button" (click)="nextRule()" class="btn btn-primary flex-1">
+              {{ isLastRule ? 'Start the questions' : 'Next rule →' }}
+            </button>
+          </div>
         </div>
 
-        <!-- Progress dots -->
-        <div class="flex justify-center gap-2 mt-4" aria-hidden="true">
-          <span *ngFor="let r of currentQuestion.rules; let i = index" class="h-2.5 rounded-full transition-all"
-            [ngClass]="i === ruleIndex ? 'w-6 bg-sky-600' : 'w-2.5 bg-slate-300'"></span>
+        <!-- 3. Image -->
+        <div *ngIf="currentQuestion?.image" class="mb-4 flex justify-center">
+          <img [src]="currentQuestion.image" alt="Diagram for this question"
+            class="max-w-full max-h-48 md:max-h-80 border border-slate-200 rounded-xl bg-white" />
         </div>
 
-        <!-- Back / Next -->
-        <div class="flex gap-3 mt-4">
-          <button *ngIf="ruleIndex > 0" type="button" (click)="prevRule()" class="btn btn-soft flex-1">← Back</button>
-          <button type="button" (click)="nextRule()" class="btn btn-primary flex-1">
-            {{ isLastRule ? 'Start the questions' : 'Next rule →' }}
+        <!-- 4. Progress -->
+        <p class="text-sm text-slate-500 mb-2">Question {{ currentQuestionIndex + 1 }} of {{ quizQuestions.length }}</p>
+        <div class="h-1.5 rounded-full bg-slate-100 mb-4 overflow-hidden">
+          <div class="h-full bg-emerald-400 transition-all duration-500"
+            [style.width.%]="((currentQuestionIndex + 1) / quizQuestions.length) * 100"></div>
+        </div>
+
+        <!-- Countdown (not shown on intro cards) -->
+        <div *ngIf="!isInfoQuestion" class="mb-4">
+          <div class="flex items-center justify-between text-xs mb-1"
+            [ngClass]="timeLeft <= 5 && !answered ? 'text-red-600' : 'text-slate-500'">
+            <span>⏱ Time left</span>
+            <span>{{ timeLeft }}s</span>
+          </div>
+          <div class="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+            <div class="h-full transition-all duration-1000 ease-linear"
+              [ngClass]="timeLeft <= 5 ? 'bg-red-500' : 'bg-sky-400'" [style.width.%]="(timeLeft / timeTotal) * 100">
+            </div>
+          </div>
+        </div>
+
+        <!-- Multiple choice options -->
+        <div *ngIf="isMcq" class="grid gap-2 mb-4">
+          <button *ngFor="let opt of currentQuestion.options; let i = index" type="button" (click)="chooseOption(i)"
+            [disabled]="answered" class="w-full text-left px-4 py-3 rounded-xl border-2 font-semibold transition-colors"
+            [ngClass]="optionClass(i)">
+            {{ opt }}
           </button>
         </div>
-      </div>
 
-      <!-- 3. Image -->
-      <div *ngIf="currentQuestion?.image" class="mb-4 flex justify-center">
-        <img [src]="currentQuestion.image" alt="Diagram for this question"
-          class="max-w-full max-h-48 md:max-h-80 border border-slate-200 rounded-xl bg-white" />
-      </div>
+        <!-- Typed answer (calculation questions only) -->
+        <ng-container *ngIf="!isInfoQuestion && !isMcq">
+          <label class="field-label" for="quiz-answer">Your answer</label>
+          <input id="quiz-answer" [(ngModel)]="userAnswer" (keyup.enter)="checkAnswer()" type="number"
+            inputmode="decimal" placeholder="e.g. 4.5" class="field mb-4" [disabled]="answered">
+        </ng-container>
 
-      <!-- 4. Progress -->
-      <p class="text-sm text-slate-500 mb-2">Question {{ currentQuestionIndex + 1 }} of {{ quizQuestions.length }}</p>
-      <div class="h-1.5 rounded-full bg-slate-100 mb-4 overflow-hidden">
-        <div class="h-full bg-emerald-400 transition-all duration-500"
-          [style.width.%]="((currentQuestionIndex + 1) / quizQuestions.length) * 100"></div>
-      </div>
+        <!-- Feedback (multiple choice and calculations) -->
+        <p *ngIf="feedback" class="mb-4 text-center font-semibold" aria-live="polite"
+          [ngClass]="isCorrect ? 'text-emerald-600' : 'text-red-600'">{{ feedback }}</p>
 
-      <!-- Countdown (not shown on intro cards) -->
-      <div *ngIf="!isInfoQuestion" class="mb-4">
-        <div class="flex items-center justify-between text-xs mb-1"
-          [ngClass]="timeLeft <= 5 && !answered ? 'text-red-600' : 'text-slate-500'">
-          <span>⏱ Time left</span>
-          <span>{{ timeLeft }}s</span>
+        <!-- 5. Buttons -->
+        <div *ngIf="!isRulesIntro" class="flex gap-3">
+          <button *ngIf="!isInfoQuestion && !isMcq" type="button" (click)="checkAnswer()"
+            [disabled]="answered || userAnswer === null" class="btn btn-navy flex-1">Check answer</button>
+          <button type="button" (click)="nextQuestion()" [disabled]="!isInfoQuestion && !answered"
+            class="btn btn-primary flex-1">{{ nextLabel }}</button>
         </div>
-        <div class="h-1.5 rounded-full bg-slate-100 overflow-hidden">
-          <div class="h-full transition-all duration-1000 ease-linear"
-            [ngClass]="timeLeft <= 5 ? 'bg-red-500' : 'bg-sky-400'" [style.width.%]="(timeLeft / timeTotal) * 100">
-          </div>
-        </div>
-      </div>
-
-      <!-- Multiple choice options -->
-      <div *ngIf="isMcq" class="grid gap-2 mb-4">
-        <button *ngFor="let opt of currentQuestion.options; let i = index" type="button" (click)="chooseOption(i)"
-          [disabled]="answered" class="w-full text-left px-4 py-3 rounded-xl border-2 font-semibold transition-colors"
-          [ngClass]="optionClass(i)">
-          {{ opt }}
-        </button>
-      </div>
-
-      <!-- Typed answer (calculation questions only) -->
-      <ng-container *ngIf="!isInfoQuestion && !isMcq">
-        <label class="field-label" for="quiz-answer">Your answer</label>
-        <input id="quiz-answer" [(ngModel)]="userAnswer" (keyup.enter)="checkAnswer()" type="number" inputmode="decimal"
-          placeholder="e.g. 4.5" class="field mb-4" [disabled]="answered">
       </ng-container>
 
-      <!-- Feedback (multiple choice and calculations) -->
-      <p *ngIf="feedback" class="mb-4 text-center font-semibold" aria-live="polite"
-        [ngClass]="isCorrect ? 'text-emerald-600' : 'text-red-600'">{{ feedback }}</p>
-
-      <!-- 5. Buttons -->
-      <div *ngIf="!isRulesIntro" class="flex gap-3">
-        <button *ngIf="!isInfoQuestion && !isMcq" type="button" (click)="checkAnswer()"
-          [disabled]="answered || userAnswer === null" class="btn btn-navy flex-1">Check answer</button>
-        <button type="button" (click)="nextQuestion()" [disabled]="!isInfoQuestion && !answered"
-          class="btn btn-primary flex-1">{{ nextLabel }}</button>
-      </div>
-      </ng-container>
-  
 
       <!-- Part complete card with arrow to the next part -->
       <div *ngIf="showPartBreak" class="text-center py-2">

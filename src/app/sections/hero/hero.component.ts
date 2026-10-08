@@ -465,7 +465,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.currentQuestion?.type === 'mcq';
   }
 
-  
+
   /* ---------------- RULE PAGES (Part 2 intro) ---------------- */
   ruleIndex = 0;   // which rule page is showing (0 = first)
 
@@ -500,7 +500,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     return (this.currentQuestion?.part ?? 0) + 1;
   }
 
-    // 0-based part shown as current in the stepper (moves on while the Part complete card is open)
+  // 0-based part shown as current in the stepper (moves on while the Part complete card is open)
   get shownPart(): number {
     return (this.currentQuestion?.part ?? 0) + (this.showPartBreak ? 1 : 0);
   }
@@ -559,7 +559,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
         img.src = q.image;
       }
 
-            q.rules?.forEach((r: any) => {
+      q.rules?.forEach((r: any) => {
         const img = new Image();
         img.src = r.image;
       });
@@ -588,7 +588,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   /* ---------------- QUIZ METHODS ---------------- */
   openQuiz() {
     this.pauseAllVideos();
-        this.showPartBreak = false;
+    this.showPartBreak = false;
     this.currentQuestionIndex = 0;
     this.totalCorrect = 0;
     this.correctByPart = this.parts.map(() => 0);
@@ -667,7 +667,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   retryQuiz() {
     this.showQuizCompletedPopup = false;
-    
+
     this.openQuiz();
   }
 
