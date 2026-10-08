@@ -48,6 +48,47 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   totalCorrect = 0;
   correctByPart: number[] = [0, 0];   // NEW: correct answers per part
   selectedOption: number | null = null;
+  /* ---------------- SAVED PROGRESS ---------------- */
+  private readonly PROGRESS_KEY = 'trig-quiz-progress-v1';
+  showResumePrompt = false;
+  savedProgress: { index: number; totalCorrect: number; correctByPart: number[] } | null = null;
+
+  get savedQuestionNumber(): number {
+    return Math.min((this.savedProgress?.index ?? 0) + 1, this.quizQuestions.length);
+  }
+
+  get savedPartName(): string {
+    const q = this.quizQuestions[this.savedProgress?.index ?? 0];
+    return q ? this.parts[q.part] : '';
+  }
+
+  private saveProgress(index: number) {
+    if (index <= 0) { this.clearProgress(); return; }
+    try {
+      localStorage.setItem(this.PROGRESS_KEY, JSON.stringify({
+        index,
+        totalCorrect: this.totalCorrect,
+        correctByPart: this.correctByPart
+      }));
+    } catch { /* storage blocked: quiz still works, just can't resume */ }
+  }
+
+  private readProgress() {
+    try {
+      const raw = localStorage.getItem(this.PROGRESS_KEY);
+      if (!raw) return null;
+      const p = JSON.parse(raw);
+      const valid =
+        Number.isInteger(p.index) && p.index > 0 && p.index <= this.quizQuestions.length &&
+        Number.isFinite(p.totalCorrect) &&
+        Array.isArray(p.correctByPart) && p.correctByPart.length === this.parts.length;
+      return valid ? p : null;
+    } catch { return null; }
+  }
+
+  private clearProgress() {
+    try { localStorage.removeItem(this.PROGRESS_KEY); } catch { }
+  }
 
   currentQuestionIndex = 0;
   currentQuestion: any;
@@ -97,6 +138,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.answered = true;
     this.isCorrect = false;
     this.feedback = "⏰ Time's up! This question is marked wrong. Tap Next to carry on.";
+    this.saveProgress(this.currentQuestionIndex + 1);   // <-- NEW
   }
 
   copied = false;              // shows "Copied" on the account number button
@@ -140,8 +182,10 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Escape closes whichever popup is open
   @HostListener('document:keydown.escape')
+  @HostListener('document:keydown.escape')
   onEscape() {
-    if (this.showQuizCompletedPopup) this.closeQuizCompletedPopup();
+    if (this.showResumePrompt) this.closeResumePrompt();
+    else if (this.showQuizCompletedPopup) this.closeQuizCompletedPopup();
     else if (this.showTestimonials) this.closeTestimonials();
   }
 
@@ -604,6 +648,18 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   /* ---------------- QUIZ METHODS ---------------- */
   openQuiz() {
     this.pauseAllVideos();
+    const saved = this.readProgress();
+    if (saved) {
+      this.savedProgress = saved;
+      this.showResumePrompt = true;   // ask: resume / start over / close
+      return;
+    }
+    this.startFresh();
+  }
+
+  startFresh() {
+    this.clearProgress();
+    this.showResumePrompt = false;
     this.showPartBreak = false;
     this.currentQuestionIndex = 0;
     this.totalCorrect = 0;
@@ -611,6 +667,31 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loadQuestion();
     this.showQuiz = true;
     this.stopTimer();
+  }
+
+  resumeQuiz() {
+    const s = this.savedProgress;
+    if (!s) { this.startFresh(); return; }
+
+    this.showResumePrompt = false;
+    this.showPartBreak = false;
+    this.totalCorrect = s.totalCorrect;
+    this.correctByPart = [...s.correctByPart];
+
+    // They answered the very last question but never pressed Finish
+    if (s.index >= this.quizQuestions.length) {
+      this.clearProgress();
+      this.showQuizCompletedPopup = true;
+      return;
+    }
+
+    this.currentQuestionIndex = s.index;
+    this.loadQuestion();
+    this.showQuiz = true;
+  }
+
+  closeResumePrompt() {
+    this.showResumePrompt = false;    // progress stays saved
   }
 
   closeQuiz() {
@@ -635,6 +716,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.ruleIndex = 0;
     this.selectedOption = null;
     this.startTimer();
+    this.saveProgress(this.currentQuestionIndex);   // <-- NEW
   }
 
   // NEW: one place to count a correct answer, overall and for its part
@@ -655,6 +737,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.isCorrect = false;
     }
+
+    this.saveProgress(this.currentQuestionIndex + 1);   // <-- NEW
   }
 
   nextQuestion() {
@@ -669,6 +753,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       this.loadQuestion();
     } else {
       this.stopTimer();
+      this.clearProgress();                 // <-- NEW
       this.quizCompleted = true;
       this.showQuiz = false;
       this.showQuizCompletedPopup = true;
@@ -714,6 +799,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.isCorrect = false;
     }
+
+    this.saveProgress(this.currentQuestionIndex + 1);   // <-- NEW
   }
 
   // Only works once an admin has enabled answers. It reveals the result but never changes the mark.

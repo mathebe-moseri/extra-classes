@@ -245,6 +245,28 @@
     </div>
   </section>
 
+  <!-- ============ RESUME PROMPT ============ -->
+  <div *ngIf="showResumePrompt" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="resume-title">
+    <div class="modal-backdrop" (click)="closeResumePrompt()"></div>
+    <div class="sheet text-center">
+      <button type="button" class="sheet-close" (click)="closeResumePrompt()" aria-label="Close">&times;</button>
+
+      <h3 id="resume-title" class="mb-2">Welcome back!</h3>
+      <p class="mb-1 font-medium text-slate-700">
+        You stopped at question {{ savedQuestionNumber }} of {{ quizQuestions.length }}.
+      </p>
+      <p class="text-sm text-slate-500 mb-5">{{ savedPartName }}</p>
+
+      <button type="button" (click)="resumeQuiz()" class="btn btn-primary w-full mb-3">
+        Resume from question {{ savedQuestionNumber }}
+      </button>
+      <button type="button" (click)="startFresh()" class="btn btn-navy w-full mb-3">
+        Start from the beginning
+      </button>
+      <button type="button" (click)="closeResumePrompt()" class="btn btn-soft w-full">Close</button>
+    </div>
+  </div>
+
   <!-- ============ QUIZ ============ -->
   <div *ngIf="showQuiz" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
     <div class="modal-backdrop"></div>
@@ -534,5 +556,4 @@
       </div>
     </div>
   </div>
-
 </div>
