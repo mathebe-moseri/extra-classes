@@ -719,10 +719,19 @@ textarea.field {
     max-height: 94vh !important;
     font-size: 1.15rem;
   }
-  .sheet h3 { font-size: 1.6rem; }
+
+  .sheet h3 {
+    font-size: 1.6rem;
+  }
+
   .sheet .field,
-  .sheet .btn { font-size: 1.1rem; }
-  .sheet .field-label { font-size: 1rem; }
+  .sheet .btn {
+    font-size: 1.1rem;
+  }
+
+  .sheet .field-label {
+    font-size: 1rem;
+  }
 }
 
 /* If the popups stick to the bottom of the screen on tablets, centre them */
@@ -731,4 +740,71 @@ textarea.field {
     align-items: center !important;
     justify-content: center !important;
   }
+}
+
+/* ---------- Part complete ring + smooth quiz motion ---------- */
+@property --p {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+.ring {
+  --c: #34d399;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  background: conic-gradient(var(--c) calc(var(--p) * 1%), #e2e8f0 0);
+  animation: ring-fill .9s cubic-bezier(.2, .7, .2, 1) both;
+}
+
+.ring::before {
+  content: '';
+  position: absolute;
+  inset: .6rem;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.ring span {
+  position: relative;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.tone-good {
+  --c: #34d399;
+}
+
+.tone-ok {
+  --c: #fbbf24;
+}
+
+.tone-low {
+  --c: #f87171;
+}
+
+@keyframes ring-fill {
+  from {
+    --p: 0;
+  }
+}
+
+.q-in {
+  animation: q-in .3s cubic-bezier(.2, .7, .2, 1) both;
+}
+
+@keyframes q-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.sheet button {
+  transition: background-color .2s, border-color .2s, color .2s, transform .15s;
 }

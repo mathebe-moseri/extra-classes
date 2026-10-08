@@ -256,128 +256,147 @@
         <ng-container *ngFor="let p of parts; let i = index">
           <span *ngIf="i > 0" class="text-slate-400" aria-hidden="true">→</span>
           <span class="px-3 py-1 rounded-full"
-            [ngClass]="i < shownPart ? 'bg-emerald-100 text-emerald-700' : (i === shownPart ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-500')">
+            [ngClass]="i < shownPart ? 'bg-emerald-100 text-emerald-700' : (i === shownPart && !showPartBreak ? 'bg-sky-700 !text-white' : 'bg-slate-100 text-slate-500')">
             <span *ngIf="i < shownPart">✓ </span>Part {{ i + 1 }}
           </span>
         </ng-container>
       </div>
-      <p class="text-sm font-semibold text-sky-700 mb-3">{{ parts[shownPart] }}</p>
+      <p *ngIf="!showPartBreak" class="text-sm font-semibold text-sky-700 mb-3">{{ parts[shownPart] }}</p>
 
       <ng-container *ngIf="!showPartBreak">
+        <ng-container *ngFor="let q of [currentQuestion]">
+          <div class="q-in">
 
-        <!-- 1. Question -->
-        <p class="mb-4 font-medium">{{ currentQuestion?.text }}</p>
+            <!-- 1. Question -->
+            <p class="mb-4 font-medium">{{ currentQuestion?.text }}</p>
 
-        <!-- 2. Definition / rules (intro cards only) -->
-        <p *ngIf="isInfoQuestion && currentQuestion.answer"
-          class="mb-4 p-3 rounded-xl bg-sky-100 border-l-4 border-sky-500 text-slate-900 font-semibold whitespace-pre-line text-left">
-          {{ currentQuestion.answer }}
-        </p>
-
-        <!-- Rules, one page at a time (Part 2 intro) -->
-        <div *ngIf="isRulesIntro" class="mb-4">
-          <p class="mb-3 font-semibold text-slate-900">{{ currentQuestion.intro }}</p>
-
-          <div class="rounded-2xl border border-sky-200 bg-sky-50 overflow-hidden text-center">
-            <!-- Header: rule number and title -->
-            <div class="bg-sky-600 text-white px-4 py-2 flex items-center justify-between text-sm font-bold">
-              <span>Rule {{ ruleIndex + 1 }} of {{ currentQuestion.rules.length }}</span>
-              <span>{{ currentRule.title }}</span>
-            </div>
-
-            <!-- Picture -->
-            <div class="p-4 bg-white flex justify-center">
-              <img [src]="currentRule.image" [alt]="'Picture for the ' + currentRule.title + ' rule'"
-                class="w-full max-w-xs max-h-56 object-contain" />
-            </div>
-
-            <!-- The rule itself, big and easy to read -->
-            <p class="px-4 pt-3 pb-5 text-xl md:text-2xl font-extrabold text-slate-900">
-              {{ currentRule.text }}
+            <!-- 2. Definition / rules (intro cards only) -->
+            <p *ngIf="isInfoQuestion && currentQuestion.answer"
+              class="mb-4 p-3 rounded-xl bg-sky-100 border-l-4 border-sky-500 text-slate-900 font-semibold whitespace-pre-line text-left">
+              {{ currentQuestion.answer }}
             </p>
-          </div>
 
-          <!-- Progress dots -->
-          <div class="flex justify-center gap-2 mt-4" aria-hidden="true">
-            <span *ngFor="let r of currentQuestion.rules; let i = index" class="h-2.5 rounded-full transition-all"
-              [ngClass]="i === ruleIndex ? 'w-6 bg-sky-600' : 'w-2.5 bg-slate-300'"></span>
-          </div>
+            <!-- Rules, one page at a time (Part 2 intro) -->
+            <div *ngIf="isRulesIntro" class="mb-4">
+              <p class="mb-3 font-semibold text-slate-900">{{ currentQuestion.intro }}</p>
 
-          <!-- Back / Next -->
-          <div class="flex gap-3 mt-4">
-            <button *ngIf="ruleIndex > 0" type="button" (click)="prevRule()" class="btn btn-soft flex-1">← Back</button>
-            <button type="button" (click)="nextRule()" class="btn btn-primary flex-1">
-              {{ isLastRule ? 'Start the questions' : 'Next rule →' }}
-            </button>
-          </div>
-        </div>
+              <div class="rounded-2xl border border-sky-200 bg-sky-50 overflow-hidden text-center">
+                <!-- Header: rule number and title -->
+                <div class="bg-sky-600 text-white px-4 py-2 flex items-center justify-between text-sm font-bold">
+                  <span>Rule {{ ruleIndex + 1 }} of {{ currentQuestion.rules.length }}</span>
+                  <span>{{ currentRule.title }}</span>
+                </div>
 
-        <!-- 3. Image -->
-        <div *ngIf="currentQuestion?.image" class="mb-4 flex justify-center">
-          <img [src]="currentQuestion.image" alt="Diagram for this question"
-            class="max-w-full max-h-48 md:max-h-80 border border-slate-200 rounded-xl bg-white" />
-        </div>
+                <!-- Picture -->
+                <div class="p-4 bg-white flex justify-center">
+                  <img [src]="currentRule.image" [alt]="'Picture for the ' + currentRule.title + ' rule'"
+                    class="w-full max-w-xs max-h-56 object-contain" />
+                </div>
 
-        <!-- 4. Progress -->
-        <p class="text-sm text-slate-500 mb-2">Question {{ currentQuestionIndex + 1 }} of {{ quizQuestions.length }}</p>
-        <div class="h-1.5 rounded-full bg-slate-100 mb-4 overflow-hidden">
-          <div class="h-full bg-emerald-400 transition-all duration-500"
-            [style.width.%]="((currentQuestionIndex + 1) / quizQuestions.length) * 100"></div>
-        </div>
+                <!-- The rule itself, big and easy to read -->
+                <p class="px-4 pt-3 pb-5 text-xl md:text-2xl font-extrabold text-slate-900">
+                  {{ currentRule.text }}
+                </p>
+              </div>
 
-        <!-- Countdown (not shown on intro cards) -->
-        <div *ngIf="!isInfoQuestion" class="mb-4">
-          <div class="flex items-center justify-between text-xs mb-1"
-            [ngClass]="timeLeft <= 5 && !answered ? 'text-red-600' : 'text-slate-500'">
-            <span>⏱ Time left</span>
-            <span>{{ timeLeft }}s</span>
-          </div>
-          <div class="h-1.5 rounded-full bg-slate-100 overflow-hidden">
-            <div class="h-full transition-all duration-1000 ease-linear"
-              [ngClass]="timeLeft <= 5 ? 'bg-red-500' : 'bg-sky-400'" [style.width.%]="(timeLeft / timeTotal) * 100">
+              <!-- Progress dots -->
+              <div class="flex justify-center gap-2 mt-4" aria-hidden="true">
+                <span *ngFor="let r of currentQuestion.rules; let i = index" class="h-2.5 rounded-full transition-all"
+                  [ngClass]="i === ruleIndex ? 'w-6 bg-sky-600' : 'w-2.5 bg-slate-300'"></span>
+              </div>
+
+              <!-- Back / Next -->
+              <div class="flex gap-3 mt-4">
+                <button *ngIf="ruleIndex > 0" type="button" (click)="prevRule()" class="btn btn-soft flex-1">←
+                  Back</button>
+                <button type="button" (click)="nextRule()" class="btn btn-primary flex-1">
+                  {{ isLastRule ? 'Start the questions' : 'Next rule →' }}
+                </button>
+              </div>
+            </div>
+
+            <!-- 3. Image -->
+            <div *ngIf="currentQuestion?.image" class="mb-4 flex justify-center">
+              <img [src]="currentQuestion.image" alt="Diagram for this question"
+                class="max-w-full max-h-48 md:max-h-80 border border-slate-200 rounded-xl bg-white" />
+            </div>
+
+            <!-- 4. Progress -->
+            <p class="text-sm text-slate-500 mb-2">Question {{ currentQuestionIndex + 1 }} of {{ quizQuestions.length }}
+            </p>
+            <div class="h-1.5 rounded-full bg-slate-100 mb-4 overflow-hidden">
+              <div class="h-full bg-emerald-400 transition-all duration-500"
+                [style.width.%]="((currentQuestionIndex + 1) / quizQuestions.length) * 100"></div>
+            </div>
+
+            <!-- Countdown (not shown on intro cards) -->
+            <div *ngIf="!isInfoQuestion" class="mb-4">
+              <div class="flex items-center justify-between text-xs mb-1"
+                [ngClass]="timeLeft <= 5 && !answered ? 'text-red-600' : 'text-slate-500'">
+                <span>⏱ Time left</span>
+                <span>{{ timeLeft }}s</span>
+              </div>
+              <div class="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                <div class="h-full transition-all duration-1000 ease-linear"
+                  [ngClass]="timeLeft <= 5 ? 'bg-red-500' : 'bg-sky-400'"
+                  [style.width.%]="(timeLeft / timeTotal) * 100">
+                </div>
+              </div>
+            </div>
+
+            <!-- Multiple choice options -->
+            <div *ngIf="isMcq" class="grid gap-2 mb-4">
+              <button *ngFor="let opt of currentQuestion.options; let i = index" type="button" (click)="chooseOption(i)"
+                [disabled]="answered"
+                class="w-full text-left px-4 py-3 rounded-xl border-2 font-semibold transition-colors"
+                [ngClass]="optionClass(i)">
+                {{ opt }}
+              </button>
+            </div>
+
+            <!-- Typed answer (calculation questions only) -->
+            <ng-container *ngIf="!isInfoQuestion && !isMcq">
+              <label class="field-label" for="quiz-answer">Your answer</label>
+              <input id="quiz-answer" [(ngModel)]="userAnswer" (keyup.enter)="checkAnswer()" type="number"
+                inputmode="decimal" placeholder="e.g. 4.5" class="field mb-4" [disabled]="answered">
+            </ng-container>
+
+            <!-- Feedback (multiple choice and calculations) -->
+            <p *ngIf="feedback" class="mb-4 text-center font-semibold" aria-live="polite"
+              [ngClass]="isCorrect ? 'text-emerald-600' : 'text-red-600'">{{ feedback }}</p>
+
+            <!-- 5. Buttons -->
+            <div *ngIf="!isRulesIntro" class="flex gap-3">
+              <button *ngIf="!isInfoQuestion && !isMcq" type="button" (click)="checkAnswer()"
+                [disabled]="answered || userAnswer === null" class="btn btn-navy flex-1">Check answer</button>
+              <button type="button" (click)="nextQuestion()" [disabled]="!isInfoQuestion && !answered"
+                class="btn btn-primary flex-1">{{ nextLabel }}</button>
             </div>
           </div>
-        </div>
-
-        <!-- Multiple choice options -->
-        <div *ngIf="isMcq" class="grid gap-2 mb-4">
-          <button *ngFor="let opt of currentQuestion.options; let i = index" type="button" (click)="chooseOption(i)"
-            [disabled]="answered" class="w-full text-left px-4 py-3 rounded-xl border-2 font-semibold transition-colors"
-            [ngClass]="optionClass(i)">
-            {{ opt }}
-          </button>
-        </div>
-
-        <!-- Typed answer (calculation questions only) -->
-        <ng-container *ngIf="!isInfoQuestion && !isMcq">
-          <label class="field-label" for="quiz-answer">Your answer</label>
-          <input id="quiz-answer" [(ngModel)]="userAnswer" (keyup.enter)="checkAnswer()" type="number"
-            inputmode="decimal" placeholder="e.g. 4.5" class="field mb-4" [disabled]="answered">
         </ng-container>
-
-        <!-- Feedback (multiple choice and calculations) -->
-        <p *ngIf="feedback" class="mb-4 text-center font-semibold" aria-live="polite"
-          [ngClass]="isCorrect ? 'text-emerald-600' : 'text-red-600'">{{ feedback }}</p>
-
-        <!-- 5. Buttons -->
-        <div *ngIf="!isRulesIntro" class="flex gap-3">
-          <button *ngIf="!isInfoQuestion && !isMcq" type="button" (click)="checkAnswer()"
-            [disabled]="answered || userAnswer === null" class="btn btn-navy flex-1">Check answer</button>
-          <button type="button" (click)="nextQuestion()" [disabled]="!isInfoQuestion && !answered"
-            class="btn btn-primary flex-1">{{ nextLabel }}</button>
-        </div>
       </ng-container>
 
-
       <!-- Part complete card with arrow to the next part -->
-      <div *ngIf="showPartBreak" class="text-center py-2">
-        <p class="text-lg font-extrabold text-slate-900 mb-1">Part {{ currentPartNumber }} complete</p>
-        <p class="text-4xl font-extrabold text-emerald-600 mb-1">
-          {{ partStats[currentPartNumber - 1].correct }}/{{ partStats[currentPartNumber - 1].total }}
+      <div *ngIf="showPartBreak" class="text-center py-2 q-in">
+        <div class="ring mx-auto mb-3" [style.--p]="partPercent"
+          [ngClass]="partPercent >= 70 ? 'tone-good' : (partPercent >= 50 ? 'tone-ok' : 'tone-low')">
+          <span>{{ partPercent }}%</span>
+        </div>
+
+        <p class="text-lg font-extrabold text-slate-900">Part {{ currentPartNumber }} complete</p>
+        <p class="text-sm text-slate-500 mb-1">
+          {{ partStats[currentPartNumber - 1].correct }} of {{ partStats[currentPartNumber - 1].total }} correct
         </p>
-        <p class="text-sm text-slate-500 mb-5">{{ parts[currentPartNumber - 1] }}</p>
+        <p class="font-semibold text-slate-700 mb-5">{{ partMessage }}</p>
+
+        <div class="text-left p-3 rounded-2xl bg-sky-50 border border-sky-100 mb-4">
+          <p class="text-xs font-bold uppercase tracking-wide text-sky-700">Up next</p>
+          <p class="font-bold text-slate-900">Part {{ shownPart + 1 }}: {{ parts[shownPart] }}</p>
+          <p class="text-sm text-slate-500">{{ partStats[shownPart].total }} questions</p>
+        </div>
+
         <button type="button" (click)="continueToNextPart()" class="btn btn-primary w-full text-lg">
-          Part {{ shownPart + 1 }}: {{ parts[shownPart] }} <span aria-hidden="true">→</span>
+          Continue to Part {{ shownPart + 1 }} <span aria-hidden="true">→</span>
         </button>
       </div>
     </div>
