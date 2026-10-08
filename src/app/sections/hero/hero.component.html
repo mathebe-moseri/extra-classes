@@ -366,22 +366,26 @@
               [ngClass]="!revealed ? 'text-slate-600' : (isCorrect ? 'text-emerald-600' : 'text-red-600')">{{ feedback
               }}</p>
 
+            <!-- Small "Check answer" link (enabled by admin) -->
+            <div *ngIf="!isInfoQuestion" class="flex justify-end mb-2">
+              <button type="button" (click)="revealAnswer()" [disabled]="!answersEnabled || !answered || revealed"
+                class="inline-flex items-center gap-1 px-2 py-1.5 rounded-full text-xs font-semibold text-sky-700 hover:bg-sky-50 disabled:opacity-40 disabled:cursor-not-allowed">
+                <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 11v5M12 8h.01" />
+                </svg>
+                Check answer
+              </button>
+            </div>
+
             <!-- 5. Buttons -->
             <div *ngIf="!isRulesIntro" class="flex gap-3">
               <button *ngIf="!isInfoQuestion && !isMcq" type="button" (click)="checkAnswer()"
                 [disabled]="answered || userAnswer === null" class="btn btn-navy flex-1">Submit answer</button>
 
               <!-- Small "i" button: shows the answer once an admin enables it -->
-              <button *ngIf="!isInfoQuestion" type="button" (click)="revealAnswer()"
-                [disabled]="!answersEnabled || !answered || revealed"
-                [attr.title]="answersEnabled ? 'Show the answer' : 'Answers are switched off for now'"
-                aria-label="Check answer" class="btn btn-soft w-12 flex-none !px-0">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
-                  stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <circle cx="12" cy="12" r="9" />
-                  <path d="M12 11v5M12 8h.01" />
-                </svg>
-              </button>
+
 
               <button type="button" (click)="nextQuestion()" [disabled]="!isInfoQuestion && !answered"
                 class="btn btn-primary flex-1">{{ nextLabel }}</button>
