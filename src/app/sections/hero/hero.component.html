@@ -348,9 +348,23 @@
             <div *ngIf="isMcq" class="grid gap-2 mb-4">
               <button *ngFor="let opt of currentQuestion.options; let i = index" type="button" (click)="chooseOption(i)"
                 [disabled]="answered"
-                class="w-full text-left px-4 py-3 rounded-xl border-2 font-semibold transition-colors"
+                class="w-full flex items-center justify-between gap-3 text-left px-4 py-3 rounded-xl border-2 font-semibold transition-colors"
                 [ngClass]="optionClass(i)">
-                {{ opt }}
+                <span>{{ opt }}</span>
+
+                <!-- Tick if the selected answer is correct -->
+                <svg *ngIf="answered && i === selectedOption && isCorrect" class="w-6 h-6 flex-none text-emerald-600"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" aria-label="Correct answer">
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+
+                <!-- X if the selected answer is wrong -->
+                <svg *ngIf="answered && i === selectedOption && !isCorrect" class="w-6 h-6 flex-none text-red-600"
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                  stroke-linejoin="round" aria-label="Wrong answer">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
               </button>
             </div>
 
