@@ -49,6 +49,9 @@ export class NavComponent implements OnInit {
   progress = 0;
   showBar = false;
 
+  // Set to true when registrations reopen
+  registrationsOpen = false;
+
   // Join form fields
   learnerFirstName = '';
   learnerSurname = '';
@@ -138,7 +141,7 @@ export class NavComponent implements OnInit {
   closeForm() { this.isMobileMenuOpen = false; this.signupDone = false; this.signupError = ''; }
 
   submitForm() {
-    if (this.isSubmitting) return;
+    if (!this.registrationsOpen || this.isSubmitting) return;
 
     if (!(this.learnerFirstName && this.learnerSurname && this.grade && this.email &&
       this.schoolName && this.parentFullName && this.parentCell)) {

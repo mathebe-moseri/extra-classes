@@ -81,7 +81,7 @@
   <div class="modal-backdrop" (click)="closeForm()"></div>
   <div class="sheet">
     <div class="sheet-head">
-      <div *ngIf="!signupDone">
+      <div *ngIf="!signupDone && registrationsOpen">
         <h3 id="signup-title">Create your account</h3>
         <p class="text-sm text-slate-500 mt-1">Step 1 of 5. Add the learner's and parent's details.</p>
       </div>
@@ -91,7 +91,18 @@
     <!-- Form -->
     <ng-container *ngIf="!signupDone; else signupSuccess">
 
-      <form (ngSubmit)="submitForm()" class="flex flex-col gap-3">
+      <div *ngIf="!registrationsOpen" class="text-center">
+        <h3 id="signup-title" class="mb-2 !pr-0">Applications are closed</h3>
+        <p class="mb-5 font-medium text-slate-700">
+          Applications are closed for now and will open again soon. Thank you for your interest!
+        </p>
+        <button type="button" class="btn btn-primary w-full mb-3" (click)="closeForm()">Okay</button>
+        <button type="button" class="btn btn-soft w-full" (click)="closeForm(); openContact()">
+          Questions? Contact us
+        </button>
+      </div>
+
+      <form *ngIf="registrationsOpen" (ngSubmit)="submitForm()" class="flex flex-col gap-3">
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="field-label" for="f-first">Learner name(s)</label>
