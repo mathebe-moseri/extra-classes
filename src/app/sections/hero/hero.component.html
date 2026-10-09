@@ -52,9 +52,12 @@
 
       <div class="rise" style="--d: .15s">
         <span
-          class="inline-block mt-3 px-3 py-0.5 rounded-full bg-green-600 text-white text-[11px] md:text-sm font-bold">
-          Applications OPEN
+          class="inline-block mt-3 px-3 py-0.5 rounded-full bg-amber-500 text-slate-900 text-[11px] md:text-sm font-bold">
+          Registrations CLOSED
         </span>
+        <p class="mt-2 text-sm md:text-base font-semibold max-w-md mx-auto" style="color: #dbeafe;">
+          Registrations are closed for now and will open again on 1 January 2027.
+        </p>
       </div>
 
       <h1 class="rise text-white text-3xl md:text-5xl font-bold mt-3 mb-2" style="--d: .25s">
@@ -244,6 +247,24 @@
       </div>
     </div>
   </section>
+
+  <!-- ============ REGISTRATIONS CLOSED ============ -->
+  <div *ngIf="showClosedNotice" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="closed-title">
+    <div class="modal-backdrop" (click)="closeClosedNotice()"></div>
+    <div class="sheet text-center">
+      <button type="button" class="sheet-close" (click)="closeClosedNotice()" aria-label="Close">&times;</button>
+
+      <h3 id="closed-title" class="mb-2">Registrations are closed</h3>
+      <p class="mb-5 font-medium text-slate-700">
+        Registrations are closed for now and will open again on 1 January 2027. Thank you for your interest!
+      </p>
+
+      <button type="button" (click)="closeClosedNotice()" class="btn btn-primary w-full mb-3">Okay</button>
+      <button type="button" (click)="closeClosedNotice(); openContact('whatsapp')" class="btn btn-soft w-full">
+        Questions? Contact us
+      </button>
+    </div>
+  </div>
 
   <!-- ============ RESUME PROMPT ============ -->
   <div *ngIf="showResumePrompt" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="resume-title">

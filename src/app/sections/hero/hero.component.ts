@@ -150,8 +150,20 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.joinForm.testimonialsRequested$.subscribe(() => this.openTestimonials());
   }
 
+  // Set to true when the database is back and registrations reopen
+  registrationsOpen = false;
+  showClosedNotice = false;
+
   openJoin() {
+    if (!this.registrationsOpen) {
+      this.showClosedNotice = true;   // registrations closed: show the popup
+      return;
+    }
     this.joinForm.open();
+  }
+
+  closeClosedNotice() {
+    this.showClosedNotice = false;
   }
 
   openLogin() {
@@ -182,9 +194,10 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Escape closes whichever popup is open
   @HostListener('document:keydown.escape')
-  @HostListener('document:keydown.escape')
   onEscape() {
-    if (this.showResumePrompt) this.closeResumePrompt();
+    if (this.showClosedNotice) this.closeClosedNotice();
+    else if (this.showResumePrompt) this.closeResumePrompt();
+
     else if (this.showQuizCompletedPopup) this.closeQuizCompletedPopup();
     else if (this.showTestimonials) this.closeTestimonials();
   }

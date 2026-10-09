@@ -104,11 +104,10 @@ export class NavComponent implements OnInit {
       this.isLoginFormOpen = true;
     });
 
-    this.learnerApiService.getLearnerInfo()
-      .pipe(tap(data => { this.joinedLearners = data; }))
-      .subscribe();
-
-    this.loadLearners();
+    // this.learnerApiService.getLearnerInfo()
+    //   .pipe(tap(data => { this.joinedLearners = data; }))
+    //   .subscribe();
+    // this.loadLearners();
   }
 
   /* ---------------- NEW: scroll tracking + keyboard ---------------- */
@@ -183,12 +182,14 @@ export class NavComponent implements OnInit {
     });
   }
 
-  loadLearners() {
-    this.learnerApiService.getLearnerInfo().subscribe({
-      next: (data) => this.joinedLearners = data,
-      error: (err) => console.error('Error fetching learners:', err)
-    });
-  }
+  // loadLearners() {
+  //   this.learnerApiService.getLearnerInfo().subscribe({
+  //     next: (data) => this.joinedLearners = data,
+  //     error: (err) => console.error('Error fetching learners:', err)
+  //   });
+  // }
+
+  loadLearners() { }
 
   /* ---------------- Login form ---------------- */
   openLoginForm() { this.loginNotice = ''; this.isLoginFormOpen = true; }
