@@ -5,6 +5,10 @@ import { JoinFormService } from '../../join-form.service';
 import { RevealDirective } from '../../shared/reveal.directive';
 import { smoothScrollToId } from '../../shared/smooth-scroll';
 
+// Stacked fraction: frac('O', 'H') shows O over H with a fraction bar
+const frac = (top: string, bottom: string) =>
+  `<span class="frac"><span>${top}</span><span>${bottom}</span></span>`;
+
 @Component({
   selector: 'app-hero',
   standalone: true,
@@ -456,7 +460,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         {
           title: 'SOH CAH TOA',
-          text: 'In a right-angled triangle: sin θ = O ÷ H, cos θ = A ÷ H, tan θ = O ÷ A.',
+          text: `In a right-angled triangle: sin θ = ${frac('O', 'H')}, cos θ = ${frac('A', 'H')}, tan θ = ${frac('O', 'A')}.`,
           image: '/images/rule-soh-cah-toa.svg',
           fun: ''
         }
@@ -587,7 +591,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       text: 'Each angle of an equilateral triangle is...',
       options: ['30°', '45°', '60°', '90°'],
       correct: 2,
-      explanation: 'Three equal angles that add up to 180° gives 180° ÷ 3 = 60° each.'
+      explanation: `Three equal angles that add up to 180° gives ${frac('180°', '3')} = 60° each.`
     },
 
     /* ---------- TYPES OF TRIANGLE ---------- */
@@ -713,20 +717,20 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       image: '/images/p2-soh-cah-toa-sides.svg',
 
       options: [
-        'Opposite ÷ Hypotenuse',
-        'Adjacent ÷ Hypotenuse',
-        'Opposite ÷ Adjacent',
-        'Hypotenuse ÷ Opposite'
+        frac('Opposite', 'Hypotenuse'),
+        frac('Adjacent', 'Hypotenuse'),
+        frac('Opposite', 'Adjacent'),
+        frac('Hypotenuse', 'Opposite')
       ],
       correct: 0,
-      explanation: 'SOH: Sine = Opposite ÷ Hypotenuse.'
+      xplanation: `SOH: Sine = ${frac('Opposite', 'Hypotenuse')}.`
     },
     {
       type: 'mcq',
-      text: 'Which letters of SOH CAH TOA give tan θ = Opposite ÷ Adjacent?',
+      text: `Which letters of SOH CAH TOA give tan θ = ${frac('Opposite', 'Adjacent')}?`,
       options: ['SOH', 'CAH', 'TOA', 'None of them'],
       correct: 2,
-      explanation: 'TOA: Tangent = Opposite ÷ Adjacent.'
+      explanation: `TOA: Tangent = ${frac('Opposite', 'Adjacent')}.`
     },
     {
       type: 'calc',

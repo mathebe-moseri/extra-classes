@@ -311,7 +311,7 @@
           <div class="q-in">
 
             <!-- 1. Question -->
-            <p class="mb-4 font-medium">{{ currentQuestion?.text }}</p>
+            <p class="mb-4 font-medium" [innerHTML]="currentQuestion?.text"></p>
 
             <!-- 2. Definition / rules (intro cards only) -->
             <p *ngIf="isInfoQuestion && currentQuestion.answer"
@@ -337,9 +337,7 @@
                 </div>
 
                 <!-- The rule itself, big and easy to read -->
-                <p class="px-4 pt-3 pb-3 text-xl md:text-2xl font-extrabold text-slate-900">
-                  {{ shownText }}
-                </p>
+                <p class="px-4 pt-3 pb-3 text-xl md:text-2xl font-extrabold text-slate-900" [innerHTML]="shownText"></p>
                 <p *ngIf="shownFun"
                   class="mx-4 mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-left text-sm md:text-base font-semibold text-amber-900">
                   💡 {{ shownFun }}
@@ -398,7 +396,7 @@
                 [disabled]="answered"
                 class="w-full flex items-center justify-between gap-3 text-left px-4 py-3 rounded-xl border-2 font-semibold transition-colors"
                 [ngClass]="optionClass(i)">
-                <span>{{ opt }}</span>
+                <span [innerHTML]="opt"></span>
 
                 <!-- Tick if the selected answer is correct -->
                 <svg *ngIf="answered && i === selectedOption && isCorrect" class="w-6 h-6 flex-none text-emerald-600"
@@ -425,8 +423,8 @@
 
             <!-- Feedback (multiple choice and calculations) -->
             <p *ngIf="feedback" class="mb-4 text-center font-semibold" aria-live="polite"
-              [ngClass]="!revealed ? 'text-slate-600' : (isCorrect ? 'text-emerald-600' : 'text-red-600')">{{ feedback
-              }}</p>
+              [ngClass]="!revealed ? 'text-slate-600' : (isCorrect ? 'text-emerald-600' : 'text-red-600')"
+              [innerHTML]="feedback"></p>
 
             <!-- Small "Check answer" link (enabled by admin) -->
             <div *ngIf="!isInfoQuestion" class="flex justify-end mb-2">
