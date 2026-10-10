@@ -364,7 +364,15 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       text: 'Part 2: The rules of a triangle',
       intro: 'Every triangle follows the same rules:',
       rules: [
-        { title: 'Angles', text: 'The three angles always add up to 180°.', image: '/images/rule-angles.svg' },
+{
+  title: 'Angles',
+  text: 'Interior angles of a triangle always adds up to 180°.',
+  image: '/images/rule-angles.svg',
+  extra: {
+    text: 'Angles that sit together on a straight line also add up to 180°.',
+    image: '/images/rule-angles-line.svg'
+  }
+},
         { title: 'Sides', text: 'Any two sides added together are longer than the third side.', image: '/images/rule-sides.svg' },
         { title: 'Longest side', text: 'The longest side is opposite the largest angle.', image: '/images/rule-longest.svg' },
         { title: 'Perimeter', text: 'Perimeter = a + b + c (the distance around the outside).', image: '/images/rule-perimeter.svg' },
@@ -526,7 +534,21 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
   /* ---------------- RULE PAGES (Part 2 intro) ---------------- */
-  ruleIndex = 0;   // which rule page is showing (0 = first)
+ruleIndex = 0;   // which rule page is showing (0 = first)
+showExtra = false;   // true while the second info page of a rule is showing
+
+get shownImage(): string {
+  return this.showExtra ? this.currentRule?.extra?.image : this.currentRule?.image;
+}
+
+get shownText(): string {
+  return this.showExtra ? this.currentRule?.extra?.text : this.currentRule?.text;
+}
+
+get nextRuleLabel(): string {
+  if (this.currentRule?.extra && !this.showExtra) return 'Next →';
+  return this.isLastRule ? 'Start the questions' : 'Next rule →';
+}
 
   // true only on the Part 2 intro card that has the list of rules
   get isRulesIntro(): boolean {
@@ -543,15 +565,27 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // on the last rule, "Next" moves on to the first Part 2 question
   nextRule() {
+    if (this.currentRule?.extra && !this.showExtra) {
+      this.showExtra = true;
+      return;
+    }
     if (this.isLastRule) {
       this.nextQuestion();
     } else {
       this.ruleIndex++;
+      this.showExtra = false;
     }
   }
 
   prevRule() {
-    if (this.ruleIndex > 0) this.ruleIndex--;
+    if (this.showExtra) {
+      this.showExtra = false;
+      return;
+    }
+    if (this.ruleIndex > 0) {
+      this.ruleIndex--;
+      this.showExtra = !!this.currentRule?.extra;
+    }
   }
 
   // NEW: which part the learner is in (1 or 2)
@@ -634,7 +668,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
       q.rules?.forEach((r: any) => {
         const img = new Image();
-        img.src = r.image;
+   img.src = r.image;
+if (r.extra?.image) { const img2 = new Image(); img2.src = r.extra.image; }
       });
     });
 
@@ -726,7 +761,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.answered = false;
     this.revealed = false;
     this.imageLoaded = false;
-    this.ruleIndex = 0;
+   this.ruleIndex = 0;
+this.showExtra = false;
     this.selectedOption = null;
     this.startTimer();
     this.saveProgress(this.currentQuestionIndex);   // <-- NEW

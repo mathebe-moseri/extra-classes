@@ -332,13 +332,13 @@
 
                 <!-- Picture -->
                 <div class="p-4 bg-white flex justify-center">
-                  <img [src]="currentRule.image" [alt]="'Picture for the ' + currentRule.title + ' rule'"
+                  <img [src]="shownImage" [alt]="'Picture for the ' + currentRule.title + ' rule'"
                     class="w-full max-w-xs max-h-56 object-contain" />
                 </div>
 
                 <!-- The rule itself, big and easy to read -->
                 <p class="px-4 pt-3 pb-5 text-xl md:text-2xl font-extrabold text-slate-900">
-                  {{ currentRule.text }}
+                  {{ shownText }}
                 </p>
               </div>
 
@@ -350,10 +350,10 @@
 
               <!-- Back / Next -->
               <div class="flex gap-3 mt-4">
-                <button *ngIf="ruleIndex > 0" type="button" (click)="prevRule()" class="btn btn-soft flex-1">←
+  <button *ngIf="ruleIndex > 0 || showExtra" type="button" (click)="prevRule()"class="btn btn-soft flex-1">←
                   Back</button>
                 <button type="button" (click)="nextRule()" class="btn btn-primary flex-1">
-                  {{ isLastRule ? 'Start the questions' : 'Next rule →' }}
+{{ nextRuleLabel }}
                 </button>
               </div>
             </div>
