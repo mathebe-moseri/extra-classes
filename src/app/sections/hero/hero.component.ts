@@ -349,7 +349,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     /* ---------- CHALLENGE ---------- */
     {
       type: 'mcq',
-      text: 'Final check: which sentence about a triangle is TRUE?',
+      text: 'Which sentence about a triangle is TRUE?',
       options: [
         'A triangle has 3 sides, 4 vertices and 3 angles',
         'A triangle has 4 sides, 3 vertices and 3 angles',
