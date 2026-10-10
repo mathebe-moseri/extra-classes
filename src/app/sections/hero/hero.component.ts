@@ -46,10 +46,12 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   imageLoaded = false;
   quizCompleted = false;
   totalCorrect = 0;
-  correctByPart: number[] = [0, 0];   // NEW: correct answers per part
+  correctByPart: number[] = [0, 0];   // correct answers per part
   selectedOption: number | null = null;
+
   /* ---------------- SAVED PROGRESS ---------------- */
-  private readonly PROGRESS_KEY = 'trig-quiz-progress-v1';
+  // v2: the question list changed, so old saved positions are ignored
+  private readonly PROGRESS_KEY = 'trig-quiz-progress-v2';
   showResumePrompt = false;
   savedProgress: { index: number; totalCorrect: number; correctByPart: number[] } | null = null;
 
@@ -138,7 +140,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.answered = true;
     this.isCorrect = false;
     this.feedback = "⏰ Time's up! This question is marked wrong. Tap Next to carry on.";
-    this.saveProgress(this.currentQuestionIndex + 1);   // <-- NEW
+    this.saveProgress(this.currentQuestionIndex + 1);
   }
 
   copied = false;              // shows "Copied" on the account number button
@@ -197,14 +199,13 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   onEscape() {
     if (this.showClosedNotice) this.closeClosedNotice();
     else if (this.showResumePrompt) this.closeResumePrompt();
-
     else if (this.showQuizCompletedPopup) this.closeQuizCompletedPopup();
     else if (this.showTestimonials) this.closeTestimonials();
   }
 
   /* ---------------- QUIZ CONTENT ---------------- */
 
-  // NEW: the parts of "Introduction to Trigonometry"
+  // The parts of "Introduction to Trigonometry"
   parts: string[] = ['The parts of a triangle', 'Rules of a triangle'];
 
   /* ===== PART 1: THE PARTS OF A TRIANGLE ===== */
@@ -358,25 +359,107 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /* ===== PART 2: RULES OF A TRIANGLE ===== */
   private partTwoQuestions: any[] = [
-    /* ---------- LEARN: the rules ---------- */
+    /* ---------- LEARN: the rules (12 rule pages) ---------- */
     {
       type: 'info',
-      text: 'Part 2: The rules of a triangle',
-      intro: 'Every triangle follows the same rules:',
+      // text: 'Part 2: The rules of a triangle',
       rules: [
-{
-  title: 'Angles',
-  text: 'Interior angles of a triangle always adds up to 180°.',
-  image: '/images/rule-angles.svg',
-  extra: {
-    text: 'Angles that sit together on a straight line also add up to 180°.',
-    image: '/images/rule-angles-line.svg'
-  }
-},
-        { title: 'Sides', text: 'Any two sides added together are longer than the third side.', image: '/images/rule-sides.svg' },
-        { title: 'Longest side', text: 'The longest side is opposite the largest angle.', image: '/images/rule-longest.svg' },
-        { title: 'Perimeter', text: 'Perimeter = a + b + c (the distance around the outside).', image: '/images/rule-perimeter.svg' },
-        { title: 'Area', text: 'Area = ½ × base × height.', image: '/images/rule-area.svg' }
+        {
+          title: 'Angles',
+          text: 'Interior angles of a triangle always adds up to 180°.',
+          image: '/images/rule-angles.svg',
+          fun: '',
+          extra: {
+            title: 'Straight line',
+            text: 'Angles that sit together on a straight line adds up to 180°.',
+            image: '/images/rule-angles-line.svg',
+            fun: ''
+          }
+        },
+        {
+          title: 'Exterior angle',
+          text: 'An exterior (outside) angle equals the two inside angles it is NOT next to.',
+          image: '/images/rule-exterior.svg',
+          fun: '',
+          extra: {
+            title: 'Exterior angles',
+            text: 'The three exterior angles, one at each corner, adds up to 360°.',
+            image: '/images/rule-exterior-sum.svg',
+            fun: ''
+          }
+        },
+        {
+          title: 'Sides',
+          text: 'Any two sides added together are longer than the third side.',
+          image: '/images/rule-sides.svg',
+          fun: ''
+        },
+        {
+          title: 'Longest side',
+          text: 'The longest side is opposite the largest angle.',
+          image: '/images/rule-longest.svg',
+          fun: ''
+        },
+        {
+          title: 'Equal sides',
+          text: 'Two equal sides mean two equal angles. This is called an isosceles triangle.',
+          image: '/images/rule-isosceles.svg',
+          fun: '',
+          extra: {
+            title: 'Equilateral',
+            text: 'Three equal sides mean three equal angles, 60° each.',
+            image: '/images/rule-equilateral.svg',
+            fun: ''
+          }
+        },
+        {
+          title: 'Types of triangle',
+          text: 'Name a triangle by its sides: equilateral, isosceles or scalene.',
+          image: '/images/rule-types-sides.svg',
+          fun: '',
+          extra: {
+            title: 'Types by angle',
+            text: 'Name a triangle by its angles: acute, right or obtuse.',
+            image: '/images/rule-types-angles.svg',
+            fun: ''
+          }
+        },
+        {
+          title: 'Pythagoras',
+          text: 'In a right-angled triangle: a² + b² = c², where c is the longest side.',
+          image: '/images/rule-pythagoras.svg',
+          fun: ''
+        },
+        {
+          title: 'Midsegment',
+          text: 'A line joining the midpoints of two sides is parallel to the third side and half as long.',
+          image: '/images/rule-midsegment.svg',
+          fun: ''
+        },
+        {
+          title: 'Medians',
+          text: 'The three medians meet at one point, the centroid. It splits each median in the ratio 2 : 1.',
+          image: '/images/rule-centroid.svg',
+          fun: ''
+        },
+        {
+          title: 'Perimeter',
+          text: 'Perimeter = a + b + c (the distance around the outside).',
+          image: '/images/rule-perimeter.svg',
+          fun: ''
+        },
+        {
+          title: 'Area',
+          text: 'Area = ½ × base × height.',
+          image: '/images/rule-area.svg',
+          fun: ''
+        },
+        {
+          title: 'SOH CAH TOA',
+          text: 'In a right-angled triangle: sin θ = O ÷ H, cos θ = A ÷ H, tan θ = O ÷ A.',
+          image: '/images/rule-soh-cah-toa.svg',
+          fun: ''
+        }
       ]
     },
 
@@ -392,6 +475,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       type: 'calc',
       time: 60,
       text: 'Two angles of a triangle are 50° and 60°. What is the third angle? (in degrees)',
+      image: '/images/p2-third-angle.svg',
       answer: 70
     },
     {
@@ -406,6 +490,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       correct: 2,
       explanation: '80° + 60° + 50° = 190°. The angles of a triangle must add up to exactly 180°.'
     },
+
+    /* ---------- EXTERIOR ANGLES ---------- */
     {
       type: 'mcq',
       text: 'An exterior angle of a triangle is equal to...',
@@ -417,6 +503,20 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       ],
       correct: 0,
       explanation: 'An exterior angle equals the sum of the two opposite (non-adjacent) interior angles.'
+    },
+    {
+      type: 'calc',
+      time: 60,
+      text: 'Two inside angles of a triangle are 40° and 65°. What is the exterior angle at the third corner? (in degrees)',
+      image: '/images/p2-exterior-calc.svg',
+      answer: 105
+    },
+    {
+      type: 'calc',
+      time: 60,
+      text: 'An exterior angle is 130°. One of the two far inside angles is 80°. What is the other one? (in degrees)',
+      image: '/images/p2-exterior-find.svg',
+      answer: 50
     },
     {
       type: 'mcq',
@@ -456,9 +556,87 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       type: 'mcq',
       text: 'In triangle ABC, angle B is the smallest angle. Which side is the shortest?',
+      image: '/images/p2-smallest-angle.svg',
       options: ['Side AB', 'Side AC', 'Side BC', 'We cannot tell'],
       correct: 1,
       explanation: 'The shortest side is opposite the smallest angle. The side opposite B is AC.'
+    },
+
+    /* ---------- EQUAL SIDES, EQUAL ANGLES ---------- */
+    {
+      type: 'calc',
+      time: 60,
+      text: 'An isosceles triangle has a top angle of 40°. What is each base angle? (in degrees)',
+      image: '/images/p2-isosceles-top.svg',
+      answer: 70
+    },
+    {
+      type: 'mcq',
+      text: 'A triangle has two angles of 50° each. What must be true?',
+      options: [
+        'It has two equal sides (it is isosceles)',
+        'It has three equal sides',
+        'All three sides are different',
+        'It must have a right angle'
+      ],
+      correct: 0,
+      explanation: 'Equal angles mean equal opposite sides. The third angle is 80°, so it is isosceles but not equilateral.'
+    },
+    {
+      type: 'mcq',
+      text: 'Each angle of an equilateral triangle is...',
+      options: ['30°', '45°', '60°', '90°'],
+      correct: 2,
+      explanation: 'Three equal angles that add up to 180° gives 180° ÷ 3 = 60° each.'
+    },
+
+    /* ---------- TYPES OF TRIANGLE ---------- */
+    {
+      type: 'mcq',
+      text: 'A triangle has sides of 5 cm, 5 cm and 8 cm. What type is it?',
+      image: '/images/p2-sides-5-5-8.svg',
+      options: ['Equilateral', 'Isosceles', 'Scalene', 'Right-angled'],
+      correct: 1,
+      explanation: 'Exactly two sides are equal, so it is isosceles.'
+    },
+    {
+      type: 'mcq',
+      text: 'A triangle has angles of 30°, 40° and 110°. What type is it?',
+      image: '/images/p2-angles-30-40-110.svg',
+      options: ['Acute', 'Right-angled', 'Obtuse', 'Equilateral'],
+      correct: 2,
+      explanation: '110° is bigger than 90°, so the triangle is obtuse.'
+    },
+    {
+      type: 'mcq',
+      text: 'One angle of a triangle is 90°. What do the other two angles add up to?',
+      image: '/images/p2-right-angle-others.svg',
+      options: ['45°', '90°', '120°', '180°'],
+      correct: 1,
+      explanation: '180° − 90° = 90°. The other two angles share the remaining 90°.'
+    },
+
+    /* ---------- PYTHAGORAS ---------- */
+    {
+      type: 'mcq',
+      text: "Pythagoras' rule a² + b² = c² only works for...",
+      options: ['Every triangle', 'Right-angled triangles', 'Equilateral triangles', 'Obtuse triangles'],
+      correct: 1,
+      explanation: 'It only works when the triangle has a 90° angle. c is the side opposite that angle.'
+    },
+    {
+      type: 'calc',
+      time: 60,
+      text: 'A right-angled triangle has short sides of 6 cm and 8 cm. How long is the longest side? (in cm)',
+      image: '/images/p2-pythagoras-6-8.svg',
+      answer: 10
+    },
+    {
+      type: 'mcq',
+      text: 'Which set of sides makes a right-angled triangle?',
+      options: ['5, 12, 14', '6, 8, 10', '4, 5, 7', '2, 3, 4'],
+      correct: 1,
+      explanation: '6² + 8² = 36 + 64 = 100 = 10². The others do not fit a² + b² = c².'
     },
 
     /* ---------- PERIMETER AND AREA ---------- */
@@ -466,6 +644,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       type: 'calc',
       time: 60,
       text: 'A triangle has sides of 5 cm, 7 cm and 9 cm. What is its perimeter? (in cm)',
+      image: '/images/p2-perimeter-5-7-9.svg',
       answer: 21
     },
     {
@@ -486,6 +665,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       type: 'calc',
       time: 60,
       text: 'A triangle has a base of 10 cm and a height of 6 cm. What is its area? (in cm²)',
+      image: '/images/p2-area-10-6.svg',
       answer: 30
     },
 
@@ -493,6 +673,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     {
       type: 'mcq',
       text: 'A line joins the midpoints of two sides of a triangle. What do we know about it?',
+      image: '/images/p2-midsegment.svg',
       options: [
         'It is parallel to the third side and half its length',
         'It is parallel to the third side and the same length',
@@ -502,11 +683,63 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       correct: 0,
       explanation: 'The midsegment theorem: the line is parallel to the third side and half its length.'
     },
+    {
+      type: 'calc',
+      time: 60,
+      text: 'The bottom side of a triangle is 18 cm. How long is the midsegment that is parallel to it? (in cm)',
+      image: '/images/p2-midsegment-18.svg',
+      answer: 9
+    },
+    {
+      type: 'mcq',
+      text: 'The three medians of a triangle meet at the centroid. It splits each median in the ratio...',
+      image: '/images/p2-centroid.svg',
+      options: ['1 : 1', '2 : 1', '3 : 1', '3 : 2'],
+      correct: 1,
+      explanation: 'The centroid is twice as far from the corner as it is from the middle of the opposite side.'
+    },
+    {
+      type: 'calc',
+      time: 60,
+      text: 'A median is 21 cm long. How far is the centroid from the corner? (in cm)',
+      image: '/images/p2-median-21.svg',
+      answer: 14
+    },
+
+    /* ---------- SOH CAH TOA ---------- */
+    {
+      type: 'mcq',
+      text: 'In a right-angled triangle, sin θ is equal to...',
+      image: '/images/p2-soh-cah-toa-sides.svg',
+
+      options: [
+        'Opposite ÷ Hypotenuse',
+        'Adjacent ÷ Hypotenuse',
+        'Opposite ÷ Adjacent',
+        'Hypotenuse ÷ Opposite'
+      ],
+      correct: 0,
+      explanation: 'SOH: Sine = Opposite ÷ Hypotenuse.'
+    },
+    {
+      type: 'mcq',
+      text: 'Which letters of SOH CAH TOA give tan θ = Opposite ÷ Adjacent?',
+      options: ['SOH', 'CAH', 'TOA', 'None of them'],
+      correct: 2,
+      explanation: 'TOA: Tangent = Opposite ÷ Adjacent.'
+    },
+    {
+      type: 'calc',
+      time: 60,
+      text: 'In a right-angled triangle the opposite side is 3 and the hypotenuse is 5. What is sin θ? (as a decimal)',
+      image: '/images/p2-sin-3-5.svg',
+      answer: 0.6
+    },
 
     /* ---------- CHALLENGE ---------- */
     {
       type: 'mcq',
-      text: 'Final check: which statement is TRUE for every triangle?',
+      text: 'Which statement is TRUE for every triangle?',
       options: [
         'The angles add up to 360°',
         'Two sides added together are longer than the third side',
@@ -532,23 +765,32 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.currentQuestion?.type === 'mcq';
   }
 
-
   /* ---------------- RULE PAGES (Part 2 intro) ---------------- */
-ruleIndex = 0;   // which rule page is showing (0 = first)
-showExtra = false;   // true while the second info page of a rule is showing
+  ruleIndex = 0;       // which rule page is showing (0 = first)
+  showExtra = false;   // true while the second info page of a rule is showing
 
-get shownImage(): string {
-  return this.showExtra ? this.currentRule?.extra?.image : this.currentRule?.image;
-}
+  get shownImage(): string {
+    return this.showExtra ? this.currentRule?.extra?.image : this.currentRule?.image;
+  }
 
-get shownText(): string {
-  return this.showExtra ? this.currentRule?.extra?.text : this.currentRule?.text;
-}
+  get shownText(): string {
+    return this.showExtra ? this.currentRule?.extra?.text : this.currentRule?.text;
+  }
 
-get nextRuleLabel(): string {
-  if (this.currentRule?.extra && !this.showExtra) return 'Next →';
-  return this.isLastRule ? 'Start the questions' : 'Next rule →';
-}
+  // NEW: title shown in the blue header of the rule card
+  get shownTitle(): string {
+    return (this.showExtra ? this.currentRule?.extra?.title : null) ?? this.currentRule?.title ?? '';
+  }
+
+  // NEW: the 💡 fun fact shown under the rule
+  get shownFun(): string {
+    return (this.showExtra ? this.currentRule?.extra?.fun : this.currentRule?.fun) ?? '';
+  }
+
+  get nextRuleLabel(): string {
+    if (this.currentRule?.extra && !this.showExtra) return 'Next →';
+    return this.isLastRule ? 'Start the questions' : 'Next rule →';
+  }
 
   // true only on the Part 2 intro card that has the list of rules
   get isRulesIntro(): boolean {
@@ -588,7 +830,7 @@ get nextRuleLabel(): string {
     }
   }
 
-  // NEW: which part the learner is in (1 or 2)
+  // which part the learner is in (1 or 2)
   get currentPartNumber(): number {
     return (this.currentQuestion?.part ?? 0) + 1;
   }
@@ -598,7 +840,7 @@ get nextRuleLabel(): string {
     return (this.currentQuestion?.part ?? 0) + (this.showPartBreak ? 1 : 0);
   }
 
-  // NEW: text on the Next button
+  // text on the Next button
   get nextLabel(): string {
     if (this.currentQuestionIndex === this.quizQuestions.length - 1) return 'Finish';
     const next = this.quizQuestions[this.currentQuestionIndex + 1];
@@ -611,7 +853,7 @@ get nextRuleLabel(): string {
     return this.quizQuestions.filter(q => q.type !== 'info').length;
   }
 
-  // NEW: score for each part, shown on the results screen
+  // score for each part, shown on the results screen
   get partStats(): { number: number; name: string; correct: number; total: number }[] {
     return this.parts.map((name, p) => ({
       number: p + 1,
@@ -660,6 +902,7 @@ get nextRuleLabel(): string {
   }
 
   ngAfterViewInit() {
+    // Preload every picture so the quiz never shows a blank image
     this.quizQuestions.forEach((q: any) => {
       if (q.image) {
         const img = new Image();
@@ -668,8 +911,11 @@ get nextRuleLabel(): string {
 
       q.rules?.forEach((r: any) => {
         const img = new Image();
-   img.src = r.image;
-if (r.extra?.image) { const img2 = new Image(); img2.src = r.extra.image; }
+        img.src = r.image;
+        if (r.extra?.image) {
+          const img2 = new Image();
+          img2.src = r.extra.image;
+        }
       });
     });
 
@@ -761,14 +1007,14 @@ if (r.extra?.image) { const img2 = new Image(); img2.src = r.extra.image; }
     this.answered = false;
     this.revealed = false;
     this.imageLoaded = false;
-   this.ruleIndex = 0;
-this.showExtra = false;
+    this.ruleIndex = 0;
+    this.showExtra = false;
     this.selectedOption = null;
     this.startTimer();
-    this.saveProgress(this.currentQuestionIndex);   // <-- NEW
+    this.saveProgress(this.currentQuestionIndex);
   }
 
-  // NEW: one place to count a correct answer, overall and for its part
+  // one place to count a correct answer, overall and for its part
   private markCorrect() {
     this.isCorrect = true;
     this.totalCorrect++;
@@ -787,7 +1033,7 @@ this.showExtra = false;
       this.isCorrect = false;
     }
 
-    this.saveProgress(this.currentQuestionIndex + 1);   // <-- NEW
+    this.saveProgress(this.currentQuestionIndex + 1);
   }
 
   nextQuestion() {
@@ -802,7 +1048,7 @@ this.showExtra = false;
       this.loadQuestion();
     } else {
       this.stopTimer();
-      this.clearProgress();                 // <-- NEW
+      this.clearProgress();
       this.quizCompleted = true;
       this.showQuiz = false;
       this.showQuizCompletedPopup = true;
@@ -817,7 +1063,6 @@ this.showExtra = false;
 
   retryQuiz() {
     this.showQuizCompletedPopup = false;
-
     this.openQuiz();
   }
 
@@ -849,7 +1094,7 @@ this.showExtra = false;
       this.isCorrect = false;
     }
 
-    this.saveProgress(this.currentQuestionIndex + 1);   // <-- NEW
+    this.saveProgress(this.currentQuestionIndex + 1);
   }
 
   // Only works once an admin has enabled answers. It reveals the result but never changes the mark.

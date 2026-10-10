@@ -327,7 +327,7 @@
                 <!-- Header: rule number and title -->
                 <div class="bg-sky-600 text-white px-4 py-2 flex items-center justify-between text-sm font-bold">
                   <span>Rule {{ ruleIndex + 1 }} of {{ currentQuestion.rules.length }}</span>
-                  <span>{{ currentRule.title }}</span>
+                  <span>{{ shownTitle }}</span>
                 </div>
 
                 <!-- Picture -->
@@ -337,8 +337,12 @@
                 </div>
 
                 <!-- The rule itself, big and easy to read -->
-                <p class="px-4 pt-3 pb-5 text-xl md:text-2xl font-extrabold text-slate-900">
+                <p class="px-4 pt-3 pb-3 text-xl md:text-2xl font-extrabold text-slate-900">
                   {{ shownText }}
+                </p>
+                <p *ngIf="shownFun"
+                  class="mx-4 mb-4 p-3 rounded-xl bg-amber-50 border border-amber-200 text-left text-sm md:text-base font-semibold text-amber-900">
+                  💡 {{ shownFun }}
                 </p>
               </div>
 
@@ -350,10 +354,11 @@
 
               <!-- Back / Next -->
               <div class="flex gap-3 mt-4">
-  <button *ngIf="ruleIndex > 0 || showExtra" type="button" (click)="prevRule()"class="btn btn-soft flex-1">←
+                <button *ngIf="ruleIndex > 0 || showExtra" type="button" (click)="prevRule()"
+                  class="btn btn-soft flex-1">←
                   Back</button>
                 <button type="button" (click)="nextRule()" class="btn btn-primary flex-1">
-{{ nextRuleLabel }}
+                  {{ nextRuleLabel }}
                 </button>
               </div>
             </div>
