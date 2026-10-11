@@ -741,21 +741,21 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     },
 
     /* ---------- SOH CAH TOA ---------- */
-      {
+    {
       type: 'info',
       text: 'Naming the sides',
       rules: [{
-      title: 'Name the sides',
-      text: 'Stand at the angle θ. Opposite is across from θ, Adjacent is next to θ, and Hypotenuse is the longest side.',
-      image: '/images/rule-trig-sides.svg',
-      fun: '',
-      extra: {
-        title: 'SOH CAH TOA',
-        text: `sin θ = ${frac('O', 'H')}, cos θ = ${frac('A', 'H')}, tan θ = ${frac('O', 'A')}`,
-        image: '/images/rule-soh-cah-toa.svg',
-        fun: ''
-      }
-    }]
+        title: 'Name the sides',
+        text: 'Stand at the angle θ. Opposite is across from θ, Adjacent is next to θ, and Hypotenuse is the longest side.',
+        image: '/images/rule-trig-sides.svg',
+        fun: '',
+        extra: {
+          title: 'SOH CAH TOA',
+          text: `sin θ = ${frac('O', 'H')}, cos θ = ${frac('A', 'H')}, tan θ = ${frac('O', 'A')}`,
+          image: '/images/rule-soh-cah-toa.svg',
+          fun: ''
+        }
+      }]
     },
 
     /* ---------- CHALLENGE ---------- */
@@ -1193,9 +1193,9 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   testimonials = [
     { label: 'Learner · Grade 10', src: 'https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial1.mp4' },
+    { label: 'Learner · Grade 10', src: 'https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial5.mp4' },
     { label: 'Learner · Grade 12', src: 'https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial3.mp4' },
     { label: 'Learner · Grade 12', src: 'https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial4.mp4' },
-    { label: 'Learner · Grade ?', src: '' },
 
   ];
 
