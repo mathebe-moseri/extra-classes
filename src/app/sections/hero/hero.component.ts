@@ -741,7 +741,10 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     },
 
     /* ---------- SOH CAH TOA ---------- */
-    {
+      {
+      type: 'info',
+      text: 'Naming the sides',
+      rules: [{
       title: 'Name the sides',
       text: 'Stand at the angle θ. Opposite is across from θ, Adjacent is next to θ, and Hypotenuse is the longest side.',
       image: '/images/rule-trig-sides.svg',
@@ -752,6 +755,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
         image: '/images/rule-soh-cah-toa.svg',
         fun: ''
       }
+    }]
     },
 
     /* ---------- CHALLENGE ---------- */
