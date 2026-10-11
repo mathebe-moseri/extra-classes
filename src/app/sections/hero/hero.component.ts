@@ -544,7 +544,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
         },
         {
           title: 'SOH CAH TOA',
-          text: `In a right-angled triangle: sin θ = ${frac('O', 'H')}, cos θ = ${frac('A', 'H')}, tan θ = ${frac('O', 'A')}.`,
+          text: `Only on a right-angled triangle`,
           image: '/images/rule-soh-cah-toa.svg',
           fun: ''
         }
