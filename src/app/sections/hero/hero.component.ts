@@ -1193,9 +1193,10 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   testimonials = [
     { label: 'Learner · Grade 10', src: 'https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial1.mp4' },
-    { label: 'Learner · Grade 11', src: '' },
-    { label: 'Learner · Grade 12', src: '' },
-    { label: 'Learner · Grade 12', src: '' },
+    { label: 'Learner · Grade 12', src: 'https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial3.mp4' },
+    { label: 'Learner · Grade 12', src: 'https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial4.mp4' },
+    { label: 'Learner · Grade ?', src: '' },
+
   ];
 
   openTestimonials() {
