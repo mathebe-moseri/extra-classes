@@ -298,10 +298,11 @@
       <div class="flex flex-wrap items-center gap-2 mb-1 text-sm font-bold">
         <ng-container *ngFor="let p of parts; let i = index">
           <span *ngIf="i > 0" class="text-slate-400" aria-hidden="true">→</span>
-          <span class="px-3 py-1 rounded-full"
+          <button type="button" (click)="goToPart(i)" [attr.aria-label]="'Go to Part ' + (i + 1)"
+            class="px-3 py-1 rounded-full cursor-pointer transition-opacity hover:opacity-80"
             [ngClass]="i < shownPart ? 'bg-emerald-100 text-emerald-700' : (i === shownPart && !showPartBreak ? 'bg-sky-700 !text-white' : 'bg-slate-100 text-slate-500')">
             <span *ngIf="i < shownPart">✓ </span>Part {{ i + 1 }}
-          </span>
+          </button>
         </ng-container>
       </div>
       <p *ngIf="!showPartBreak" class="text-sm font-semibold text-sky-700 mb-3">{{ parts[shownPart] }}</p>
@@ -310,8 +311,11 @@
         <ng-container *ngFor="let q of [currentQuestion]">
           <div class="q-in">
 
-            <!-- 1. Question -->
-            <p class="mb-4 font-medium" [innerHTML]="currentQuestion?.text"></p>
+            <!-- 1. Question (or a "Learn" heading on intro cards) -->
+            <span *ngIf="isInfoQuestion"
+              class="inline-block mb-2 px-3 py-0.5 rounded-full bg-sky-100 text-sky-700 text-xs font-bold uppercase tracking-wide">Learn</span>
+            <p class="mb-4" [ngClass]="isInfoQuestion ? 'text-xl font-extrabold text-slate-900' : 'font-medium'"
+              [innerHTML]="currentQuestion?.text"></p>
 
             <!-- 2. Definition / rules (intro cards only) -->
             <p *ngIf="isInfoQuestion && currentQuestion.answer"
@@ -326,7 +330,8 @@
               <div class="rounded-2xl border border-sky-200 bg-sky-50 overflow-hidden text-center">
                 <!-- Header: rule number and title -->
                 <div class="bg-sky-600 text-white px-4 py-2 flex items-center justify-between text-sm font-bold">
-                  <span>Rule {{ ruleIndex + 1 }} of {{ currentQuestion.rules.length }}</span>
+                  <span>{{ currentQuestion.pageLabel || 'Rule' }} {{ ruleIndex + 1 }} of {{ currentQuestion.rules.length
+                    }}</span>
                   <span>{{ shownTitle }}</span>
                 </div>
 
@@ -368,11 +373,13 @@
             </div>
 
             <!-- 4. Progress -->
-            <p class="text-sm text-slate-500 mb-2">Question {{ currentQuestionIndex + 1 }} of {{ quizQuestions.length }}
+            <p class="text-sm text-slate-500 mb-2">
+              <ng-container *ngIf="isInfoQuestion">Read this first, then answer the questions</ng-container>
+              <ng-container *ngIf="!isInfoQuestion">Question {{ questionNumber }} of {{ scoredTotal }}</ng-container>
             </p>
             <div class="h-1.5 rounded-full bg-slate-100 mb-4 overflow-hidden">
               <div class="h-full bg-emerald-400 transition-all duration-500"
-                [style.width.%]="((currentQuestionIndex + 1) / quizQuestions.length) * 100"></div>
+                [style.width.%]="(questionNumber / scoredTotal) * 100"></div>
             </div>
 
             <!-- Countdown (not shown on intro cards) -->

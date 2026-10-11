@@ -50,17 +50,19 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   imageLoaded = false;
   quizCompleted = false;
   totalCorrect = 0;
-  correctByPart: number[] = [0, 0];   // correct answers per part
+  correctByPart: number[] = [0, 0, 0];   // correct answers per part
   selectedOption: number | null = null;
 
   /* ---------------- SAVED PROGRESS ---------------- */
   // v2: the question list changed, so old saved positions are ignored
-  private readonly PROGRESS_KEY = 'trig-quiz-progress-v2';
+  private readonly PROGRESS_KEY = 'trig-quiz-progress-v3';
   showResumePrompt = false;
   savedProgress: { index: number; totalCorrect: number; correctByPart: number[] } | null = null;
 
   get savedQuestionNumber(): number {
-    return Math.min((this.savedProgress?.index ?? 0) + 1, this.quizQuestions.length);
+    const i = Math.min(this.savedProgress?.index ?? 0, this.quizQuestions.length - 1);
+    const n = this.quizQuestions.slice(0, i + 1).filter(q => q.type !== 'info').length;
+    return Math.max(n, 1);
   }
 
   get savedPartName(): string {
@@ -210,7 +212,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   /* ---------------- QUIZ CONTENT ---------------- */
 
   // The parts of "Introduction to Trigonometry"
-  parts: string[] = ['The parts of a triangle', 'Rules of a triangle'];
+  parts: string[] = ['The parts of a triangle', 'Types of triangles', 'Rules of a triangle'];
 
   /* ===== PART 1: THE PARTS OF A TRIANGLE ===== */
   private partOneQuestions: any[] = [
@@ -361,12 +363,118 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     },
   ];
 
-  /* ===== PART 2: RULES OF A TRIANGLE ===== */
+  /* ===== PART 2: TYPES OF TRIANGLES ===== */
   private partTwoQuestions: any[] = [
+    {
+      type: 'info',
+      text: 'Types of triangles',
+      pageLabel: 'Type',
+      rules: [
+        {
+          title: 'Equilateral',
+          text: 'All 3 sides are equal, so all 3 angles are equal too: 60° each.',
+          image: '/images/type-equilateral.svg',
+          fun: ''
+        },
+        {
+          title: 'Isosceles',
+          text: 'Exactly 2 sides are equal, and the 2 angles opposite them are equal.',
+          image: '/images/type-isosceles.svg',
+          fun: ''
+        },
+        {
+          title: 'Scalene',
+          text: 'All 3 sides are different lengths, and all 3 angles are different.',
+          image: '/images/type-scalene.svg',
+          fun: ''
+        },
+        {
+          title: 'Acute',
+          text: 'All 3 angles are less than 90°.',
+          image: '/images/type-acute.svg',
+          fun: ''
+        },
+        {
+          title: 'Right-angled',
+          text: 'One angle is exactly 90°. The side opposite it is the hypotenuse.',
+          image: '/images/type-right.svg',
+          fun: ''
+        },
+        {
+          title: 'Obtuse',
+          text: 'One angle is bigger than 90°. The other two must be small.',
+          image: '/images/type-obtuse.svg',
+          fun: ''
+        },
+      ]
+    },
+
+    {
+      type: 'mcq',
+      text: 'A triangle has sides of 5 cm, 5 cm and 8 cm. What type is it?',
+      image: '/images/p2-sides-5-5-8.svg',
+      options: ['Equilateral', 'Isosceles', 'Scalene', 'Right-angled'],
+      correct: 1,
+      explanation: 'Exactly two sides are equal, so it is isosceles.'
+    },
+    {
+      type: 'mcq',
+      text: 'A triangle has angles of 30°, 40° and 110°. What type is it?',
+      image: '/images/p2-angles-30-40-110.svg',
+      options: ['Acute', 'Right-angled', 'Obtuse', 'Equilateral'],
+      correct: 2,
+      explanation: '110° is bigger than 90°, so the triangle is obtuse.'
+    },
+    {
+      type: 'mcq',
+      text: 'One angle of a triangle is 90°. What do the other two angles add up to?',
+      image: '/images/p2-right-angle-others.svg',
+      options: ['45°', '90°', '120°', '180°'],
+      correct: 1,
+      explanation: '180° − 90° = 90°. The other two angles share the remaining 90°.'
+    },
+    {
+      type: 'mcq',
+      text: 'A triangle has three different side lengths. What type is it?',
+      options: ['Equilateral', 'Isosceles', 'Scalene', 'Acute'],
+      correct: 2,
+      explanation: 'A scalene triangle has no equal sides.'
+    },
+
+    /* ---------- EQUAL SIDES, EQUAL ANGLES ---------- */
+    {
+      type: 'calc',
+      time: 60,
+      text: 'An isosceles triangle has a top angle of 40°. What is each base angle? (in degrees)',
+      image: '/images/p2-isosceles-top.svg',
+      answer: 70
+    },
+    {
+      type: 'mcq',
+      text: 'A triangle has two angles of 50° each. What must be true?',
+      options: [
+        'It has two equal sides (it is isosceles)',
+        'It has three equal sides',
+        'All three sides are different',
+        'It must have a right angle'
+      ],
+      correct: 0,
+      explanation: 'Equal angles mean equal opposite sides. The third angle is 80°, so it is isosceles but not equilateral.'
+    },
+    {
+      type: 'mcq',
+      text: 'Each angle of an equilateral triangle is...',
+      options: ['30°', '45°', '60°', '90°'],
+      correct: 2,
+      explanation: `Three equal angles that add up to 180° gives ${frac('180°', '3')} = 60° each.`
+    },
+  ];
+  /* ===== PART 3: RULES OF A TRIANGLE ===== */
+  private partThreeQuestions: any[] = [
     /* ---------- LEARN: the rules (12 rule pages) ---------- */
     {
       type: 'info',
-      // text: 'Part 2: The rules of a triangle',
+      text: 'The rules of a triangle',
       rules: [
         {
           title: 'Angles',
@@ -403,30 +511,6 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
           text: 'The longest side is opposite the largest angle.',
           image: '/images/rule-longest.svg',
           fun: ''
-        },
-        {
-          title: 'Equal sides',
-          text: 'Two equal sides mean two equal angles. This is called an isosceles triangle.',
-          image: '/images/rule-isosceles.svg',
-          fun: '',
-          extra: {
-            title: 'Equilateral',
-            text: 'Three equal sides mean three equal angles, 60° each.',
-            image: '/images/rule-equilateral.svg',
-            fun: ''
-          }
-        },
-        {
-          title: 'Types of triangle',
-          text: 'Name a triangle by its sides: equilateral, isosceles or scalene.',
-          image: '/images/rule-types-sides.svg',
-          fun: '',
-          extra: {
-            title: 'Types by angle',
-            text: 'Name a triangle by its angles: acute, right or obtuse.',
-            image: '/images/rule-types-angles.svg',
-            fun: ''
-          }
         },
         {
           title: 'Pythagoras',
@@ -566,60 +650,6 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       explanation: 'The shortest side is opposite the smallest angle. The side opposite B is AC.'
     },
 
-    /* ---------- EQUAL SIDES, EQUAL ANGLES ---------- */
-    {
-      type: 'calc',
-      time: 60,
-      text: 'An isosceles triangle has a top angle of 40°. What is each base angle? (in degrees)',
-      image: '/images/p2-isosceles-top.svg',
-      answer: 70
-    },
-    {
-      type: 'mcq',
-      text: 'A triangle has two angles of 50° each. What must be true?',
-      options: [
-        'It has two equal sides (it is isosceles)',
-        'It has three equal sides',
-        'All three sides are different',
-        'It must have a right angle'
-      ],
-      correct: 0,
-      explanation: 'Equal angles mean equal opposite sides. The third angle is 80°, so it is isosceles but not equilateral.'
-    },
-    {
-      type: 'mcq',
-      text: 'Each angle of an equilateral triangle is...',
-      options: ['30°', '45°', '60°', '90°'],
-      correct: 2,
-      explanation: `Three equal angles that add up to 180° gives ${frac('180°', '3')} = 60° each.`
-    },
-
-    /* ---------- TYPES OF TRIANGLE ---------- */
-    {
-      type: 'mcq',
-      text: 'A triangle has sides of 5 cm, 5 cm and 8 cm. What type is it?',
-      image: '/images/p2-sides-5-5-8.svg',
-      options: ['Equilateral', 'Isosceles', 'Scalene', 'Right-angled'],
-      correct: 1,
-      explanation: 'Exactly two sides are equal, so it is isosceles.'
-    },
-    {
-      type: 'mcq',
-      text: 'A triangle has angles of 30°, 40° and 110°. What type is it?',
-      image: '/images/p2-angles-30-40-110.svg',
-      options: ['Acute', 'Right-angled', 'Obtuse', 'Equilateral'],
-      correct: 2,
-      explanation: '110° is bigger than 90°, so the triangle is obtuse.'
-    },
-    {
-      type: 'mcq',
-      text: 'One angle of a triangle is 90°. What do the other two angles add up to?',
-      image: '/images/p2-right-angle-others.svg',
-      options: ['45°', '90°', '120°', '180°'],
-      correct: 1,
-      explanation: '180° − 90° = 90°. The other two angles share the remaining 90°.'
-    },
-
     /* ---------- PYTHAGORAS ---------- */
     {
       type: 'mcq',
@@ -712,32 +742,16 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
     /* ---------- SOH CAH TOA ---------- */
     {
-      type: 'mcq',
-      text: 'In a right-angled triangle, sin θ is equal to...',
-      image: '/images/p2-soh-cah-toa-sides.svg',
-
-      options: [
-        frac('Opposite', 'Hypotenuse'),
-        frac('Adjacent', 'Hypotenuse'),
-        frac('Opposite', 'Adjacent'),
-        frac('Hypotenuse', 'Opposite')
-      ],
-      correct: 0,
-      xplanation: `SOH: Sine = ${frac('Opposite', 'Hypotenuse')}.`
-    },
-    {
-      type: 'mcq',
-      text: `Which letters of SOH CAH TOA give tan θ = ${frac('Opposite', 'Adjacent')}?`,
-      options: ['SOH', 'CAH', 'TOA', 'None of them'],
-      correct: 2,
-      explanation: `TOA: Tangent = ${frac('Opposite', 'Adjacent')}.`
-    },
-    {
-      type: 'calc',
-      time: 60,
-      text: 'In a right-angled triangle the opposite side is 3 and the hypotenuse is 5. What is sin θ? (as a decimal)',
-      image: '/images/p2-sin-3-5.svg',
-      answer: 0.6
+      title: 'Name the sides',
+      text: 'Stand at the angle θ. Opposite is across from θ, Adjacent is next to θ, and Hypotenuse is the longest side.',
+      image: '/images/rule-trig-sides.svg',
+      fun: '',
+      extra: {
+        title: 'SOH CAH TOA',
+        text: `sin θ = ${frac('O', 'H')}, cos θ = ${frac('A', 'H')}, tan θ = ${frac('O', 'A')}`,
+        image: '/images/rule-soh-cah-toa.svg',
+        fun: ''
+      }
     },
 
     /* ---------- CHALLENGE ---------- */
@@ -759,6 +773,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   quizQuestions: any[] = [
     ...this.partOneQuestions.map(q => ({ ...q, part: 0 })),
     ...this.partTwoQuestions.map(q => ({ ...q, part: 1 })),
+    ...this.partThreeQuestions.map(q => ({ ...q, part: 2 })),
   ];
 
   get isInfoQuestion(): boolean {
@@ -767,6 +782,13 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get isMcq(): boolean {
     return this.currentQuestion?.type === 'mcq';
+  }
+
+  // Number shown to the learner: only real questions are counted, intro cards are not
+  get questionNumber(): number {
+    return this.quizQuestions
+      .slice(0, this.currentQuestionIndex + 1)
+      .filter(q => q.type !== 'info').length;
   }
 
   /* ---------------- RULE PAGES (Part 2 intro) ---------------- */
@@ -793,7 +815,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get nextRuleLabel(): string {
     if (this.currentRule?.extra && !this.showExtra) return 'Next →';
-    return this.isLastRule ? 'Start the questions' : 'Next rule →';
+    const word = this.currentQuestion?.pageLabel === 'Type' ? 'type' : 'rule';
+    return this.isLastRule ? 'Start the questions' : `Next ${word} →`;
   }
 
   // true only on the Part 2 intro card that has the list of rules
@@ -849,6 +872,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.currentQuestionIndex === this.quizQuestions.length - 1) return 'Finish';
     const next = this.quizQuestions[this.currentQuestionIndex + 1];
     if (next && next.part !== this.currentQuestion?.part) return `Finish Part ${this.currentPartNumber}`;
+    if (this.isInfoQuestion) return 'Start the questions';
     return 'Next';
   }
 
@@ -877,7 +901,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     const p = this.partPercent;
     if (p >= 85) return 'Excellent work!';
     if (p >= 70) return "Great job, you're on track.";
-    if (p >= 50) return 'Good effort. Part 2 will build on this.';
+    if (p >= 50) return 'Good effort. The next part will build on this.';
     return 'Tricky one. Keep going, you can retry at the end.';
   }
 
@@ -1062,6 +1086,26 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   continueToNextPart() {
     this.showPartBreak = false;
     this.currentQuestionIndex++;
+    this.loadQuestion();
+  }
+
+  // Jump to the first question of a part (used by the Part 1 / 2 / 3 buttons)
+  goToPart(p: number) {
+    // Already working on this part: do nothing, so a stray tap can't wipe progress
+    if (p === this.currentPartNumber - 1 && !this.showPartBreak) return;
+
+    const index = this.quizQuestions.findIndex(q => q.part === p);
+    if (index === -1) return;
+
+    // Starting a part again clears the scores from that part onward,
+    // so answering those questions a second time is never counted twice
+    for (let i = p; i < this.parts.length; i++) {
+      this.totalCorrect -= this.correctByPart[i] ?? 0;
+      this.correctByPart[i] = 0;
+    }
+
+    this.showPartBreak = false;
+    this.currentQuestionIndex = index;
     this.loadQuestion();
   }
 
