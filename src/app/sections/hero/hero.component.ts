@@ -57,7 +57,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   // v2: the question list changed, so old saved positions are ignored
   private readonly PROGRESS_KEY = 'trig-quiz-progress-v3';
   showResumePrompt = false;
-  savedProgress: { index: number; totalCorrect: number; correctByPart: number[] } | null = null;
+savedProgress: { index: number; totalCorrect: number; correctByPart: number[]; seed: number } | null = null;
 
   get savedQuestionNumber(): number {
     const i = Math.min(this.savedProgress?.index ?? 0, this.quizQuestions.length - 1);
@@ -76,7 +76,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       localStorage.setItem(this.PROGRESS_KEY, JSON.stringify({
         index,
         totalCorrect: this.totalCorrect,
-        correctByPart: this.correctByPart
+              correctByPart: this.correctByPart,
+        seed: this.seed
       }));
     } catch { /* storage blocked: quiz still works, just can't resume */ }
   }
@@ -88,7 +89,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       const p = JSON.parse(raw);
       const valid =
         Number.isInteger(p.index) && p.index > 0 && p.index <= this.quizQuestions.length &&
-        Number.isFinite(p.totalCorrect) &&
+        Number.isFinite(p.totalCorrect) && Number.isInteger(p.seed) &&
         Array.isArray(p.correctByPart) && p.correctByPart.length === this.parts.length;
       return valid ? p : null;
     } catch { return null; }
@@ -774,11 +775,63 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   // All questions in order, each tagged with its part (0 = Part 1, 1 = Part 2)
-  quizQuestions: any[] = [
+  private baseQuestions: any[] = [
     ...this.partOneQuestions.map(q => ({ ...q, part: 0 })),
     ...this.partTwoQuestions.map(q => ({ ...q, part: 1 })),
     ...this.partThreeQuestions.map(q => ({ ...q, part: 2 })),
   ];
+
+  // The list the quiz actually uses (shuffled when a quiz starts or resumes)
+  quizQuestions: any[] = [...this.baseQuestions];
+  private seed = 0;
+
+  private rng(seed: number) {
+    return () => {
+      seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+      let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  private shuffle<T>(arr: T[], rand: () => number): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // Same seed = same order, so a resumed quiz matches the one that was started
+  private buildQuestions(seed: number) {
+    const rand = this.rng(seed);
+    const result: any[] = [];
+
+    // Shuffle the options of one multiple-choice question and fix the correct index
+    const mix = (q: any) => {
+      if (q.type !== 'mcq') return q;
+       const opts = this.shuffle<{ text: string; ok: boolean }>(
+        q.options.map((text: string, i: number) => ({ text, ok: i === q.correct })),
+        rand
+      );
+      return { ...q, options: opts.map(o => o.text), correct: opts.findIndex(o => o.ok) };
+    };
+
+    for (let p = 0; p < this.parts.length; p++) {
+      let segment: any[] = [];
+      const flush = () => {
+        result.push(...this.shuffle(segment, rand).map(mix));
+        segment = [];
+      };
+      for (const q of this.baseQuestions.filter(x => x.part === p)) {
+        if (q.type === 'info') { flush(); result.push(q); }
+        else segment.push(q);
+      }
+      flush();
+    }
+    this.quizQuestions = result;
+  }
 
   get isInfoQuestion(): boolean {
     return this.currentQuestion?.type === 'info';
@@ -990,6 +1043,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.currentQuestionIndex = 0;
     this.totalCorrect = 0;
     this.correctByPart = this.parts.map(() => 0);
+    this.seed = Math.floor(Math.random() * 2147483647);
+    this.buildQuestions(this.seed);
     this.loadQuestion();
     this.showQuiz = true;
     this.stopTimer();
@@ -1011,6 +1066,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
+    this.seed = s.seed;
+    this.buildQuestions(this.seed);
     this.currentQuestionIndex = s.index;
     this.loadQuestion();
     this.showQuiz = true;
