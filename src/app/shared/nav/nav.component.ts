@@ -50,7 +50,7 @@ export class NavComponent implements OnInit {
   showBar = false;
 
   // Set to true when registrations reopen
-  registrationsOpen = false;
+  registrationsOpen = true;
 
   // Join form fields
   learnerFirstName = '';
@@ -163,10 +163,15 @@ export class NavComponent implements OnInit {
     };
 
     this.learnerApiService.addLearner(learnerData).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.isSubmitting = false;
-        this.signupDone = true;   // popup switches to the success panel
 
+        if (!res?.success) {
+          this.signupError = res?.message || 'We could not sign you up. Please try again.';
+          return;
+        }
+
+        this.signupDone = true;
         this.learnerFirstName = '';
         this.learnerSurname = '';
         this.grade = '';
@@ -174,7 +179,6 @@ export class NavComponent implements OnInit {
         this.schoolName = '';
         this.parentFullName = '';
         this.parentCell = '';
-
         this.loadLearners();
       },
       error: (err) => {

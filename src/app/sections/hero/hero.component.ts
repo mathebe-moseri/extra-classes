@@ -159,7 +159,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // Set to true when the database is back and registrations reopen
-  registrationsOpen = false;
+  registrationsOpen = true;
   showClosedNotice = false;
 
   openJoin() {

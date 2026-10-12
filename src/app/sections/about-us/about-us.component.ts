@@ -10,6 +10,8 @@ import { CommonModule } from '@angular/common';
 })
 export class AboutUSComponent implements AfterViewInit {
 
+  registrationsOpen = true;
+
   constructor(private el: ElementRef) { }
 
   ngAfterViewInit(): void {
@@ -38,4 +40,6 @@ export class AboutUSComponent implements AfterViewInit {
 
     elements.forEach((el: HTMLElement) => observer.observe(el));
   }
+
+
 }
