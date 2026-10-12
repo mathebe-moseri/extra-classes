@@ -406,14 +406,14 @@
                 <span [innerHTML]="opt"></span>
 
                 <!-- Tick if the selected answer is correct -->
-                <svg *ngIf="answered && i === selectedOption && isCorrect" class="w-6 h-6 flex-none text-emerald-600"
+                <svg *ngIf="revealed && i === selectedOption && isCorrect" class="w-6 h-6 flex-none text-emerald-600"
                   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
                   stroke-linejoin="round" aria-label="Correct answer">
                   <path d="M20 6L9 17l-5-5" />
                 </svg>
 
                 <!-- X if the selected answer is wrong -->
-                <svg *ngIf="answered && i === selectedOption && !isCorrect" class="w-6 h-6 flex-none text-red-600"
+                <svg *ngIf="revealed && i === selectedOption && !isCorrect" class="w-6 h-6 flex-none text-red-600"
                   viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
                   stroke-linejoin="round" aria-label="Wrong answer">
                   <path d="M18 6L6 18M6 6l12 12" />
@@ -434,7 +434,7 @@
               [innerHTML]="feedback"></p>
 
             <!-- Small "Check answer" link (enabled by admin) -->
-            <div *ngIf="!isInfoQuestion" class="flex justify-end mb-2">
+<div *ngIf="!isInfoQuestion && answersEnabled" class="flex justify-end mb-2">
               <button type="button" (click)="revealAnswer()" [disabled]="!answersEnabled || !answered || revealed"
                 class="inline-flex items-center gap-1 px-2 py-1.5 rounded-full text-xs font-semibold text-sky-700 hover:bg-sky-50 disabled:opacity-40 disabled:cursor-not-allowed">
                 <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"

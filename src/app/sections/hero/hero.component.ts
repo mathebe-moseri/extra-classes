@@ -145,7 +145,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.answered) return;
     this.answered = true;
     this.isCorrect = false;
-    this.feedback = "⏰ Time's up! This question is marked wrong. Tap Next to carry on.";
+  this.feedback = "⏰ Time's up! Tap Next to carry on.";
     this.saveProgress(this.currentQuestionIndex + 1);
   }
 
