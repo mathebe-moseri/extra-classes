@@ -186,7 +186,26 @@
       <button type="button" class="sheet-close" (click)="closeLoginForm()" aria-label="Close">&times;</button>
     </div>
 
-    <form (ngSubmit)="submitLogin()" class="flex flex-col gap-3">
+    <form *ngIf="showChangePassword" (ngSubmit)="submitNewPassword()" class="flex flex-col gap-3">
+      <p class="note">Choose your own password to continue. Use at least 8 characters.</p>
+      <div>
+        <label class="field-label" for="n-pass">New password</label>
+        <input id="n-pass" name="newPassword" [(ngModel)]="newPassword" required type="password"
+          autocomplete="new-password" class="field">
+      </div>
+      <div>
+        <label class="field-label" for="n-pass2">Repeat new password</label>
+        <input id="n-pass2" name="confirmPassword" [(ngModel)]="confirmPassword" required type="password"
+          autocomplete="new-password" class="field">
+      </div>
+      <p *ngIf="changeError" class="msg-error" role="alert">{{ changeError }}</p>
+      <button type="submit" [disabled]="!newPassword || !confirmPassword || changeBusy"
+        class="btn btn-navy w-full mt-1">
+        {{ changeBusy ? 'Saving…' : 'Save password' }}
+      </button>
+    </form>
+
+    <form *ngIf="!showChangePassword" (ngSubmit)="submitLogin()" class="flex flex-col gap-3">
       <div>
         <label class="field-label" for="l-email">Email</label>
         <input id="l-email" name="loginEmail" [(ngModel)]="loginEmail" required type="email" inputmode="email"
@@ -200,13 +219,40 @@
 
       <p *ngIf="loginNotice" class="note" role="status">{{ loginNotice }}</p>
 
-      <button type="submit" [disabled]="!loginEmail || !loginPassword" class="btn btn-navy w-full mt-1">Log in</button>
+      <button type="submit" [disabled]="!loginEmail || !loginPassword || loginBusy" class="btn btn-navy w-full mt-1">{{
+        loginBusy ? 'Logging in…' : 'Log in' }}</button>
     </form>
 
     <p class="text-center text-sm mt-4">
       New here?
       <button type="button" class="font-bold underline" (click)="closeLoginForm(); toggleMobileMenu()">Sign up</button>
     </p>
+  </div>
+</div>
+
+<!-- ============ DASHBOARD ============ -->
+<div *ngIf="showDashboard" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="dash-title">
+  <div class="modal-backdrop" (click)="closeDashboard()"></div>
+  <div class="sheet">
+    <div class="sheet-head">
+      <h3 id="dash-title">{{ profile ? 'Welcome, ' + profile.firstName : 'Your dashboard' }}</h3>
+      <button type="button" class="sheet-close" (click)="closeDashboard()" aria-label="Close">&times;</button>
+    </div>
+
+    <p *ngIf="dashLoading" class="note" aria-live="polite">Loading…</p>
+    <p *ngIf="dashError" class="msg-error" role="alert">{{ dashError }}</p>
+
+    <div *ngIf="profile" class="mb-4 text-sm">
+      <div class="flex justify-between gap-3 py-2 border-b border-slate-100"><span>Name</span><strong>{{
+          profile.firstName }} {{ profile.surname }}</strong></div>
+      <div class="flex justify-between gap-3 py-2 border-b border-slate-100"><span>Grade</span><strong>{{ profile.grade
+          }}</strong></div>
+      <div class="flex justify-between gap-3 py-2 border-b border-slate-100"><span>School</span><strong>{{
+          profile.school }}</strong></div>
+      <div class="flex justify-between gap-3 py-2"><span>Email</span><strong>{{ profile.email }}</strong></div>
+    </div>
+
+    <button type="button" class="btn btn-soft w-full" (click)="logOut()">Log out</button>
   </div>
 </div>
 

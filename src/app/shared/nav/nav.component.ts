@@ -5,13 +5,14 @@ import { LearnerAPiService } from '../../learner-api.service';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { JoinFormService } from '../../join-form.service';
+import { AuthService, LearnerProfile } from '../../auth.service';
 import { smoothScrollToId, smoothScrollToY } from '../smooth-scroll';
 
 @Component({
   selector: 'app-nav',
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
-  providers: [LearnerAPiService],
+  providers: [LearnerAPiService, AuthService],
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.css']
 })
@@ -76,8 +77,9 @@ export class NavComponent implements OnInit {
   constructor(
     private learnerApiService: LearnerAPiService,
     private http: HttpClient,
-    private joinForm: JoinFormService
-  ) { }   // (removed: document.body.style.backgroundColor = 'white')
+    private joinForm: JoinFormService,
+    private auth: AuthService
+  ) { }  // (removed: document.body.style.backgroundColor = 'white')
 
   ngOnInit() {
     // Hero "Sign up" button -> open the join form
@@ -103,9 +105,7 @@ export class NavComponent implements OnInit {
     });
 
     // Hero "Log in" button -> open the login form
-    this.joinForm.loginRequested$.subscribe(() => {
-      this.isLoginFormOpen = true;
-    });
+    this.joinForm.loginRequested$.subscribe(() => this.openLoginForm());
 
     // this.learnerApiService.getLearnerInfo()
     //   .pipe(tap(data => { this.joinedLearners = data; }))
@@ -199,13 +199,103 @@ export class NavComponent implements OnInit {
   loadLearners() { }
 
   /* ---------------- Login form ---------------- */
-  openLoginForm() { this.loginNotice = ''; this.isLoginFormOpen = true; }
-  closeLoginForm() { this.isLoginFormOpen = false; this.loginNotice = ''; }
+  openLoginForm() {
+    if (this.auth.isLoggedIn()) { this.openDashboard(); return; }
+    this.loginNotice = '';
+    this.isLoginFormOpen = true;
+  }
+  closeLoginForm() { this.isLoginFormOpen = false; this.loginNotice = ''; this.showChangePassword = false; this.changeError = ''; }
+
+  loginBusy = false;
+  showChangePassword = false;
+  newPassword = '';
+  confirmPassword = '';
+  changeError = '';
+  changeBusy = false;
+
+  showDashboard = false;
+  profile: LearnerProfile | null = null;
+  dashError = '';
+  dashLoading = false;
+
+  openDashboard() {
+    this.showDashboard = true;
+    this.dashError = '';
+    this.dashLoading = true;
+    this.auth.me().subscribe({
+      next: p => { this.profile = p; this.dashLoading = false; },
+      error: err => {
+        this.dashLoading = false;
+        if (err?.status === 401) {
+          this.auth.logout();
+          this.showDashboard = false;
+          this.isLoginFormOpen = true;
+          this.loginNotice = 'Your session has ended. Please log in again.';
+        } else {
+          this.dashError = 'We could not load your dashboard. Please try again.';
+        }
+      }
+    });
+  }
+
+  closeDashboard() { this.showDashboard = false; }
+
+  logOut() {
+    this.auth.logout();
+    this.profile = null;
+    this.showDashboard = false;
+  }
+
+  submitNewPassword() {
+    this.changeError = '';
+    if (this.newPassword.length < 8) {
+      this.changeError = 'Your password must be at least 8 characters.';
+      return;
+    }
+    if (this.newPassword !== this.confirmPassword) {
+      this.changeError = 'The two passwords do not match.';
+      return;
+    }
+    this.changeBusy = true;
+    this.auth.changePassword(this.newPassword).subscribe({
+      next: () => {
+        this.changeBusy = false;
+        this.newPassword = '';
+        this.confirmPassword = '';
+        this.showChangePassword = false;
+        this.closeLoginForm();
+        this.openDashboard();
+      },
+      error: () => {
+        this.changeBusy = false;
+        this.changeError = 'We could not save your password. Please try again.';
+      }
+    });
+  }
 
   submitLogin() {
-    // Login is not connected yet. Replace this message when the real login is added.
-    this.loginPassword = '';
-    this.loginNotice = 'Log in is not available on this page yet.';
+    if (this.loginBusy) return;
+    this.loginNotice = '';
+    this.loginBusy = true;
+
+    this.auth.login(this.loginEmail.trim(), this.loginPassword).subscribe({
+      next: (res: any) => {
+        this.loginBusy = false;
+        this.loginPassword = '';
+        if (res?.mustChangePassword) {
+          this.loginNotice = '';
+          this.showChangePassword = true;
+        } else {
+          this.closeLoginForm();
+          this.openDashboard();
+        }
+      },
+      error: (err) => {
+        this.loginBusy = false;
+        this.loginPassword = '';
+        this.loginNotice = err?.error?.message || 'We could not log you in. Check your connection and try again.';
+      }
+    });
   }
 
   /* ---------------- Contact form ---------------- */
