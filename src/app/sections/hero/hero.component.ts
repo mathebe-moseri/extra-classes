@@ -57,7 +57,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   // v2: the question list changed, so old saved positions are ignored
   private readonly PROGRESS_KEY = 'trig-quiz-progress-v3';
   showResumePrompt = false;
-savedProgress: { index: number; totalCorrect: number; correctByPart: number[]; seed: number } | null = null;
+  savedProgress: { index: number; totalCorrect: number; correctByPart: number[]; seed: number } | null = null;
 
   get savedQuestionNumber(): number {
     const i = Math.min(this.savedProgress?.index ?? 0, this.quizQuestions.length - 1);
@@ -76,7 +76,7 @@ savedProgress: { index: number; totalCorrect: number; correctByPart: number[]; s
       localStorage.setItem(this.PROGRESS_KEY, JSON.stringify({
         index,
         totalCorrect: this.totalCorrect,
-              correctByPart: this.correctByPart,
+        correctByPart: this.correctByPart,
         seed: this.seed
       }));
     } catch { /* storage blocked: quiz still works, just can't resume */ }
@@ -146,7 +146,7 @@ savedProgress: { index: number; totalCorrect: number; correctByPart: number[]; s
     if (this.answered) return;
     this.answered = true;
     this.isCorrect = false;
-  this.feedback = "⏰ Time's up! Tap Next to carry on.";
+    this.feedback = "⏰ Time's up! Tap Next to carry on.";
     this.saveProgress(this.currentQuestionIndex + 1);
   }
 
@@ -811,7 +811,7 @@ savedProgress: { index: number; totalCorrect: number; correctByPart: number[]; s
     // Shuffle the options of one multiple-choice question and fix the correct index
     const mix = (q: any) => {
       if (q.type !== 'mcq') return q;
-       const opts = this.shuffle<{ text: string; ok: boolean }>(
+      const opts = this.shuffle<{ text: string; ok: boolean }>(
         q.options.map((text: string, i: number) => ({ text, ok: i === q.correct })),
         rand
       );

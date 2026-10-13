@@ -1,0 +1,33 @@
+<div class="min-h-screen bg-slate-50">
+  <header class="bg-[#1e3a8a] text-white px-4 h-14 flex items-center justify-between">
+    <button type="button" (click)="goHome()" class="font-semibold text-left">SM Remote Extra Classes</button>
+    <button type="button" (click)="logOut()" class="text-sm font-semibold underline">Log out</button>
+  </header>
+
+  <main class="max-w-3xl mx-auto p-4 md:p-8">
+    <p *ngIf="loading" class="text-slate-500">Loading…</p>
+    <p *ngIf="error" class="text-red-600" role="alert">{{ error }}</p>
+
+    <ng-container *ngIf="profile">
+      <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-1">Welcome, {{ profile.firstName }}</h1>
+      <p class="text-slate-500 mb-6">Grade {{ profile.grade }} · {{ profile.school }}</p>
+
+      <section class="bg-white rounded-2xl shadow p-5 mb-4">
+        <h2 class="font-bold text-slate-900 mb-3">Your details</h2>
+        <div class="flex justify-between gap-3 py-2 border-b border-slate-100 text-sm"><span>Name</span><strong>{{
+            profile.firstName }} {{ profile.surname }}</strong></div>
+        <div class="flex justify-between gap-3 py-2 border-b border-slate-100 text-sm"><span>Grade</span><strong>{{
+            profile.grade }}</strong></div>
+        <div class="flex justify-between gap-3 py-2 border-b border-slate-100 text-sm"><span>School</span><strong>{{
+            profile.school }}</strong></div>
+        <div class="flex justify-between gap-3 py-2 text-sm"><span>Email</span><strong>{{ profile.email }}</strong>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-2xl shadow p-5">
+        <h2 class="font-bold text-slate-900 mb-2">Your lessons</h2>
+        <p class="text-slate-500 text-sm">Video lessons, exercises and worked solutions will appear here.</p>
+      </section>
+    </ng-container>
+  </main>
+</div>

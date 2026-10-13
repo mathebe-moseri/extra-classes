@@ -7,6 +7,7 @@ import { tap } from 'rxjs/operators';
 import { JoinFormService } from '../../join-form.service';
 import { AuthService, LearnerProfile } from '../../auth.service';
 import { smoothScrollToId, smoothScrollToY } from '../smooth-scroll';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav',
@@ -78,8 +79,9 @@ export class NavComponent implements OnInit {
     private learnerApiService: LearnerAPiService,
     private http: HttpClient,
     private joinForm: JoinFormService,
-    private auth: AuthService
-  ) { }  // (removed: document.body.style.backgroundColor = 'white')
+    private auth: AuthService,
+    private router: Router
+  ) { }// (removed: document.body.style.backgroundColor = 'white')
 
   ngOnInit() {
     // Hero "Sign up" button -> open the join form
@@ -219,23 +221,7 @@ export class NavComponent implements OnInit {
   dashLoading = false;
 
   openDashboard() {
-    this.showDashboard = true;
-    this.dashError = '';
-    this.dashLoading = true;
-    this.auth.me().subscribe({
-      next: p => { this.profile = p; this.dashLoading = false; },
-      error: err => {
-        this.dashLoading = false;
-        if (err?.status === 401) {
-          this.auth.logout();
-          this.showDashboard = false;
-          this.isLoginFormOpen = true;
-          this.loginNotice = 'Your session has ended. Please log in again.';
-        } else {
-          this.dashError = 'We could not load your dashboard. Please try again.';
-        }
-      }
-    });
+    this.router.navigate(['/dashboard']);
   }
 
   closeDashboard() { this.showDashboard = false; }
