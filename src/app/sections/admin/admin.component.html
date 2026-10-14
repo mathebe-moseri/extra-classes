@@ -1,0 +1,60 @@
+<div class="min-h-screen bg-slate-50 p-4 md:p-8">
+  <div class="max-w-4xl mx-auto">
+
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-xl md:text-2xl font-bold text-slate-900">Admin: learner documents</h1>
+      <button *ngIf="unlocked" type="button" (click)="lock()" class="text-sm font-semibold underline">Lock</button>
+    </div>
+
+    <!-- Unlock -->
+    <form *ngIf="!unlocked" (ngSubmit)="unlock()" class="bg-white rounded-2xl shadow p-5 max-w-sm">
+      <label class="block text-sm font-semibold mb-1" for="ak">Admin key</label>
+      <input id="ak" name="adminKey" type="password" [(ngModel)]="keyInput" autocomplete="off"
+        class="w-full border border-slate-300 rounded-lg p-2 mb-3">
+      <p *ngIf="error" class="text-red-600 text-sm mb-3" role="alert">{{ error }}</p>
+      <button type="submit" [disabled]="!keyInput || busy"
+        class="w-full bg-[#1e3a8a] text-white rounded-lg py-2 font-semibold disabled:opacity-60">
+        {{ busy ? 'Checking…' : 'Unlock' }}
+      </button>
+    </form>
+
+    <!-- Learners -->
+    <ng-container *ngIf="unlocked">
+      <p *ngIf="notice" class="bg-emerald-50 text-emerald-800 rounded-lg p-3 mb-3 text-sm" role="status">{{ notice }}</p>
+      <p *ngIf="error" class="bg-red-50 text-red-700 rounded-lg p-3 mb-3 text-sm" role="alert">{{ error }}</p>
+
+      <input type="search" [(ngModel)]="search" name="search" placeholder="Search by name, email or school"
+        class="w-full border border-slate-300 rounded-lg p-2 mb-4 bg-white">
+
+      <div *ngFor="let l of filtered" class="bg-white rounded-2xl shadow p-4 mb-3">
+        <div class="flex items-start justify-between gap-3 mb-1">
+          <div>
+            <p class="font-bold text-slate-900">{{ l.learnerFirstName }} {{ l.learnerSurname }}</p>
+            <p class="text-sm text-slate-500">Grade {{ l.grade }} · {{ l.schoolName }}</p>
+          </div>
+          <span class="shrink-0 px-3 py-1 rounded-full text-xs font-bold"
+            [ngClass]="l.accessActivated ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'">
+            {{ l.accessActivated ? 'Active' : 'Waiting' }}
+          </span>
+        </div>
+        <p class="text-sm text-slate-600">{{ l.email }}</p>
+        <p class="text-sm text-slate-600 mb-3">Parent: {{ l.parentFullName }} · {{ l.parentCell }}</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <ng-container *ngFor="let d of docs">
+            <div *ngIf="isDone(l, d.id)"
+              class="rounded-lg bg-emerald-50 text-emerald-700 text-sm font-semibold text-center py-2">
+              ✓ {{ d.label }}
+            </div>
+            <button *ngIf="!isDone(l, d.id)" type="button" (click)="mark(l, d.id)" [disabled]="busy"
+              class="rounded-lg border border-slate-300 text-slate-700 text-sm font-semibold py-2 hover:bg-slate-100 disabled:opacity-60">
+              Mark {{ d.label.toLowerCase() }} verified
+            </button>
+          </ng-container>
+        </div>
+      </div>
+
+      <p *ngIf="!filtered.length" class="text-slate-500 text-sm">No learners found.</p>
+    </ng-container>
+  </div>
+</div>
