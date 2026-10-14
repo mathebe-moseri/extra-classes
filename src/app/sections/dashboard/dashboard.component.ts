@@ -16,6 +16,8 @@ export class DashboardComponent implements OnInit {
   profile: LearnerProfile | null = null;
   loading = true;
   error = '';
+  attempts: any[] = [];
+  showAll = false;
 
   constructor(private auth: AuthService, private router: Router) { }
 
@@ -24,6 +26,7 @@ export class DashboardComponent implements OnInit {
       this.router.navigate(['/']);
       return;
     }
+    this.loadAttempts();
     this.auth.me().subscribe({
       next: p => { this.profile = p; this.loading = false; },
       error: err => {
@@ -36,6 +39,26 @@ export class DashboardComponent implements OnInit {
         }
       }
     });
+  }
+
+  private loadAttempts() {
+    this.auth.myAttempts().subscribe({
+      next: list => {
+        this.attempts = list.map(a => {
+          let d: any = {};
+          try { d = JSON.parse(a.details || '{}'); } catch { }
+          const answers: any[] = d.answers ?? [];
+          return { ...a, byPart: d.byPart ?? [], answers, wrong: answers.filter(x => !x.ok) };
+        });
+      },
+      error: () => { this.attempts = []; }
+    });
+  }
+
+  get latest() { return this.attempts[this.attempts.length - 1] ?? null; }
+  get best(): number { return Math.max(0, ...this.attempts.map(a => a.percent)); }
+  get weakParts() {
+    return (this.latest?.byPart ?? []).filter((p: any) => p.total && p.correct / p.total < 0.7);
   }
 
   logOut() {

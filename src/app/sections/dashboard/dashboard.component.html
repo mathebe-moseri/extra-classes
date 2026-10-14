@@ -24,6 +24,62 @@
         </div>
       </section>
 
+      <section class="bg-white rounded-2xl shadow p-5 mb-4">
+        <h2 class="font-bold text-slate-900 mb-3">Your progress</h2>
+        <p *ngIf="!attempts.length" class="text-slate-500 text-sm">
+          Finish the Introduction to Trigonometry quiz and your results will show here.
+        </p>
+
+        <ng-container *ngIf="latest">
+          <div class="grid grid-cols-3 gap-3 text-center mb-4">
+            <div class="p-3 rounded-xl bg-slate-50">
+              <p class="text-2xl font-extrabold">{{ latest.percent }}%</p>
+              <p class="text-xs text-slate-500">Latest</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50">
+              <p class="text-2xl font-extrabold">{{ best }}%</p>
+              <p class="text-xs text-slate-500">Best</p>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50">
+              <p class="text-2xl font-extrabold">{{ attempts.length }}</p>
+              <p class="text-xs text-slate-500">Attempts</p>
+            </div>
+          </div>
+
+          <div *ngFor="let p of latest.byPart"
+            class="flex justify-between gap-3 py-2 border-b border-slate-100 text-sm">
+            <span>{{ p.name }}</span><strong>{{ p.correct }}/{{ p.total }}</strong>
+          </div>
+
+          <div *ngIf="weakParts.length" class="mt-4 p-3 rounded-xl bg-amber-50 text-sm text-amber-900">
+            <strong>To improve: </strong>
+            <span *ngFor="let p of weakParts; let last = last">{{ p.name }}{{ last ? '' : ', ' }}</span>
+          </div>
+
+          <button type="button" (click)="showAll = !showAll"
+            class="mt-4 w-full px-4 py-2 rounded-xl bg-slate-100 text-sm font-semibold text-slate-800">
+            {{ showAll ? 'Hide answers' : 'Review all answers from last attempt' }}
+          </button>
+          <div *ngIf="showAll" class="grid gap-2 mt-3">
+            <div *ngFor="let a of latest.answers; let i = index" class="p-3 rounded-xl text-sm"
+              [ngClass]="a.ok ? 'bg-emerald-50' : 'bg-red-50'">
+              <p class="font-bold text-slate-900 mb-1">{{ i + 1 }}. <span [innerHTML]="a.text"></span></p>
+              <p>Your answer: <strong [innerHTML]="a.given"></strong> {{ a.ok ? '✓' : '✗' }}</p>
+              <p *ngIf="!a.ok">Correct answer: <strong [innerHTML]="a.correct"></strong></p>
+              <p *ngIf="a.explanation" class="text-slate-600 mt-1" [innerHTML]="a.explanation"></p>
+            </div>
+          </div>
+
+          <div *ngIf="latest.wrong.length" class="mt-4">
+            <h3 class="font-bold text-sm text-slate-900 mb-2">Questions you got wrong last time</h3>
+            <div *ngFor="let w of latest.wrong" class="p-3 rounded-xl bg-red-50 mb-2 text-sm">
+              <p class="font-semibold" [innerHTML]="w.text"></p>
+              <p>Answer: <strong [innerHTML]="w.correct"></strong></p>
+            </div>
+          </div>
+        </ng-container>
+      </section>
+
       <section class="bg-white rounded-2xl shadow p-5">
         <h2 class="font-bold text-slate-900 mb-2">Your lessons</h2>
         <p class="text-slate-500 text-sm">Video lessons, exercises and worked solutions will appear here.</p>

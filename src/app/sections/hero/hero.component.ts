@@ -5,6 +5,8 @@ import { JoinFormService } from '../../join-form.service';
 import { RevealDirective } from '../../shared/reveal.directive';
 import { smoothScrollToId } from '../../shared/smooth-scroll';
 import { NumberPatternsComponent } from '../topics/number-patterns/number-patterns.component';
+import { HttpClientModule } from '@angular/common/http';
+import { AuthService } from '../../auth.service';
 // Stacked fraction: frac('O', 'H') shows O over H with a fraction bar
 const frac = (top: string, bottom: string) =>
   `<span class="frac"><span>${top}</span><span>${bottom}</span></span>`;
@@ -12,7 +14,8 @@ const frac = (top: string, bottom: string) =>
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, FormsModule, RevealDirective, NumberPatternsComponent],
+  imports: [CommonModule, FormsModule, RevealDirective, NumberPatternsComponent, HttpClientModule],
+  providers: [AuthService],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css']
 })
@@ -45,7 +48,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   feedback = '';
   isCorrect = false;
   answered = false;            // true once the learner has checked an answer
-  answersEnabled = false;      // admin switch: false = answers stay hidden and Check answer is disabled
+  get answersEnabled(): boolean { return this.auth.isLoggedIn(); }   // logged-in learners can see answers
   revealed = false;            // true once the learner has used Check answer on this question
   imageLoaded = false;
   quizCompleted = false;
@@ -147,6 +150,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.answered = true;
     this.isCorrect = false;
     this.feedback = "⏰ Time's up! Tap Next to carry on.";
+    this.logAnswer('No answer (time ran out)');
     this.saveProgress(this.currentQuestionIndex + 1);
   }
 
@@ -169,7 +173,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.openQuiz();           // trigonometry: your existing quiz
   }
 
-  constructor(private joinForm: JoinFormService) { }
+  constructor(private joinForm: JoinFormService, private auth: AuthService) { }
 
   ngOnInit() {
     // Hamburger menu "Testimonials" -> open the testimonials popup
@@ -1061,8 +1065,9 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.currentQuestionIndex = 0;
     this.totalCorrect = 0;
     this.correctByPart = this.parts.map(() => 0);
-    this.seed = Math.floor(Math.random() * 2147483647);
-    this.buildQuestions(this.seed);
+    this.answerLog = [];
+    this.showReview = false;
+    this.seed = Math.floor(Math.random() * 2147483647); this.buildQuestions(this.seed);
     this.loadQuestion();
     this.showQuiz = true;
     this.stopTimer();
@@ -1121,6 +1126,41 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.saveProgress(this.currentQuestionIndex);
   }
 
+  /* ---------------- REVIEW AND HISTORY (logged-in learners) ---------------- */
+  answerLog: { part: number; text: string; given: string; correct: string; ok: boolean; explanation: string }[] = [];
+  showReview = false;
+  private readonly HISTORY_KEY = 'trig-quiz-history-v1';
+
+  private logAnswer(given: string) {
+    const q = this.currentQuestion;
+    this.answerLog.push({
+      part: q.part,
+      text: q.text,
+      given,
+      correct: q.type === 'mcq' ? q.options[q.correct] : String(q.answer),
+      ok: this.isCorrect,
+      explanation: q.explanation ?? ''
+    });
+  }
+
+  private saveAttempt() {
+    if (!this.auth.isLoggedIn()) return;
+    this.auth.saveAttempt({
+      quiz: 'Introduction to Trigonometry',
+      correct: this.totalCorrect,
+      total: this.scoredTotal,
+      details: JSON.stringify({
+        byPart: this.partStats.map(p => ({ name: p.name, correct: p.correct, total: p.total })),
+        answers: this.answerLog
+      })
+    }).subscribe({ error: () => { /* save failed: the quiz still works */ } });
+  }
+
+  // parts below the pass mark, shown as "Work on"
+  get weakParts() {
+    return this.partStats.filter(p => p.total && (p.correct / p.total) * 100 < this.passMark);
+  }
+
   // one place to count a correct answer, overall and for its part
   private markCorrect() {
     this.isCorrect = true;
@@ -1139,6 +1179,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.isCorrect = false;
     }
+    this.logAnswer(String(this.userAnswer));
 
     this.saveProgress(this.currentQuestionIndex + 1);
   }
@@ -1156,6 +1197,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.stopTimer();
       this.clearProgress();
+      this.saveAttempt();
       this.quizCompleted = true;
       this.showQuiz = false;
       this.showQuizCompletedPopup = true;
@@ -1184,6 +1226,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.showPartBreak = false;
+    this.answerLog = this.answerLog.filter(a => a.part < p);
     this.currentQuestionIndex = index;
     this.loadQuestion();
   }
@@ -1220,6 +1263,9 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.isCorrect = false;
     }
+    this.logAnswer(this.currentQuestion.options[i]);
+    this.logAnswer(this.currentQuestion.options[i]);
+    this.logAnswer(this.currentQuestion.options[i]);
 
     this.saveProgress(this.currentQuestionIndex + 1);
   }

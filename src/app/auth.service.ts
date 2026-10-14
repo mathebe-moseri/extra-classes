@@ -28,6 +28,14 @@ export class AuthService {
     return this.http.get<LearnerProfile>(`${this.baseUrl}/me`, { headers: this.authHeaders() });
   }
 
+  saveAttempt(attempt: { quiz: string; correct: number; total: number; details: string }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/quiz_attempts`, attempt, { headers: this.authHeaders() });
+  }
+
+  myAttempts(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/quiz_attempts`, { headers: this.authHeaders() });
+  }
+
   changePassword(newPassword: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/change_password`, { newPassword }, { headers: this.authHeaders() });
   }
