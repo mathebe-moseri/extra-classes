@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { JoinFormService } from '../../join-form.service';
 import { RevealDirective } from '../../shared/reveal.directive';
 import { smoothScrollToId } from '../../shared/smooth-scroll';
-
+import { NumberPatternsComponent } from '../topics/number-patterns/number-patterns.component';
 // Stacked fraction: frac('O', 'H') shows O over H with a fraction bar
 const frac = (top: string, bottom: string) =>
   `<span class="frac"><span>${top}</span><span>${bottom}</span></span>`;
@@ -12,7 +12,7 @@ const frac = (top: string, bottom: string) =>
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, FormsModule, RevealDirective],
+  imports: [CommonModule, FormsModule, RevealDirective, NumberPatternsComponent],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css']
 })
@@ -152,6 +152,23 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   copied = false;              // shows "Copied" on the account number button
 
+  /* ---------------- TOPIC DROPDOWN ---------------- */
+  topics = [
+    { id: 'trig', name: 'Trigonometry' },
+    { id: 'patterns', name: 'Number patterns' }
+  ];
+  selectedTopic = 'trig';
+  showNumberPatterns = false;  // will open the new Number Patterns component (step 2)
+
+  startTopicQuiz() {
+    this.pauseAllVideos();
+    if (this.selectedTopic === 'patterns') {
+      this.showNumberPatterns = true;
+      return;
+    }
+    this.openQuiz();           // trigonometry: your existing quiz
+  }
+
   constructor(private joinForm: JoinFormService) { }
 
   ngOnInit() {
@@ -207,6 +224,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.showClosedNotice) this.closeClosedNotice();
     else if (this.showResumePrompt) this.closeResumePrompt();
     else if (this.showQuizCompletedPopup) this.closeQuizCompletedPopup();
+    else if (this.showNumberPatterns) this.showNumberPatterns = false;
     else if (this.showTestimonials) this.closeTestimonials();
   }
 

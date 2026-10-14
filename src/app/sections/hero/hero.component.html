@@ -150,7 +150,12 @@
           allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
       </div>
 
-      <button type="button" (click)="openQuiz()" class="btn btn-primary w-full">Test your knowledge</button>
+      <label class="field-label" for="topic-select">Choose a topic</label>
+      <select id="topic-select" [(ngModel)]="selectedTopic" class="field mb-4">
+        <option *ngFor="let t of topics" [ngValue]="t.id">{{ t.name }}</option>
+      </select>
+
+      <button type="button" (click)="startTopicQuiz()" class="btn btn-primary w-full">Test your knowledge</button>
     </div>
   </section>
 
@@ -287,6 +292,12 @@
       <button type="button" (click)="closeResumePrompt()" class="btn btn-soft w-full">Close</button>
     </div>
   </div>
+
+  <!-- ============ NUMBER PATTERNS QUIZ ============ -->
+  <app-number-patterns *ngIf="showNumberPatterns"
+    (closed)="showNumberPatterns = false"
+    (signUp)="showNumberPatterns = false; openJoin()">
+  </app-number-patterns>
 
   <!-- ============ QUIZ ============ -->
   <div *ngIf="showQuiz" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
