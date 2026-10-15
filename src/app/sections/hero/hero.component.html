@@ -583,7 +583,8 @@
 
       <!-- Score for each part -->
       <div class="grid gap-2 mb-4 text-left">
-        <div *ngFor="let p of partStats" class="flex items-center justify-between p-3 rounded-xl bg-slate-50 text-sm">
+        <div *ngFor="let p of visibleParts"
+          class="flex items-center justify-between p-3 rounded-xl bg-slate-50 text-sm">
           <span class="font-semibold text-slate-700">Part {{ p.number }}: {{ p.name }}</span>
           <span class="font-extrabold text-slate-900">{{ p.correct }}/{{ p.total }}</span>
         </div>
@@ -624,6 +625,8 @@
       </p>
 
       <button type="button" (click)="retryQuiz()" class="btn btn-navy w-full mb-3">Try again</button>
+      <button *ngIf="answersEnabled" type="button" (click)="closeQuizCompletedPopup(); goDashboard()"
+        class="btn btn-primary w-full mb-3">Back to my dashboard</button>
       <button type="button" (click)="closeQuizCompletedPopup(); openJoin()" class="btn btn-primary w-full mb-3">
         Sign up to keep learning
       </button>

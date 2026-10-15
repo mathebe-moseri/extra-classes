@@ -1,135 +1,212 @@
-<div class="min-h-screen bg-slate-50">
-  <header class="bg-[#1e3a8a] text-white px-4 h-14 flex items-center justify-between">
-    <button type="button" (click)="goHome()" class="font-semibold text-left">SM Remote Extra Classes</button>
-    <button type="button" (click)="logOut()" class="text-sm font-semibold underline">Log out</button>
+<div class="d-page">
+  <header class="d-top">
+    <button type="button" class="d-brand" (click)="goHome()">SM Remote Extra Classes</button>
+    <button type="button" class="d-logout" (click)="logOut()">Log out</button>
   </header>
 
-  <main class="max-w-3xl mx-auto p-4 md:p-8">
-    <p *ngIf="loading" class="text-slate-500">Loading…</p>
-    <p *ngIf="error" class="text-red-600" role="alert">{{ error }}</p>
+  <main class="d-wrap">
+    <p *ngIf="loading" class="d-muted">Loading…</p>
+    <p *ngIf="error" class="d-error" role="alert">{{ error }}</p>
 
-    <ng-container *ngIf="profile">
-      <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mb-1">Welcome, {{ profile.firstName }}</h1>
-      <p class="text-slate-500 mb-6">Grade {{ profile.grade }} · {{ profile.school }}</p>
+    <div class="d-shell" *ngIf="profile">
 
-      <section class="rounded-2xl p-5 mb-4 text-white shadow-lg"
-        style="background:linear-gradient(135deg,#1e3a8a,#3b82f6)">
-        <div class="flex items-center gap-5">
-          <div class="relative w-24 h-24 shrink-0">
-            <svg viewBox="0 0 36 36" class="w-24 h-24 -rotate-90">
-              <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="3" />
-              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"
-                style="transition: stroke-dasharray .8s ease" [attr.stroke-dasharray]="overallPct + ', 100'" />
+      <!-- ===== Profile corner ===== -->
+      <aside class="d-side">
+        <div class="d-card d-profile">
+          <div class="d-banner"></div>
+          <div class="d-avatar">{{ initials }}</div>
+          <h2 class="d-name">{{ profile.firstName }} {{ profile.surname }}</h2>
+          <span class="d-level">{{ level }}</span>
+
+          <div class="d-rankbox" *ngIf="overall?.rank">
+            <span>Class rank</span>
+            <strong>#{{ overall.rank }} <small>of {{ overall.participants }}</small></strong>
+          </div>
+
+          <ul class="d-facts">
+            <li><span>Grade</span><strong>{{ profile.grade }}</strong></li>
+            <li><span>School</span><strong>{{ profile.school }}</strong></li>
+            <li><span>Email</span><strong class="d-break">{{ profile.email }}</strong></li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- ===== Main ===== -->
+      <section class="d-main">
+
+        <div class="d-hero">
+          <div class="d-ring">
+            <svg viewBox="0 0 36 36">
+              <circle cx="18" cy="18" r="15.9" class="d-ring-bg" />
+              <circle cx="18" cy="18" r="15.9" class="d-ring-fg" [attr.stroke-dasharray]="overallPct + ', 100'" />
             </svg>
-            <span class="absolute inset-0 flex items-center justify-center text-xl font-extrabold">{{ overallPct
-              }}%</span>
+            <span>{{ overallPct }}%</span>
           </div>
           <div>
-            <p class="text-sm opacity-80">Overall progress</p>
-            <p class="text-xl font-bold">{{ completedCount }} of {{ topics.length }} topics completed</p>
-            <p class="text-xs opacity-80 mt-1">A topic is completed when the score is 70% or more.</p>
+            <p class="d-eyebrow">Welcome back</p>
+            <h1 class="d-title">{{ profile.firstName }}</h1>
+            <p class="d-hero-msg">{{ heroMessage }}</p>
+            <button type="button" class="d-hero-btn" (click)="startQuiz()">Start assessment</button>
           </div>
         </div>
-      </section>
 
-      <section class="bg-white rounded-2xl shadow p-5 mb-4">
-        <h2 class="font-bold text-slate-900 mb-3">Progress by topic</h2>
-        <div class="grid gap-3">
-          <div *ngFor="let t of topics; let i = index" class="p-4 rounded-xl border" [ngClass]="t.card">
-            <div class="flex items-start justify-between gap-3">
+        <div class="d-stats">
+          <div class="d-stat">
+            <p>{{ best }}%</p><span>Best score</span>
+          </div>
+          <div class="d-stat">
+            <p>{{ overall?.rank ? '#' + overall.rank : '—' }}</p><span>Class rank</span>
+          </div>
+          <div class="d-stat">
+            <p>{{ overall?.beatPercent != null ? overall.beatPercent + '%' : '—' }}</p><span>Ahead of learners</span>
+          </div>
+          <div class="d-stat">
+            <p>{{ completedCount }}/{{ topics.length }}</p><span>Topics completed</span>
+          </div>
+        </div>
+
+        <div class="d-card">
+          <div class="d-card-head">
+            <h2>Take an assessment</h2>
+          </div>
+          <div class="d-assess">
+            <div class="d-assess-item" *ngFor="let a of assessments">
+              <span class="d-assess-ico">{{ a.icon }}</span>
               <div>
-                <p class="text-xs font-semibold text-slate-400">TOPIC {{ i + 1 }}</p>
-                <p class="font-bold text-slate-900">{{ t.name }}</p>
+                <h3>{{ a.name }}</h3>
+                <p>{{ a.desc }}</p>
               </div>
-              <span class="px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap" [ngClass]="t.badge">{{
-                t.label }}</span>
-            </div>
-            <div class="h-2 rounded-full bg-slate-100 mt-3 overflow-hidden">
-              <div class="h-full rounded-full" style="transition: width .8s ease" [ngClass]="t.bar"
-                [style.width.%]="t.best"></div>
-            </div>
-            <div class="flex justify-between gap-3 text-xs text-slate-500 mt-2">
-              <span *ngIf="t.tries; else none">Best {{ t.best }}% · Latest {{ t.latest }}% · {{ t.tries }} {{
-                t.tries === 1 ? 'attempt' : 'attempts' }}</span>
-              <ng-template #none><span>Not attempted yet</span></ng-template>
-              <span *ngIf="t.last">{{ t.last | date:'d MMM yyyy' }}</span>
+              <button type="button" class="d-start" (click)="startQuiz(a.id)">Start</button>
             </div>
           </div>
         </div>
-      </section>
 
-      <section class="bg-white rounded-2xl shadow p-5 mb-4">
-        <h2 class="font-bold text-slate-900 mb-3">Your details</h2>
-        <div class="flex justify-between gap-3 py-2 border-b border-slate-100 text-sm"><span>Name</span><strong>{{
-            profile.firstName }} {{ profile.surname }}</strong></div>
-        <div class="flex justify-between gap-3 py-2 border-b border-slate-100 text-sm"><span>Grade</span><strong>{{
-            profile.grade }}</strong></div>
-        <div class="flex justify-between gap-3 py-2 border-b border-slate-100 text-sm"><span>School</span><strong>{{
-            profile.school }}</strong></div>
-        <div class="flex justify-between gap-3 py-2 text-sm"><span>Email</span><strong>{{ profile.email }}</strong>
+        <!-- You vs all learners -->
+        <div class="d-card">
+          <div class="d-card-head">
+            <h2>You vs all learners</h2>
+            <div class="d-legend">
+              <span><i class="d-dot d-dot-you"></i>You</span>
+              <span><i class="d-dot d-dot-avg"></i>Class average</span>
+              <span><i class="d-dot d-dot-top"></i>Top score</span>
+            </div>
+          </div>
+
+          <div class="d-topic" *ngFor="let t of topics; let i = index">
+            <div class="d-topic-head">
+              <div>
+                <span class="d-topic-no">Topic {{ i + 1 }}</span>
+                <h3>{{ t.name }}</h3>
+              </div>
+              <div class="d-topic-actions">
+                <span class="d-badge" [ngClass]="'d-' + t.status">{{ t.label }}</span>
+                <button type="button" class="d-start" (click)="startQuiz(t.id)">{{
+                  t.status === 'not-started' ? 'Start' : t.status === 'in-progress' ? 'Continue' : 'Retake' }}</button>
+              </div>
+            </div>
+
+            <ng-container *ngIf="statsFor(t.id) as s; else noStats">
+              <div class="d-track">
+                <div class="d-fill" [ngClass]="'d-fill-' + t.status" [style.width.%]="t.best"></div>
+                <span class="d-mark d-mark-avg" [style.left.%]="s.average" title="Class average"></span>
+                <span class="d-mark d-mark-top" [style.left.%]="s.top" title="Top score"></span>
+              </div>
+              <div class="d-meta">
+                <span>You <strong>{{ t.tries ? t.best + '%' : '—' }}</strong></span>
+                <span>Class avg <strong>{{ s.average }}%</strong></span>
+                <span>Top <strong>{{ s.top }}%</strong></span>
+                <span *ngIf="s.rank">Rank <strong>#{{ s.rank }} of {{ s.participants }}</strong></span>
+                <span *ngIf="t.tries" class="d-delta" [ngClass]="t.best >= s.average ? 'd-up' : 'd-down'">
+                  {{ t.best >= s.average ? '▲' : '▼' }} {{ abs(t.best - s.average) }} pts vs average
+                </span>
+              </div>
+            </ng-container>
+
+            <ng-template #noStats>
+              <div class="d-track">
+                <div class="d-fill" [ngClass]="'d-fill-' + t.status" [style.width.%]="t.best"></div>
+              </div>
+              <div class="d-meta">
+                <span *ngIf="t.tries">You <strong>{{ t.best }}%</strong> · {{ t.tries }} {{ t.tries === 1 ? 'attempt' :
+                  'attempts' }}</span>
+                <span *ngIf="!t.tries">Not attempted yet</span>
+              </div>
+            </ng-template>
+          </div>
         </div>
+
+        <!-- Leaderboard -->
+        <div class="d-card">
+          <div class="d-card-head">
+            <h2>Leaderboard</h2>
+          </div>
+          <div class="d-tabs">
+            <button type="button" class="d-tab" *ngFor="let tb of tabs" [class.d-tab-on]="boardTab === tb.id"
+              (click)="boardTab = tb.id">{{ tb.name }}</button>
+          </div>
+
+          <p *ngIf="boardLoading" class="d-muted">Loading leaderboard…</p>
+          <p *ngIf="!boardLoading && !board" class="d-muted">The leaderboard is not available right now.</p>
+
+          <ng-container *ngIf="activeBoard as b">
+            <p *ngIf="!b.board.length" class="d-muted">No scores yet. Be the first on the board!</p>
+            <div class="d-row" *ngFor="let r of b.board" [class.d-me]="r.isMe">
+              <span class="d-rank">{{ r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : r.rank }}</span>
+              <span class="d-av">{{ r.name.charAt(0) }}</span>
+              <span class="d-rname">{{ r.name }}<em *ngIf="r.isMe"> (You)</em></span>
+              <span class="d-rbar"><i [style.width.%]="r.score"></i></span>
+              <strong class="d-rscore">{{ r.score }}%</strong>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- Last attempt -->
+        <div class="d-card">
+          <h2 class="d-h2">Last attempt</h2>
+          <p *ngIf="!attempts.length" class="d-muted">
+            Finish the Introduction to Trigonometry quiz and your results will show here.
+          </p>
+
+          <ng-container *ngIf="latest">
+            <div class="d-parts">
+              <div *ngFor="let p of latest.byPart"><span>{{ p.name }}</span><strong>{{ p.correct }}/{{ p.total
+                  }}</strong></div>
+            </div>
+
+            <div *ngIf="weakParts.length" class="d-improve">
+              <strong>To improve: </strong>
+              <span *ngFor="let p of weakParts; let last = last">{{ p.name }}{{ last ? '' : ', ' }}</span>
+            </div>
+
+            <button type="button" class="d-btn" (click)="showAll = !showAll">
+              {{ showAll ? 'Hide answers' : 'Review all answers from last attempt' }}
+            </button>
+
+            <div *ngIf="showAll" class="d-answers">
+              <div *ngFor="let a of latest.answers; let i = index" class="d-answer" [ngClass]="a.ok ? 'd-ok' : 'd-bad'">
+                <p class="d-q">{{ i + 1 }}. <span [innerHTML]="a.text"></span></p>
+                <p>Your answer: <strong [innerHTML]="a.given"></strong> {{ a.ok ? '✓' : '✗' }}</p>
+                <p *ngIf="!a.ok">Correct answer: <strong [innerHTML]="a.correct"></strong></p>
+                <p *ngIf="a.explanation" class="d-expl" [innerHTML]="a.explanation"></p>
+              </div>
+            </div>
+
+            <div *ngIf="latest.wrong.length" class="d-wrong">
+              <h3>Questions you got wrong last time</h3>
+              <div *ngFor="let w of latest.wrong" class="d-answer d-bad">
+                <p class="d-q" [innerHTML]="w.text"></p>
+                <p>Answer: <strong [innerHTML]="w.correct"></strong></p>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+        <div class="d-card">
+          <h2 class="d-h2">Your lessons</h2>
+          <p class="d-muted">Video lessons, exercises and worked solutions will appear here.</p>
+        </div>
+
       </section>
-
-      <section class="bg-white rounded-2xl shadow p-5 mb-4">
-        <h2 class="font-bold text-slate-900 mb-3">Your progress</h2>
-        <p *ngIf="!attempts.length" class="text-slate-500 text-sm">
-          Finish the Introduction to Trigonometry quiz and your results will show here.
-        </p>
-
-        <ng-container *ngIf="latest">
-          <div class="grid grid-cols-3 gap-3 text-center mb-4">
-            <div class="p-3 rounded-xl bg-slate-50">
-              <p class="text-2xl font-extrabold">{{ latest.percent }}%</p>
-              <p class="text-xs text-slate-500">Latest</p>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-50">
-              <p class="text-2xl font-extrabold">{{ best }}%</p>
-              <p class="text-xs text-slate-500">Best</p>
-            </div>
-            <div class="p-3 rounded-xl bg-slate-50">
-              <p class="text-2xl font-extrabold">{{ attempts.length }}</p>
-              <p class="text-xs text-slate-500">Attempts</p>
-            </div>
-          </div>
-
-          <div *ngFor="let p of latest.byPart"
-            class="flex justify-between gap-3 py-2 border-b border-slate-100 text-sm">
-            <span>{{ p.name }}</span><strong>{{ p.correct }}/{{ p.total }}</strong>
-          </div>
-
-          <div *ngIf="weakParts.length" class="mt-4 p-3 rounded-xl bg-amber-50 text-sm text-amber-900">
-            <strong>To improve: </strong>
-            <span *ngFor="let p of weakParts; let last = last">{{ p.name }}{{ last ? '' : ', ' }}</span>
-          </div>
-
-          <button type="button" (click)="showAll = !showAll"
-            class="mt-4 w-full px-4 py-2 rounded-xl bg-slate-100 text-sm font-semibold text-slate-800">
-            {{ showAll ? 'Hide answers' : 'Review all answers from last attempt' }}
-          </button>
-          <div *ngIf="showAll" class="grid gap-2 mt-3">
-            <div *ngFor="let a of latest.answers; let i = index" class="p-3 rounded-xl text-sm"
-              [ngClass]="a.ok ? 'bg-emerald-50' : 'bg-red-50'">
-              <p class="font-bold text-slate-900 mb-1">{{ i + 1 }}. <span [innerHTML]="a.text"></span></p>
-              <p>Your answer: <strong [innerHTML]="a.given"></strong> {{ a.ok ? '✓' : '✗' }}</p>
-              <p *ngIf="!a.ok">Correct answer: <strong [innerHTML]="a.correct"></strong></p>
-              <p *ngIf="a.explanation" class="text-slate-600 mt-1" [innerHTML]="a.explanation"></p>
-            </div>
-          </div>
-
-          <div *ngIf="latest.wrong.length" class="mt-4">
-            <h3 class="font-bold text-sm text-slate-900 mb-2">Questions you got wrong last time</h3>
-            <div *ngFor="let w of latest.wrong" class="p-3 rounded-xl bg-red-50 mb-2 text-sm">
-              <p class="font-semibold" [innerHTML]="w.text"></p>
-              <p>Answer: <strong [innerHTML]="w.correct"></strong></p>
-            </div>
-          </div>
-        </ng-container>
-      </section>
-
-      <section class="bg-white rounded-2xl shadow p-5">
-        <h2 class="font-bold text-slate-900 mb-2">Your lessons</h2>
-        <p class="text-slate-500 text-sm">Video lessons, exercises and worked solutions will appear here.</p>
-      </section>
-    </ng-container>
+    </div>
   </main>
 </div>

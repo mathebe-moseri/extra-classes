@@ -19,13 +19,21 @@ export class DashboardComponent implements OnInit {
   attempts: any[] = [];
   showAll = false;
   topics: any[] = [];
+  assessments = [
+    { id: 'all', name: 'Trigonometry', icon: '📐', desc: 'Triangles, their rules and SOH CAH TOA' },
+    { id: 'patterns', name: 'Number patterns', icon: '🔢', desc: 'Finding any term with Tn = a + (n − 1)d' },
+    { id: 'measurement', name: 'Measurement', icon: '📦', desc: 'Surface area and volume of solids' }
+  ];
+  board: any = null;
+  boardLoading = true;
+  boardTab = 'overall';
 
   private readonly topicDefs = [
-    { name: 'Parts of a triangle', key: 'parts of a' },
-    { name: 'Types of triangles', key: 'types' },
-    { name: 'Rules of a triangle', key: 'rules' },
-    { name: 'Comparing triangles', key: 'compar|congru|similar' },
-    { name: 'Introduction to trigonometry', key: 'trigonometry' }
+    { id: 'parts', name: 'Parts of a triangle', key: 'parts of a' },
+    { id: 'types', name: 'Types of triangles', key: 'types' },
+    { id: 'rules', name: 'Rules of a triangle', key: 'rules' },
+    { id: 'compare', name: 'Comparing triangles', key: 'compar|congru|similar' },
+    { id: 'trig', name: 'Introduction to trigonometry', key: 'trigonometry' }
   ];
 
   constructor(private auth: AuthService, private router: Router) { }
@@ -36,6 +44,7 @@ export class DashboardComponent implements OnInit {
       return;
     }
     this.loadAttempts();
+    this.loadBoard();
     this.auth.me().subscribe({
       next: p => { this.profile = p; this.loading = false; },
       error: err => {
@@ -65,7 +74,19 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  private loadBoard() {
+    this.auth.leaderboard().subscribe({
+      next: (b: any) => { this.board = b; this.boardLoading = false; },
+      error: () => { this.board = null; this.boardLoading = false; }
+    });
+  }
+
   private buildTopics() {
+    const labels: any = {
+      'not-started': 'Not started',
+      'in-progress': 'In progress',
+      'completed': 'Completed'
+    };
     this.topics = this.topicDefs.map(t => {
       const re = new RegExp(t.key, 'i');
       const hits: { pct: number; date: string }[] = [];
@@ -75,13 +96,8 @@ export class DashboardComponent implements OnInit {
       }
       const best = hits.length ? Math.max(...hits.map(h => h.pct)) : 0;
       const status = !hits.length ? 'not-started' : best >= 70 ? 'completed' : 'in-progress';
-      const look: any = {
-        'not-started': { label: 'Not started', badge: 'bg-slate-100 text-slate-600', bar: 'bg-slate-300', card: 'border-slate-200' },
-        'in-progress': { label: 'In progress', badge: 'bg-amber-100 text-amber-800', bar: 'bg-amber-500', card: 'border-amber-200' },
-        'completed': { label: 'Completed', badge: 'bg-emerald-100 text-emerald-800', bar: 'bg-emerald-500', card: 'border-emerald-200' }
-      };
       return {
-        name: t.name, status, best, ...look[status],
+        id: t.id, name: t.name, status, best, label: labels[status],
         latest: hits.length ? hits[hits.length - 1].pct : 0,
         tries: hits.length,
         last: hits.length ? hits[hits.length - 1].date : null
@@ -89,20 +105,58 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  // ----- progress -----
   get completedCount(): number { return this.topics.filter(t => t.status === 'completed').length; }
   get overallPct(): number {
     return this.topics.length ? Math.round(this.completedCount * 100 / this.topics.length) : 0;
   }
-
   get latest() { return this.attempts[this.attempts.length - 1] ?? null; }
   get best(): number { return Math.max(0, ...this.attempts.map(a => a.percent)); }
   get weakParts() {
     return (this.latest?.byPart ?? []).filter((p: any) => p.total && p.correct / p.total < 0.7);
   }
 
+  // ----- profile -----
+  get initials(): string {
+    const f = this.profile?.firstName?.charAt(0) ?? '';
+    const s = this.profile?.surname?.charAt(0) ?? '';
+    return (f + s).toUpperCase();
+  }
+  get level(): string {
+    const p = this.overallPct;
+    return p >= 80 ? 'Champion' : p >= 50 ? 'Achiever' : p >= 20 ? 'Rising star' : 'Starter';
+  }
+
+  // ----- comparison with other learners -----
+  get overall() { return this.board?.overall ?? null; }
+  get heroMessage(): string {
+    if (!this.attempts.length) return 'Complete the quiz to join the leaderboard and see how you compare.';
+    const o = this.overall;
+    if (o?.beatPercent != null) return `You are ahead of ${o.beatPercent}% of learners. Keep climbing!`;
+    return `${this.completedCount} of ${this.topics.length} topics completed. Keep going!`;
+  }
+  statsFor(id: string): any {
+    const s = (this.board?.topics ?? []).find((t: any) => t.id === id);
+    return s && s.participants > 0 ? s : null;
+  }
+  get tabs() {
+    return [{ id: 'overall', name: 'Overall' }, ...this.topicDefs.map(t => ({ id: t.id, name: t.name }))];
+  }
+  get activeBoard(): any {
+    if (!this.board) return null;
+    return this.boardTab === 'overall'
+      ? this.board.overall
+      : (this.board.topics ?? []).find((t: any) => t.id === this.boardTab) ?? null;
+  }
+  abs(n: number) { return Math.abs(n); }
+
   logOut() {
     this.auth.logout();
     this.router.navigate(['/']);
+  }
+
+  startQuiz(topicId?: string) {
+    this.router.navigate(['/'], { queryParams: { quiz: topicId ?? 'all' } });
   }
 
   goHome() {

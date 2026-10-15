@@ -2,7 +2,7 @@ import { Component, AfterViewInit, OnInit, OnDestroy, HostListener, ViewChild, E
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { JoinFormService } from '../../join-form.service';
-import { RevealDirective } from '../../shared/reveal.directive';
+import { ActivatedRoute, Router } from '@angular/router'; import { RevealDirective } from '../../shared/reveal.directive';
 import { smoothScrollToId } from '../../shared/smooth-scroll';
 import { NumberPatternsComponent } from '../topics/number-patterns/number-patterns.component';
 
@@ -76,8 +76,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private saveProgress(index: number) {
-    if (index <= 0) { this.clearProgress(); return; }
-    try {
+    if (this.singlePart !== null) return;   // one-topic quizzes are not resumable
+    if (index <= 0) { this.clearProgress(); return; } try {
       localStorage.setItem(this.PROGRESS_KEY, JSON.stringify({
         index,
         totalCorrect: this.totalCorrect,
@@ -202,16 +202,58 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.openQuiz();           // trigonometry: your existing quiz
   }
 
-  constructor(private joinForm: JoinFormService, private auth: AuthService) { }
+  constructor(private joinForm: JoinFormService, private auth: AuthService,
+    private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
     // Hamburger menu "Testimonials" -> open the testimonials popup
     this.joinForm.testimonialsRequested$.subscribe(() => this.openTestimonials());
+    // Opened from the learner dashboard: /?quiz=parts | types | rules | patterns | measurement | all
+    this.route.queryParamMap.subscribe(p => this.launchFromUrl(p.get('quiz')));
   }
 
+  /* ---------------- OPENED FROM THE DASHBOARD ---------------- */
+  singlePart: number | null = null;   // set when a learner starts one topic only
+
+  private launchFromUrl(quiz: string | null) {
+    if (!quiz) return;
+    // remove ?quiz=... so a refresh does not open it again
+    this.router.navigate([], { queryParams: { quiz: null }, queryParamsHandling: 'merge', replaceUrl: true });
+    this.pauseAllVideos();
+    switch (quiz) {
+      case 'patterns': this.showNumberPatterns = true; break;
+      case 'measurement': this.showMeasurement = true; break;
+      case 'parts': this.startPart(0); break;
+      case 'types': this.startPart(1); break;
+      case 'rules': this.startPart(2); break;
+      default: this.openQuiz();   // 'all', 'trig', 'compare'
+    }
+  }
+
+  // Quiz with only one part's questions
+  startPart(p: number) {
+    this.showResumePrompt = false;
+    this.showPartBreak = false;
+    this.singlePart = p;
+    this.totalCorrect = 0;
+    this.correctByPart = this.parts.map(() => 0);
+    this.answerLog = [];
+    this.showReview = false;
+    this.seed = Math.floor(Math.random() * 2147483647);
+    this.buildQuestions(this.seed);
+    this.quizQuestions = this.quizQuestions.filter(q => q.part === p);
+    this.currentQuestionIndex = 0;
+    this.loadQuestion();
+    this.showQuiz = true;
+  }
+
+  // parts that have questions in the current quiz (hides empty parts on the results screen)
+  get visibleParts() { return this.partStats.filter(p => p.total > 0); }
+
+  goDashboard() { this.router.navigate(['/dashboard']); }
+
   // Set to true when the database is back and registrations reopen
-  registrationsOpen = true;
-  showClosedNotice = false;
+  registrationsOpen = true; showClosedNotice = false;
 
   openJoin() {
     if (!this.registrationsOpen) {
@@ -1088,8 +1130,9 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   /* ---------------- QUIZ METHODS ---------------- */
   openQuiz() {
     this.pauseAllVideos();
-    const saved = this.readProgress();
-    if (saved) {
+    this.singlePart = null;
+    this.quizQuestions = [...this.baseQuestions];
+    const saved = this.readProgress(); if (saved) {
       this.savedProgress = saved;
       this.showResumePrompt = true;   // ask: resume / start over / close
       return;
@@ -1185,8 +1228,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   private saveAttempt() {
     if (!this.auth.isLoggedIn()) return;
     this.auth.saveAttempt({
-      quiz: 'Introduction to Trigonometry',
-      correct: this.totalCorrect,
+      quiz: this.singlePart === null ? 'Introduction to Trigonometry' : 'Introduction to Trigonometry: ' + this.parts[this.singlePart], correct: this.totalCorrect,
       total: this.scoredTotal,
       details: JSON.stringify({
         byPart: this.partStats.map(p => ({ name: p.name, correct: p.correct, total: p.total })),
@@ -1271,7 +1313,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   retryQuiz() {
-    this.showQuizCompletedPopup = false;
+    if (this.singlePart !== null) { this.showQuizCompletedPopup = false; this.startPart(this.singlePart); return; } this.showQuizCompletedPopup = false;
     this.openQuiz();
   }
 

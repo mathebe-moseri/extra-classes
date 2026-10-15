@@ -36,6 +36,10 @@ export class AuthService {
     return this.http.get<any[]>(`${this.baseUrl}/quiz_attempts`, { headers: this.authHeaders() });
   }
 
+  leaderboard(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/leaderboard`, { headers: this.authHeaders() });
+  }
+
   changePassword(newPassword: string): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/change_password`, { newPassword }, { headers: this.authHeaders() });
   }
