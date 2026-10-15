@@ -8,7 +8,7 @@ import { NumberPatternsComponent } from '../topics/number-patterns/number-patter
 
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../auth.service';
-import { MeasurementComponent } from '../topics/number-patterns/measurement/measurement.component';
+import { MeasurementComponent } from '../topics/measurement/measurement.component';
 // Stacked fraction: frac('O', 'H') shows O over H with a fraction bar
 const frac = (top: string, bottom: string) =>
   `<span class="frac"><span>${top}</span><span>${bottom}</span></span>`;
