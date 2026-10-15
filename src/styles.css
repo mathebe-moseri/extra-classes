@@ -808,3 +808,25 @@ textarea.field {
 .sheet button {
   transition: background-color .2s, border-color .2s, color .2s, transform .15s;
 }
+
+/* ---------- Topic dropdown: always above the button and the sections below ---------- */
+#demo-lesson:has(#topic-list) {
+  position: relative;
+  z-index: 50;
+}
+
+#topic-picker {
+  position: relative;
+  z-index: 60;
+}
+
+#topic-list {
+  position: absolute;
+  z-index: 70;
+  background: #fff;
+}
+
+#demo-lesson .btn {
+  position: relative;
+  z-index: 0;
+}

@@ -5,8 +5,10 @@ import { JoinFormService } from '../../join-form.service';
 import { RevealDirective } from '../../shared/reveal.directive';
 import { smoothScrollToId } from '../../shared/smooth-scroll';
 import { NumberPatternsComponent } from '../topics/number-patterns/number-patterns.component';
+
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../auth.service';
+import { MeasurementComponent } from '../topics/number-patterns/measurement/measurement.component';
 // Stacked fraction: frac('O', 'H') shows O over H with a fraction bar
 const frac = (top: string, bottom: string) =>
   `<span class="frac"><span>${top}</span><span>${bottom}</span></span>`;
@@ -14,7 +16,7 @@ const frac = (top: string, bottom: string) =>
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, FormsModule, RevealDirective, NumberPatternsComponent, HttpClientModule],
+  imports: [CommonModule, FormsModule, RevealDirective, NumberPatternsComponent, MeasurementComponent],
   providers: [AuthService],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css']
@@ -158,16 +160,43 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /* ---------------- TOPIC DROPDOWN ---------------- */
   topics = [
-    { id: 'trig', name: 'Trigonometry' },
-    { id: 'patterns', name: 'Number patterns' }
+    { id: 'trig', name: 'Trigonometry', icon: '📐', desc: 'Triangles, their rules and SOH CAH TOA' },
+    { id: 'patterns', name: 'Number patterns', icon: '🔢', desc: 'Finding any term with Tn = a + (n − 1)d' },
+    { id: 'measurement', name: 'Measurement', icon: '📦', desc: 'Surface area and volume of solids' }
   ];
-  selectedTopic = 'trig';
+  selectedTopic = '';
+  topicOpen = false;   // true while the topic list is showing
+  topicError = false;  // true when "Test your knowledge" is pressed with no topic chosen
+
+  get selectedTopicName(): string {
+    return this.topics.find(t => t.id === this.selectedTopic)?.name ?? '';
+  }
+
+  get selectedTopicIcon(): string {
+    return this.topics.find(t => t.id === this.selectedTopic)?.icon ?? '';
+  }
+
+  selectTopic(id: string) {
+    this.selectedTopic = id;
+    this.topicOpen = false;
+    this.topicError = false;
+  }
   showNumberPatterns = false;  // will open the new Number Patterns component (step 2)
+  showMeasurement = false;
 
   startTopicQuiz() {
+    if (!this.selectedTopic) {
+      this.topicError = true;
+      this.topicOpen = true;
+      return;
+    }
     this.pauseAllVideos();
     if (this.selectedTopic === 'patterns') {
       this.showNumberPatterns = true;
+      return;
+    }
+    if (this.selectedTopic === 'measurement') {
+      this.showMeasurement = true;
       return;
     }
     this.openQuiz();           // trigonometry: your existing quiz
@@ -222,13 +251,23 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // Tapping anywhere outside the topic picker closes its list
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(e: Event) {
+    if (this.topicOpen && !(e.target as HTMLElement).closest('#topic-picker')) {
+      this.topicOpen = false;
+    }
+  }
+
   // Escape closes whichever popup is open
   @HostListener('document:keydown.escape')
   onEscape() {
-    if (this.showClosedNotice) this.closeClosedNotice();
+    if (this.topicOpen) this.topicOpen = false;
+    else if (this.showClosedNotice) this.closeClosedNotice();
     else if (this.showResumePrompt) this.closeResumePrompt();
     else if (this.showQuizCompletedPopup) this.closeQuizCompletedPopup();
     else if (this.showNumberPatterns) this.showNumberPatterns = false;
+    else if (this.showMeasurement) this.showMeasurement = false;
     else if (this.showTestimonials) this.closeTestimonials();
   }
 
@@ -1263,8 +1302,6 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.isCorrect = false;
     }
-    this.logAnswer(this.currentQuestion.options[i]);
-    this.logAnswer(this.currentQuestion.options[i]);
     this.logAnswer(this.currentQuestion.options[i]);
 
     this.saveProgress(this.currentQuestionIndex + 1);
