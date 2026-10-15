@@ -331,12 +331,12 @@
   </div>
 
   <!-- ============ NUMBER PATTERNS QUIZ ============ -->
-  <app-number-patterns *ngIf="showNumberPatterns" (closed)="showNumberPatterns = false"
+  <app-number-patterns *ngIf="showNumberPatterns" (closed)="showNumberPatterns = false; returnIfFromDashboard()"
     (signUp)="showNumberPatterns = false; openJoin()">
   </app-number-patterns>
 
   <!-- ============ MEASUREMENT QUIZ ============ -->
-  <app-measurement *ngIf="showMeasurement" (closed)="showMeasurement = false"
+  <app-measurement *ngIf="showMeasurement" (closed)="showMeasurement = false; returnIfFromDashboard()"
     (signUp)="showMeasurement = false; openJoin()">
   </app-measurement>
 

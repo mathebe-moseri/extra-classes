@@ -8,6 +8,7 @@ import { NumberPatternsComponent } from '../topics/number-patterns/number-patter
 
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../auth.service';
+import { QuizLauncherService } from '../../quiz-launcher.service';
 import { MeasurementComponent } from '../topics/measurement/measurement.component';
 // Stacked fraction: frac('O', 'H') shows O over H with a fraction bar
 const frac = (top: string, bottom: string) =>
@@ -203,22 +204,38 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   constructor(private joinForm: JoinFormService, private auth: AuthService,
-    private route: ActivatedRoute, private router: Router) { }
+    private route: ActivatedRoute, private router: Router,
+    private launcher: QuizLauncherService) { }
 
   ngOnInit() {
-    // Hamburger menu "Testimonials" -> open the testimonials popup
     this.joinForm.testimonialsRequested$.subscribe(() => this.openTestimonials());
-    // Opened from the learner dashboard: /?quiz=parts | types | rules | patterns | measurement | all
-    this.route.queryParamMap.subscribe(p => this.launchFromUrl(p.get('quiz')));
+
+    // Opened from the dashboard Start buttons
+    const pending = this.launcher.take();
+    if (pending) { this.fromDashboard = true; this.launch(pending); }
+
+    // Still works for /?quiz=types typed in the address bar
+    this.route.queryParamMap.subscribe(p => {
+      const q = p.get('quiz');
+      if (!q) return;
+      this.router.navigate([], { queryParams: { quiz: null }, queryParamsHandling: 'merge', replaceUrl: true });
+      this.launch(q);
+    });
   }
 
   /* ---------------- OPENED FROM THE DASHBOARD ---------------- */
   singlePart: number | null = null;   // set when a learner starts one topic only
 
-  private launchFromUrl(quiz: string | null) {
-    if (!quiz) return;
-    // remove ?quiz=... so a refresh does not open it again
-    this.router.navigate([], { queryParams: { quiz: null }, queryParamsHandling: 'merge', replaceUrl: true });
+  fromDashboard = false;   // true when the quiz was opened from the dashboard
+
+  returnIfFromDashboard() {
+    if (this.fromDashboard) {
+      this.fromDashboard = false;
+      this.goDashboard();
+    }
+  }
+
+  private launch(quiz: string) {
     this.pauseAllVideos();
     switch (quiz) {
       case 'patterns': this.showNumberPatterns = true; break;
@@ -1180,6 +1197,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   closeResumePrompt() {
     this.showResumePrompt = false;    // progress stays saved
+    this.returnIfFromDashboard();
   }
 
   closeQuiz() {
@@ -1191,6 +1209,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.revealed = false;
     this.quizCompleted = false;
     this.selectedOption = null;
+    this.returnIfFromDashboard();
   }
 
   loadQuestion() {
@@ -1324,6 +1343,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.totalCorrect = 0;
     this.correctByPart = this.parts.map(() => 0);
     this.currentQuestionIndex = 0;
+    this.returnIfFromDashboard();
   }
 
   downloadPDF() {

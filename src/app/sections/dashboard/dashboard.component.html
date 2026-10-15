@@ -46,7 +46,7 @@
             <p class="d-eyebrow">Welcome back</p>
             <h1 class="d-title">{{ profile.firstName }}</h1>
             <p class="d-hero-msg">{{ heroMessage }}</p>
-            <button type="button" class="d-hero-btn" (click)="startQuiz()">Start assessment</button>
+<button type="button" class="d-hero-btn" (click)="startQuiz()">{{ hasSavedQuiz ? 'Continue assessment' : 'Start assessment' }}</button>
           </div>
         </div>
 
@@ -76,7 +76,7 @@
                 <h3>{{ a.name }}</h3>
                 <p>{{ a.desc }}</p>
               </div>
-              <button type="button" class="d-start" (click)="startQuiz(a.id)">Start</button>
+<button type="button" class="d-start" (click)="startQuiz(a.id)">{{ a.id === 'all' && hasSavedQuiz ? 'Continue' : 'Start' }}</button>
             </div>
           </div>
         </div>

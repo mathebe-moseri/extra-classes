@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService, LearnerProfile } from '../../auth.service';
+import { QuizLauncherService } from '../../quiz-launcher.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -36,8 +37,8 @@ export class DashboardComponent implements OnInit {
     { id: 'trig', name: 'Introduction to trigonometry', key: 'trigonometry' }
   ];
 
-  constructor(private auth: AuthService, private router: Router) { }
-
+  constructor(private auth: AuthService, private router: Router,
+    private launcher: QuizLauncherService) { }
   ngOnInit() {
     if (!this.auth.isLoggedIn()) {
       this.router.navigate(['/']);
@@ -130,6 +131,9 @@ export class DashboardComponent implements OnInit {
   // ----- comparison with other learners -----
   get overall() { return this.board?.overall ?? null; }
   get heroMessage(): string {
+
+    if (this.hasSavedQuiz) return 'You have a quiz in progress. Continue where you stopped.';
+
     if (!this.attempts.length) return 'Complete the quiz to join the leaderboard and see how you compare.';
     const o = this.overall;
     if (o?.beatPercent != null) return `You are ahead of ${o.beatPercent}% of learners. Keep climbing!`;
@@ -150,13 +154,24 @@ export class DashboardComponent implements OnInit {
   }
   abs(n: number) { return Math.abs(n); }
 
+    // true when a Trigonometry quiz was started and closed before finishing
+  get hasSavedQuiz(): boolean {
+    try {
+      const raw = localStorage.getItem('trig-quiz-progress-v3');
+      if (!raw) return false;
+      const p = JSON.parse(raw);
+      return Number.isInteger(p.index) && p.index > 0;
+    } catch { return false; }
+  }
+
   logOut() {
     this.auth.logout();
     this.router.navigate(['/']);
   }
 
   startQuiz(topicId?: string) {
-    this.router.navigate(['/'], { queryParams: { quiz: topicId ?? 'all' } });
+    this.launcher.request(topicId ?? 'all');
+    this.router.navigate(['/']);
   }
 
   goHome() {
