@@ -824,6 +824,21 @@ textarea.field {
   position: absolute;
   z-index: 70;
   background: #fff;
+  max-height: 3.35rem !important;     /* exactly 2 topics visible, the rest scroll */
+  overflow-y: auto !important;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;              /* your global rule hides scrollbars on html/body only, so this one shows */
+  scrollbar-color: #94a3b8 #f1f5f9;
+}
+
+#topic-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+#topic-list::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 9999px;
 }
 
 #demo-lesson .btn {
