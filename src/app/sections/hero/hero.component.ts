@@ -10,6 +10,7 @@ import { AuthService } from '../../auth.service';
 import { QuizLauncherService } from '../../quiz-launcher.service';
 import { MeasurementComponent } from '../topics/measurement/measurement.component';
 import { AlgebraComponent } from '../topics/algebra/algebra.component';
+import { QuizProgressService } from '../../quiz-progress.service';
 // Stacked fraction: frac('O', 'H') shows O over H with a fraction bar
 const frac = (top: string, bottom: string) =>
   `<span class="frac"><span>${top}</span><span>${bottom}</span></span>`;
@@ -211,7 +212,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private joinForm: JoinFormService, private auth: AuthService,
     private route: ActivatedRoute, private router: Router,
-    private launcher: QuizLauncherService) { }
+    private launcher: QuizLauncherService, private progress: QuizProgressService) { }
 
   ngOnInit() {
     this.joinForm.testimonialsRequested$.subscribe(() => this.openTestimonials());
@@ -1242,6 +1243,16 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private logAnswer(given: string) {
     const q = this.currentQuestion;
+
+    // Remember this question for the dashboard, even if the quiz is never finished
+    if (this.auth.isLoggedIn()) {
+      const totals: Record<string, number> = {};
+      this.parts.forEach((name, p) => {
+        totals[name] = this.baseQuestions.filter(x => x.part === p && x.type !== 'info').length;
+      });
+      this.progress.record('all', `${q.part}|${q.text}`, this.parts[q.part], this.isCorrect,
+        this.baseQuestions.filter(x => x.type !== 'info').length, totals);
+    }
     this.answerLog.push({
       part: q.part,
       text: q.text,

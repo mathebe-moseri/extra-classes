@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService, LearnerProfile } from '../../auth.service';
 import { QuizLauncherService } from '../../quiz-launcher.service';
+import { QuizProgressService, ProgressSummary } from '../../quiz-progress.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -39,7 +40,8 @@ export class DashboardComponent implements OnInit {
   ];
 
   constructor(private auth: AuthService, private router: Router,
-    private launcher: QuizLauncherService) { }
+    private launcher: QuizLauncherService, private progress: QuizProgressService) { }
+
   ngOnInit() {
     if (!this.auth.isLoggedIn()) {
       this.router.navigate(['/']);
@@ -48,7 +50,13 @@ export class DashboardComponent implements OnInit {
     this.loadAttempts();
     this.loadBoard();
     this.auth.me().subscribe({
-      next: p => { this.profile = p; this.loading = false; },
+      next: p => {
+        // Tell the quizzes whose progress to save, then rebuild what the dashboard shows
+        this.progress.setOwner(p.email);
+        this.buildTopics();
+        this.profile = p;
+        this.loading = false;
+      },
       error: err => {
         this.loading = false;
         if (err?.status === 401) {
@@ -89,6 +97,8 @@ export class DashboardComponent implements OnInit {
       'in-progress': 'In progress',
       'completed': 'Completed'
     };
+    const saved = this.progress.summary('all');   // answers saved while the quiz was still open
+
     this.topics = this.topicDefs.map(t => {
       const re = new RegExp(t.key, 'i');
       const hits: { pct: number; date: string }[] = [];
@@ -96,15 +106,26 @@ export class DashboardComponent implements OnInit {
         const p = (a.byPart ?? []).find((x: any) => re.test(x.name) && x.total);
         if (p) hits.push({ pct: Math.round(p.correct * 100 / p.total), date: a.date });
       }
+
+      // Even one answered question puts the topic "In progress"
+      const part = saved?.topics.find(x => re.test(x.name));
+      const answered = part?.answered ?? 0;
+
       const best = hits.length ? Math.max(...hits.map(h => h.pct)) : 0;
-      const status = !hits.length ? 'not-started' : best >= 70 ? 'completed' : 'in-progress';
+      const status = !hits.length
+        ? (answered ? 'in-progress' : 'not-started')
+        : best >= 70 ? 'completed' : 'in-progress';
       return {
         id: t.id, name: t.name, status, best, label: labels[status],
         latest: hits.length ? hits[hits.length - 1].pct : 0,
         tries: hits.length,
-        last: hits.length ? hits[hits.length - 1].date : null
+        last: hits.length ? hits[hits.length - 1].date : null,
+        answered,
+        qTotal: part?.total ?? 0
       };
     });
+
+    this.refreshProgress();
   }
 
   // ----- progress -----
@@ -165,30 +186,81 @@ export class DashboardComponent implements OnInit {
   ];
   activeNav = 'dashboard';
 
-  private readonly assessmentTotals: Record<string, number> = {
-    all: 5, patterns: 3, measurement: 3, algebra: 13
-  };
+  // ----- "My progress": questions answered in every assessment, finished or not -----
+  progressRows: { id: string; name: string; icon: string; sum: ProgressSummary | null }[] = [];
+  totalAnswered = 0;
 
-  // progress for each card in "Recent Activity"
-  assessmentProgress(id: string) {
-    const total = this.assessmentTotals[id] ?? 0;
-    if (id === 'all') {
-      return { pct: this.overallPct, done: this.completedCount, total };
-    }
-    if (id === 'algebra') {
-      const bestByTopic: Record<string, number> = {};
-      for (const a of this.attempts) {
-        if (!/^algebra/i.test(a.quiz ?? '')) continue;
-        for (const p of a.byPart ?? []) {
-          if (!p.total) continue;
-          const pct = Math.round(p.correct * 100 / p.total);
-          bestByTopic[p.name] = Math.max(bestByTopic[p.name] ?? 0, pct);
-        }
+  /** Rebuilds the progress card. Uses the answers saved while quizzes were open, or the finished attempts, whichever is further. */
+  private refreshProgress() {
+    this.progressRows = this.assessments.map(a => {
+      const local = this.progress.summary(a.id);
+      const server = this.fromAttempts(a.id);
+      const sum = local && server
+        ? (local.answered >= server.answered ? local : server)
+        : (local ?? server);
+      return { id: a.id, name: a.name, icon: a.icon, sum };
+    });
+    this.totalAnswered = this.progressRows.reduce((n, r) => n + (r.sum?.answered ?? 0), 0);
+  }
+
+  /** Progress worked out from finished attempts saved on the server (older attempts) */
+  private fromAttempts(id: string): ProgressSummary | null {
+    const rx = id === 'algebra' ? /^algebra/i
+      : id === 'all' ? /^introduction to trigonometry/i
+        : null;
+    if (!rx) return null;
+
+    const best: Record<string, { correct: number; total: number }> = {};
+    let last: string | null = null;
+    for (const a of this.attempts) {
+      if (!rx.test(a.quiz ?? '')) continue;
+      last = a.date ?? last;
+      for (const p of a.byPart ?? []) {
+        if (!p.total) continue;
+        const old = best[p.name];
+        if (!old || p.correct > old.correct) best[p.name] = { correct: p.correct, total: p.total };
       }
-      const done = Object.values(bestByTopic).filter(v => v >= 70).length;
-      return { pct: total ? Math.round(done * 100 / total) : 0, done, total };
     }
-    return { pct: 0, done: 0, total };
+
+    const names = Object.keys(best);
+    if (!names.length) return null;
+    const topics = names.map(name => ({
+      name, answered: best[name].total, correct: best[name].correct, total: best[name].total, pct: 100
+    }));
+    const total = topics.reduce((s, t) => s + t.total, 0);
+    const correct = topics.reduce((s, t) => s + t.correct, 0);
+    return { answered: total, correct, total, pct: 100, topics, updated: last };
+  }
+
+  pgStatus(sum: ProgressSummary | null): 'not-started' | 'in-progress' | 'completed' {
+    if (!sum || !sum.answered) return 'not-started';
+    return sum.total && sum.answered >= sum.total ? 'completed' : 'in-progress';
+  }
+
+  pgLabel(sum: ProgressSummary | null): string {
+    const s = this.pgStatus(sum);
+    return s === 'completed' ? 'All answered' : s === 'in-progress' ? 'In progress' : 'Not started';
+  }
+
+  /** Bar width: even one answered question shows a small visible bar */
+  pgWidth(answered: number, pct: number): number {
+    return answered > 0 ? Math.max(pct, 4) : 0;
+  }
+
+  // small numbers used by the assessment cards
+  assessmentProgress(id: string) {
+    const sum = this.progressRows.find(r => r.id === id)?.sum;
+    return sum
+      ? { pct: this.pgWidth(sum.answered, sum.pct), done: sum.answered, total: sum.total }
+      : { pct: 0, done: 0, total: 0 };
+  }
+
+  // the last 5 finished attempts, newest first
+  get recentAttempts() { return this.attempts.slice(-5).reverse(); }
+
+  shortDate(d: any): string {
+    const t = new Date(d);
+    return isNaN(t.getTime()) ? '' : t.toLocaleDateString('en-ZA', { day: 'numeric', month: 'short' });
   }
 
   // used by the circular progress ring in the hero card
@@ -209,7 +281,9 @@ export class DashboardComponent implements OnInit {
     const open = this.topics.filter(t => t.status === 'in-progress');
     const pool = open.length ? open : this.topics.filter(t => t.status === 'not-started');
     return pool.length ? pool.reduce((a, b) => (b.best < a.best ? b : a)) : null;
-  }    // true when a Trigonometry quiz was started and closed before finishing
+  }
+
+  // true when a Trigonometry quiz was started and closed before finishing
   get hasSavedQuiz(): boolean {
     try {
       const raw = localStorage.getItem('trig-quiz-progress-v3');
@@ -220,6 +294,7 @@ export class DashboardComponent implements OnInit {
   }
 
   logOut() {
+    this.progress.clearOwner();   // the next learner on this device starts clean
     this.auth.logout();
     this.router.navigate(['/']);
   }

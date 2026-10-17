@@ -41,7 +41,7 @@
             <span class="dx-nav-ico" aria-hidden="true">📝</span>Assessments
           </button>
           <button type="button" class="dx-nav-item" [class.dx-nav-on]="activeNav === 'progress'"
-            (click)="setNav('progress'); secTopics.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+            (click)="setNav('progress'); secProg.scrollIntoView({ behavior: 'smooth', block: 'start' })">
             <span class="dx-nav-ico" aria-hidden="true">📈</span>My progress
           </button>
           <button type="button" class="dx-nav-item" [class.dx-nav-on]="activeNav === 'leaderboard'"
@@ -148,6 +148,78 @@
           <!-- ===== Column A ===== -->
           <div class="dx-col">
 
+            <!-- My progress: questions answered in every assessment -->
+            <div class="dx-card dx-pg" #secProg>
+              <div class="dx-pg-top">
+                <div>
+                  <h2>My progress</h2>
+                  <p class="dx-sub">Every question you answer counts, even if you do not finish the quiz.</p>
+                </div>
+                <div class="dx-pg-count">
+                  <strong>{{ totalAnswered }}</strong>
+                  <small>questions answered</small>
+                </div>
+              </div>
+
+              <div class="dx-pg-list">
+                <details class="dx-pg-item" *ngFor="let r of progressRows"
+                  [open]="pgStatus(r.sum) === 'in-progress'">
+                  <summary class="dx-pg-sum">
+                    <span class="dx-pg-ico" aria-hidden="true">{{ r.icon }}</span>
+
+                    <div class="dx-pg-main">
+                      <div class="dx-pg-line">
+                        <h3>{{ r.name }}</h3>
+                        <span class="dx-pg-chip" [ngClass]="'dx-pg-st-' + pgStatus(r.sum)">{{ pgLabel(r.sum) }}</span>
+                      </div>
+                      <div class="dx-pg-bar">
+                        <i [ngClass]="'dx-pg-fill-' + pgStatus(r.sum)"
+                          [style.width.%]="r.sum ? pgWidth(r.sum.answered, r.sum.pct) : 0"></i>
+                      </div>
+                      <p class="dx-pg-meta" *ngIf="r.sum; else pgNone">
+                        <b>{{ r.sum.answered }}</b> of {{ r.sum.total }} questions answered ·
+                        <b>{{ r.sum.correct }}</b> correct
+                      </p>
+                      <ng-template #pgNone>
+                        <p class="dx-pg-meta">You have not answered any questions yet.</p>
+                      </ng-template>
+                    </div>
+
+                    <span class="dx-pg-pct">{{ r.sum ? r.sum.pct : 0 }}%<small>answered</small></span>
+                    <span class="dx-pg-chev" aria-hidden="true">⌄</span>
+                  </summary>
+
+                  <div class="dx-pg-body">
+                    <ng-container *ngIf="r.sum && r.sum.topics.length">
+                      <div class="dx-pg-topic" *ngFor="let t of r.sum.topics">
+                        <span class="dx-pg-tname">{{ t.name }}</span>
+                        <div class="dx-pg-bar dx-pg-bar-sm">
+                          <i [style.width.%]="pgWidth(t.answered, t.pct)"></i>
+                        </div>
+                        <span class="dx-pg-tnum">{{ t.answered }}/{{ t.total }}<em> · {{ t.correct }} ✓</em></span>
+                      </div>
+                    </ng-container>
+                    <p *ngIf="!r.sum" class="dx-sub">Answer your first question and your progress will appear here.</p>
+
+                    <button type="button" class="dx-btn dx-btn-primary dx-btn-sm" (click)="startQuiz(r.id)">
+                      {{ pgStatus(r.sum) === 'not-started' ? 'Start' : 'Practise again' }}
+                    </button>
+                  </div>
+                </details>
+              </div>
+
+              <!-- Recent attempts -->
+              <div class="dx-pg-recent" *ngIf="recentAttempts.length">
+                <h3>Recent attempts</h3>
+                <div class="dx-pg-rec" *ngFor="let a of recentAttempts">
+                  <span class="dx-pg-rec-pct" [ngClass]="a.percent >= 70 ? 'dx-pg-pass' : 'dx-pg-fail'">{{ a.percent
+                    }}%</span>
+                  <span class="dx-pg-rec-name">{{ a.quiz || 'Quiz' }}</span>
+                  <span class="dx-pg-rec-date">{{ shortDate(a.date) }}</span>
+                </div>
+              </div>
+            </div>
+
             <!-- Assessments -->
             <div class="dx-card" #secAssess>
               <div class="dx-head">
@@ -168,7 +240,7 @@
                   </div>
                   <div class="dx-tile-prog" *ngIf="assessmentProgress(a.id) as p">
                     <div class="dx-bar"><i [style.width.%]="p.pct"></i></div>
-                    <small>{{ p.done }}/{{ p.total }} done</small>
+                    <small>{{ p.total ? p.done + ' of ' + p.total + ' answered' : 'Not started' }}</small>
                   </div>
                   <button type="button" class="dx-btn dx-btn-primary" (click)="startQuiz(a.id)">
                     {{ a.id === 'all' && hasSavedQuiz ? 'Continue' : 'Start' }}
@@ -213,6 +285,7 @@
                     }}</button>
 
                   <p class="dx-tmeta">
+                    <span *ngIf="t.qTotal"><b>{{ t.answered }}</b> of {{ t.qTotal }} answered</span>
                     <ng-container *ngIf="statsFor(t.id) as s; else noStats">
                       <span>Class avg <b>{{ s.average }}%</b></span>
                       <span>Top <b>{{ s.top }}%</b></span>
@@ -258,8 +331,7 @@
               <div class="dx-head">
                 <div>
                   <h2>Last attempt</h2>
-                  <p class="dx-sub" *ngIf="!latest">Finish the Introduction to Trigonometry quiz and your results will
-                    show here.</p>
+                  <p class="dx-sub" *ngIf="!latest">Finish a quiz and your results will show here.</p>
                 </div>
                 <strong class="dx-score" *ngIf="latest">{{ latest.percent }}%</strong>
               </div>
@@ -364,7 +436,7 @@
           <span aria-hidden="true">📝</span>Quizzes
         </button>
         <button type="button" class="dx-tb-item" [class.dx-tb-on]="activeNav === 'progress'"
-          (click)="setNav('progress'); secTopics.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+          (click)="setNav('progress'); secProg.scrollIntoView({ behavior: 'smooth', block: 'start' })">
           <span aria-hidden="true">📈</span>Progress
         </button>
         <button type="button" class="dx-tb-item" [class.dx-tb-on]="activeNav === 'leaderboard'"

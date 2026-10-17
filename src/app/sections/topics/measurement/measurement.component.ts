@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../../auth.service';
+import { QuizProgressService } from '../../../quiz-progress.service';
 
 type QuestionType = 'info' | 'mcq' | 'calc';
 
@@ -26,6 +28,7 @@ interface QuizQuestion {
   selector: 'app-measurement',
   standalone: true,
   imports: [CommonModule, FormsModule],
+  providers: [AuthService],
   templateUrl: './measurement.component.html',
   styleUrl: './measurement.component.css'
 })
@@ -787,6 +790,8 @@ export class MeasurementComponent implements OnInit, OnDestroy {
   totalCorrect = 0;
   totalWrong = 0;
 
+  constructor(private auth: AuthService, private progress: QuizProgressService) { }
+
   // ---------- Lifecycle ----------
   ngOnInit(): void {
     this.startQuestion();
@@ -905,6 +910,7 @@ export class MeasurementComponent implements OnInit, OnDestroy {
     } else {
       this.totalWrong++;
     }
+    this.saveProgress(this.isCorrect);
     this.feedback = 'Answer saved.';
   }
 
@@ -917,6 +923,14 @@ export class MeasurementComponent implements OnInit, OnDestroy {
     }
     this.currentIndex++;
     this.startQuestion();
+  }
+
+  private saveProgress(ok: boolean): void {
+    if (!this.auth.isLoggedIn()) {
+      return;
+    }
+    const total = this.scoredTotal;
+    this.progress.record('measurement', `q${this.currentIndex}`, 'Measurement', ok, total, { 'Measurement': total });
   }
 
   // ---------- Option styling ----------
@@ -972,6 +986,7 @@ export class MeasurementComponent implements OnInit, OnDestroy {
     this.selectedOption = null;
     this.answered = true;
     this.totalWrong++;
+      this.saveProgress(false);
     this.feedback = "Time's up!";
   }
 

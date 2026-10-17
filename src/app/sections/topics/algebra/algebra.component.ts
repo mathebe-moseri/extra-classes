@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../auth.service';
+import { QuizProgressService } from '../../../quiz-progress.service';
 
 type QuestionType = 'info' | 'mcq' | 'calc';
 /** 0 = applies to both grades (overview card) */
@@ -91,8 +92,7 @@ export class AlgebraComponent implements OnInit, OnDestroy {
         '10. Equations: quadratic, fractions, exponential, literal\n' +
         '11. Linear inequalities and interval notation\n' +
         '12. Simultaneous equations\n' +
-        '13. Functions: parabola, hyperbola, exponential\n\n' +
-        'Number patterns has its own topic.')
+        '13. Functions: parabola, hyperbola, exponential\n\n')
     ]),
 
     /* ===================================================== */
@@ -572,7 +572,7 @@ export class AlgebraComponent implements OnInit, OnDestroy {
   private answerLog: { part: string; text: string; given: string; correct: string; ok: boolean; explanation: string }[] = [];
   private attemptSaved = false;
 
-  constructor(private auth: AuthService) { }
+  constructor(private auth: AuthService, private progress: QuizProgressService) { }
 
   // ---------- Lifecycle ----------
   ngOnInit(): void {
@@ -731,6 +731,24 @@ export class AlgebraComponent implements OnInit, OnDestroy {
       ok: correct,
       explanation: q.explanation ?? ''
     });
+
+    // Remember this question for the dashboard, even if the quiz is never finished
+    if (this.auth.isLoggedIn()) {
+      this.progress.record('algebra', `q${this.currentIndex}`, label, correct, this.scoredTotal, this.topicTotals);
+    }
+  }
+
+  /** Number of scored questions in each topic block */
+  private get topicTotals(): Record<string, number> {
+    const totals: Record<string, number> = {};
+    for (const q of this.questions) {
+      if (q.type === 'info') {
+        continue;
+      }
+      const name = `Grade ${q.grade}: ${q.topic}`;
+      totals[name] = (totals[name] ?? 0) + 1;
+    }
+    return totals;
   }
 
   private lockAnswer(): void {
