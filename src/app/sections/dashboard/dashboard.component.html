@@ -1,212 +1,382 @@
-<div class="d-page">
-  <header class="d-top">
-    <button type="button" class="d-brand" (click)="goHome()">SM Remote Extra Classes</button>
-    <button type="button" class="d-logout" (click)="logOut()">Log out</button>
+<div class="dx-page">
+
+  <!-- ===== Top bar ===== -->
+  <header class="dx-top">
+    <button type="button" class="dx-brand" (click)="goHome()">
+      <span class="dx-brand-ico" aria-hidden="true">🎓</span>
+      <span class="dx-brand-txt">SM Remote Extra Classes</span>
+    </button>
+
+    <label class="dx-search">
+      <span aria-hidden="true">🔍</span>
+      <input #q type="search" placeholder="Search topics or assessments…" aria-label="Search topics or assessments"
+        autocomplete="off" (input)="0" />
+    </label>
+
+    <div class="dx-user">
+      <span class="dx-user-av">{{ initials }}</span>
+      <span class="dx-user-txt">
+        <strong>{{ profile?.firstName }} {{ profile?.surname }}</strong>
+        <small>Grade {{ profile?.grade }}</small>
+      </span>
+      <button type="button" class="dx-logout" (click)="logOut()">Log out</button>
+    </div>
   </header>
 
-  <main class="d-wrap">
-    <p *ngIf="loading" class="d-muted">Loading…</p>
-    <p *ngIf="error" class="d-error" role="alert">{{ error }}</p>
+  <main class="dx-wrap">
+    <p *ngIf="loading" class="dx-state"><span class="dx-spin"></span> Loading your dashboard…</p>
+    <p *ngIf="error" class="dx-state dx-state-err" role="alert">{{ error }}</p>
 
-    <div class="d-shell" *ngIf="profile">
+    <div class="dx-shell" *ngIf="profile">
 
-      <!-- ===== Profile corner ===== -->
-      <aside class="d-side">
-        <div class="d-card d-profile">
-          <div class="d-banner"></div>
-          <div class="d-avatar">{{ initials }}</div>
-          <h2 class="d-name">{{ profile.firstName }} {{ profile.surname }}</h2>
-          <span class="d-level">{{ level }}</span>
+      <!-- ===== Sidebar (desktop) ===== -->
+      <aside class="dx-side">
+        <nav class="dx-card dx-nav" aria-label="Main">
+          <button type="button" class="dx-nav-item" [class.dx-nav-on]="activeNav === 'dashboard'"
+            (click)="setNav('dashboard'); secTop.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+            <span class="dx-nav-ico" aria-hidden="true">🏠</span>Dashboard
+          </button>
+          <button type="button" class="dx-nav-item" [class.dx-nav-on]="activeNav === 'assessments'"
+            (click)="setNav('assessments'); secAssess.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+            <span class="dx-nav-ico" aria-hidden="true">📝</span>Assessments
+          </button>
+          <button type="button" class="dx-nav-item" [class.dx-nav-on]="activeNav === 'progress'"
+            (click)="setNav('progress'); secTopics.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+            <span class="dx-nav-ico" aria-hidden="true">📈</span>My progress
+          </button>
+          <button type="button" class="dx-nav-item" [class.dx-nav-on]="activeNav === 'leaderboard'"
+            (click)="setNav('leaderboard'); secBoard.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+            <span class="dx-nav-ico" aria-hidden="true">🏆</span>Leaderboard
+          </button>
+          <button type="button" class="dx-nav-item" [class.dx-nav-on]="activeNav === 'lessons'"
+            (click)="setNav('lessons'); secLessons.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+            <span class="dx-nav-ico" aria-hidden="true">📖</span>Lessons
+          </button>
+        </nav>
 
-          <div class="d-rankbox" *ngIf="overall?.rank">
-            <span>Class rank</span>
-            <strong>#{{ overall.rank }} <small>of {{ overall.participants }}</small></strong>
+        <div class="dx-card dx-prof">
+          <div class="dx-prof-top">
+            <span class="dx-avatar">{{ initials }}</span>
+            <div>
+              <strong>{{ profile.firstName }} {{ profile.surname }}</strong>
+              <span class="dx-level">{{ level }}</span>
+            </div>
           </div>
-
-          <ul class="d-facts">
+          <ul class="dx-facts">
             <li><span>Grade</span><strong>{{ profile.grade }}</strong></li>
             <li><span>School</span><strong>{{ profile.school }}</strong></li>
-            <li><span>Email</span><strong class="d-break">{{ profile.email }}</strong></li>
+            <li><span>Email</span><strong>{{ profile.email }}</strong></li>
           </ul>
+        </div>
+
+        <div class="dx-card dx-next" *ngIf="nextTopic as n">
+          <small>🎯 Next up</small>
+          <h3>{{ n.name }}</h3>
+          <p>{{ n.tries ? 'Best so far ' + n.best + '%.' : 'You have not tried this one yet.' }} Score 70% to complete
+            it.</p>
+          <button type="button" class="dx-btn dx-btn-primary dx-btn-block" (click)="startQuiz(n.id)">
+            {{ n.status === 'in-progress' ? 'Continue' : 'Start' }}
+          </button>
+        </div>
+        <div class="dx-card dx-next" *ngIf="!nextTopic && topics.length">
+          <small>🎉 Amazing</small>
+          <h3>Every topic completed!</h3>
+          <p>Retake any topic to beat your best score and climb the leaderboard.</p>
         </div>
       </aside>
 
       <!-- ===== Main ===== -->
-      <section class="d-main">
+      <div class="dx-main">
 
-        <div class="d-hero">
-          <div class="d-ring">
-            <svg viewBox="0 0 36 36">
-              <circle cx="18" cy="18" r="15.9" class="d-ring-bg" />
-              <circle cx="18" cy="18" r="15.9" class="d-ring-fg" [attr.stroke-dasharray]="overallPct + ', 100'" />
-            </svg>
-            <span>{{ overallPct }}%</span>
-          </div>
-          <div>
-            <p class="d-eyebrow">Welcome back</p>
-            <h1 class="d-title">{{ profile.firstName }}</h1>
-            <p class="d-hero-msg">{{ heroMessage }}</p>
-<button type="button" class="d-hero-btn" (click)="startQuiz()">{{ hasSavedQuiz ? 'Continue assessment' : 'Start assessment' }}</button>
-          </div>
-        </div>
-
-        <div class="d-stats">
-          <div class="d-stat">
-            <p>{{ best }}%</p><span>Best score</span>
-          </div>
-          <div class="d-stat">
-            <p>{{ overall?.rank ? '#' + overall.rank : '—' }}</p><span>Class rank</span>
-          </div>
-          <div class="d-stat">
-            <p>{{ overall?.beatPercent != null ? overall.beatPercent + '%' : '—' }}</p><span>Ahead of learners</span>
-          </div>
-          <div class="d-stat">
-            <p>{{ completedCount }}/{{ topics.length }}</p><span>Topics completed</span>
-          </div>
-        </div>
-
-        <div class="d-card">
-          <div class="d-card-head">
-            <h2>Take an assessment</h2>
-          </div>
-          <div class="d-assess">
-            <div class="d-assess-item" *ngFor="let a of assessments">
-              <span class="d-assess-ico">{{ a.icon }}</span>
-              <div>
-                <h3>{{ a.name }}</h3>
-                <p>{{ a.desc }}</p>
-              </div>
-<button type="button" class="d-start" (click)="startQuiz(a.id)">{{ a.id === 'all' && hasSavedQuiz ? 'Continue' : 'Start' }}</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- You vs all learners -->
-        <div class="d-card">
-          <div class="d-card-head">
-            <h2>You vs all learners</h2>
-            <div class="d-legend">
-              <span><i class="d-dot d-dot-you"></i>You</span>
-              <span><i class="d-dot d-dot-avg"></i>Class average</span>
-              <span><i class="d-dot d-dot-top"></i>Top score</span>
+        <!-- Hero -->
+        <div class="dx-hero" #secTop>
+          <div class="dx-hero-text">
+            <p class="dx-eyebrow">Welcome back 👋</p>
+            <h1 class="dx-title">{{ profile.firstName }}</h1>
+            <p class="dx-hero-msg">{{ heroMessage }}</p>
+            <div class="dx-chips">
+              <span class="dx-chip-w">🏅 {{ level }}</span>
+              <span class="dx-chip-w">Grade {{ profile.grade }}</span>
             </div>
           </div>
 
-          <div class="d-topic" *ngFor="let t of topics; let i = index">
-            <div class="d-topic-head">
-              <div>
-                <span class="d-topic-no">Topic {{ i + 1 }}</span>
-                <h3>{{ t.name }}</h3>
-              </div>
-              <div class="d-topic-actions">
-                <span class="d-badge" [ngClass]="'d-' + t.status">{{ t.label }}</span>
-                <button type="button" class="d-start" (click)="startQuiz(t.id)">{{
-                  t.status === 'not-started' ? 'Start' : t.status === 'in-progress' ? 'Continue' : 'Retake' }}</button>
-              </div>
+          <div class="dx-hero-ring">
+            <div class="dx-ring" role="img" [attr.aria-label]="'Overall progress ' + overallPct + ' percent'">
+              <svg viewBox="0 0 36 36" aria-hidden="true">
+                <circle cx="18" cy="18" r="15.9" class="dx-ring-bg" />
+                <circle cx="18" cy="18" r="15.9" class="dx-ring-fg" [attr.stroke-dasharray]="ringDash" />
+              </svg>
+              <span>{{ overallPct }}%</span>
             </div>
-
-            <ng-container *ngIf="statsFor(t.id) as s; else noStats">
-              <div class="d-track">
-                <div class="d-fill" [ngClass]="'d-fill-' + t.status" [style.width.%]="t.best"></div>
-                <span class="d-mark d-mark-avg" [style.left.%]="s.average" title="Class average"></span>
-                <span class="d-mark d-mark-top" [style.left.%]="s.top" title="Top score"></span>
-              </div>
-              <div class="d-meta">
-                <span>You <strong>{{ t.tries ? t.best + '%' : '—' }}</strong></span>
-                <span>Class avg <strong>{{ s.average }}%</strong></span>
-                <span>Top <strong>{{ s.top }}%</strong></span>
-                <span *ngIf="s.rank">Rank <strong>#{{ s.rank }} of {{ s.participants }}</strong></span>
-                <span *ngIf="t.tries" class="d-delta" [ngClass]="t.best >= s.average ? 'd-up' : 'd-down'">
-                  {{ t.best >= s.average ? '▲' : '▼' }} {{ abs(t.best - s.average) }} pts vs average
-                </span>
-              </div>
-            </ng-container>
-
-            <ng-template #noStats>
-              <div class="d-track">
-                <div class="d-fill" [ngClass]="'d-fill-' + t.status" [style.width.%]="t.best"></div>
-              </div>
-              <div class="d-meta">
-                <span *ngIf="t.tries">You <strong>{{ t.best }}%</strong> · {{ t.tries }} {{ t.tries === 1 ? 'attempt' :
-                  'attempts' }}</span>
-                <span *ngIf="!t.tries">Not attempted yet</span>
-              </div>
-            </ng-template>
-          </div>
-        </div>
-
-        <!-- Leaderboard -->
-        <div class="d-card">
-          <div class="d-card-head">
-            <h2>Leaderboard</h2>
-          </div>
-          <div class="d-tabs">
-            <button type="button" class="d-tab" *ngFor="let tb of tabs" [class.d-tab-on]="boardTab === tb.id"
-              (click)="boardTab = tb.id">{{ tb.name }}</button>
+            <small>{{ completedCount }} of {{ topics.length }} topics done</small>
           </div>
 
-          <p *ngIf="boardLoading" class="d-muted">Loading leaderboard…</p>
-          <p *ngIf="!boardLoading && !board" class="d-muted">The leaderboard is not available right now.</p>
-
-          <ng-container *ngIf="activeBoard as b">
-            <p *ngIf="!b.board.length" class="d-muted">No scores yet. Be the first on the board!</p>
-            <div class="d-row" *ngFor="let r of b.board" [class.d-me]="r.isMe">
-              <span class="d-rank">{{ r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : r.rank }}</span>
-              <span class="d-av">{{ r.name.charAt(0) }}</span>
-              <span class="d-rname">{{ r.name }}<em *ngIf="r.isMe"> (You)</em></span>
-              <span class="d-rbar"><i [style.width.%]="r.score"></i></span>
-              <strong class="d-rscore">{{ r.score }}%</strong>
-            </div>
-          </ng-container>
-        </div>
-
-        <!-- Last attempt -->
-        <div class="d-card">
-          <h2 class="d-h2">Last attempt</h2>
-          <p *ngIf="!attempts.length" class="d-muted">
-            Finish the Introduction to Trigonometry quiz and your results will show here.
-          </p>
-
-          <ng-container *ngIf="latest">
-            <div class="d-parts">
-              <div *ngFor="let p of latest.byPart"><span>{{ p.name }}</span><strong>{{ p.correct }}/{{ p.total
-                  }}</strong></div>
-            </div>
-
-            <div *ngIf="weakParts.length" class="d-improve">
-              <strong>To improve: </strong>
-              <span *ngFor="let p of weakParts; let last = last">{{ p.name }}{{ last ? '' : ', ' }}</span>
-            </div>
-
-            <button type="button" class="d-btn" (click)="showAll = !showAll">
-              {{ showAll ? 'Hide answers' : 'Review all answers from last attempt' }}
+          <div class="dx-hero-cta">
+            <button type="button" class="dx-btn dx-btn-white" (click)="startQuiz()">
+              ▶ {{ hasSavedQuiz ? 'Continue assessment' : 'Start assessment' }}
             </button>
+            <button type="button" class="dx-btn dx-btn-ghost dx-only-small" *ngIf="nextTopic as n"
+              (click)="startQuiz(n.id)">
+              🎯 Next up: {{ n.name }}
+            </button>
+          </div>
+        </div>
 
-            <div *ngIf="showAll" class="d-answers">
-              <div *ngFor="let a of latest.answers; let i = index" class="d-answer" [ngClass]="a.ok ? 'd-ok' : 'd-bad'">
-                <p class="d-q">{{ i + 1 }}. <span [innerHTML]="a.text"></span></p>
-                <p>Your answer: <strong [innerHTML]="a.given"></strong> {{ a.ok ? '✓' : '✗' }}</p>
-                <p *ngIf="!a.ok">Correct answer: <strong [innerHTML]="a.correct"></strong></p>
-                <p *ngIf="a.explanation" class="d-expl" [innerHTML]="a.explanation"></p>
+        <!-- Stats -->
+        <div class="dx-stats">
+          <div class="dx-stat">
+            <span class="dx-stat-ico dx-i-green" aria-hidden="true">🏆</span>
+            <div><strong>{{ best }}%</strong><small>Best score</small></div>
+          </div>
+          <div class="dx-stat">
+            <span class="dx-stat-ico dx-i-purple" aria-hidden="true">👥</span>
+            <div><strong>{{ overall?.rank ? '#' + overall.rank : '—' }}</strong><small>Class rank</small></div>
+          </div>
+          <div class="dx-stat">
+            <span class="dx-stat-ico dx-i-amber" aria-hidden="true">🚀</span>
+            <div><strong>{{ overall?.beatPercent != null ? overall.beatPercent + '%' : '—' }}</strong><small>Ahead of
+                learners</small></div>
+          </div>
+          <div class="dx-stat">
+            <span class="dx-stat-ico dx-i-blue" aria-hidden="true">🎯</span>
+            <div><strong>{{ completedCount }}/{{ topics.length }}</strong><small>Topics completed</small></div>
+          </div>
+        </div>
+
+        <div class="dx-cols">
+
+          <!-- ===== Column A ===== -->
+          <div class="dx-col">
+
+            <!-- Assessments -->
+            <div class="dx-card" #secAssess>
+              <div class="dx-head">
+                <div>
+                  <h2>Assessments</h2>
+                  <p class="dx-sub">Pick one and show what you know.</p>
+                </div>
+              </div>
+              <div class="dx-tiles">
+                <div class="dx-tile" *ngFor="let a of assessments"
+                  [hidden]="!!q.value && !a.name.toLowerCase().includes(q.value.toLowerCase())">
+                  <div class="dx-tile-top">
+                    <span class="dx-tile-ico" aria-hidden="true">{{ a.icon }}</span>
+                    <div>
+                      <h3>{{ a.name }}</h3>
+                      <p>{{ a.desc }}</p>
+                    </div>
+                  </div>
+                  <div class="dx-tile-prog" *ngIf="assessmentProgress(a.id) as p">
+                    <div class="dx-bar"><i [style.width.%]="p.pct"></i></div>
+                    <small>{{ p.done }}/{{ p.total }} done</small>
+                  </div>
+                  <button type="button" class="dx-btn dx-btn-primary" (click)="startQuiz(a.id)">
+                    {{ a.id === 'all' && hasSavedQuiz ? 'Continue' : 'Start' }}
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div *ngIf="latest.wrong.length" class="d-wrong">
-              <h3>Questions you got wrong last time</h3>
-              <div *ngFor="let w of latest.wrong" class="d-answer d-bad">
-                <p class="d-q" [innerHTML]="w.text"></p>
-                <p>Answer: <strong [innerHTML]="w.correct"></strong></p>
+            <!-- Topics -->
+            <div class="dx-card" #secTopics>
+              <div class="dx-head">
+                <div>
+                  <h2>Your topics</h2>
+                  <p class="dx-sub">Score 70% or more to complete a topic.</p>
+                </div>
+                <div class="dx-legend">
+                  <span><i class="dx-dot-avg"></i>Class average</span>
+                  <span><i class="dx-dot-top"></i>Top score</span>
+                </div>
+              </div>
+
+              <div class="dx-topic" *ngFor="let t of topics"
+                [hidden]="!!q.value && !t.name.toLowerCase().includes(q.value.toLowerCase())">
+                <div class="dx-trow">
+                  <div class="dx-tname">
+                    <h3>{{ t.name }}</h3>
+                    <span class="dx-chip" [ngClass]="'dx-st-' + t.status">{{ t.label }}</span>
+                  </div>
+
+                  <div class="dx-track">
+                    <div class="dx-fill" [ngClass]="'dx-fill-' + t.status" [style.width.%]="t.best"></div>
+                    <ng-container *ngIf="statsFor(t.id) as s">
+                      <span class="dx-mark dx-mark-avg" [style.left.%]="s.average" title="Class average"></span>
+                      <span class="dx-mark dx-mark-top" [style.left.%]="s.top" title="Top score"></span>
+                    </ng-container>
+                  </div>
+
+                  <strong class="dx-tpct">{{ t.best }}%</strong>
+
+                  <button type="button" class="dx-btn dx-btn-primary dx-btn-sm" (click)="startQuiz(t.id)">{{
+                    t.status === 'not-started' ? 'Start' : t.status === 'in-progress' ? 'Continue' : 'Retake'
+                    }}</button>
+
+                  <p class="dx-tmeta">
+                    <ng-container *ngIf="statsFor(t.id) as s; else noStats">
+                      <span>Class avg <b>{{ s.average }}%</b></span>
+                      <span>Top <b>{{ s.top }}%</b></span>
+                      <span *ngIf="s.rank">Rank <b>#{{ s.rank }} of {{ s.participants }}</b></span>
+                      <span *ngIf="t.tries" class="dx-delta" [ngClass]="t.best >= s.average ? 'dx-up' : 'dx-down'">
+                        {{ t.best >= s.average ? '▲' : '▼' }} {{ abs(t.best - s.average) }} pts vs average
+                      </span>
+                    </ng-container>
+                    <ng-template #noStats>
+                      <span>{{ t.tries ? t.tries + (t.tries === 1 ? ' attempt' : ' attempts') : 'Not attempted yet'
+                        }}</span>
+                    </ng-template>
+                  </p>
+                </div>
               </div>
             </div>
-          </ng-container>
-        </div>
 
-        <div class="d-card">
-          <h2 class="d-h2">Your lessons</h2>
-          <p class="d-muted">Video lessons, exercises and worked solutions will appear here.</p>
-        </div>
+            <!-- Latest questions -->
+            <div class="dx-card" *ngIf="latestQuestions.length">
+              <div class="dx-head">
+                <div>
+                  <h2>Latest questions</h2>
+                  <p class="dx-sub">Quick look at your most recent answers.</p>
+                </div>
+              </div>
+              <div class="dx-lq">
+                <div class="dx-lq-item" *ngFor="let q2 of latestQuestions" [ngClass]="q2.ok ? 'dx-lq-ok' : 'dx-lq-bad'">
+                  <span class="dx-lq-mark" aria-hidden="true">{{ q2.ok ? '✓' : '✗' }}</span>
+                  <div class="dx-lq-body">
+                    <p class="dx-lq-q" [innerHTML]="q2.text"></p>
+                    <p class="dx-lq-a">Answer: <b [innerHTML]="q2.correct"></b></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-      </section>
+          <!-- ===== Column B ===== -->
+          <div class="dx-col">
+
+            <!-- Last attempt -->
+            <div class="dx-card">
+              <div class="dx-head">
+                <div>
+                  <h2>Last attempt</h2>
+                  <p class="dx-sub" *ngIf="!latest">Finish the Introduction to Trigonometry quiz and your results will
+                    show here.</p>
+                </div>
+                <strong class="dx-score" *ngIf="latest">{{ latest.percent }}%</strong>
+              </div>
+
+              <ng-container *ngIf="latest">
+                <div class="dx-parts">
+                  <div *ngFor="let p of latest.byPart">
+                    <div class="dx-part-top"><span>{{ p.name }}</span><strong>{{ p.correct }}/{{ p.total }}</strong>
+                    </div>
+                    <div class="dx-bar">
+                      <i [ngClass]="p.total && p.correct / p.total >= 0.7 ? 'dx-good' : 'dx-low'"
+                        [style.width.%]="p.total ? p.correct * 100 / p.total : 0"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div *ngIf="weakParts.length" class="dx-improve">
+                  <strong>Focus on: </strong>
+                  <span *ngFor="let p of weakParts; let last = last">{{ p.name }}{{ last ? '' : ', ' }}</span>
+                </div>
+
+                <button type="button" class="dx-btn dx-btn-soft dx-btn-block dx-mt" (click)="showAll = !showAll">
+                  {{ showAll ? 'Show questions to retry' : 'Review all answers' }}
+                </button>
+
+                <div *ngIf="showAll" class="dx-scroll">
+                  <div *ngFor="let a of latest.answers; let i = index" class="dx-ans"
+                    [ngClass]="a.ok ? 'dx-ans-ok' : 'dx-ans-bad'">
+                    <p class="dx-ans-q">{{ i + 1 }}. <span [innerHTML]="a.text"></span></p>
+                    <p>Your answer: <strong [innerHTML]="a.given"></strong> {{ a.ok ? '✓' : '✗' }}</p>
+                    <p *ngIf="!a.ok">Correct answer: <strong [innerHTML]="a.correct"></strong></p>
+                    <p *ngIf="a.explanation" class="dx-ans-x" [innerHTML]="a.explanation"></p>
+                  </div>
+                </div>
+
+                <ng-container *ngIf="!showAll">
+                  <p *ngIf="!latest.wrong.length" class="dx-sub dx-mt">Perfect score, no mistakes to retry! 🎉</p>
+                  <ng-container *ngIf="latest.wrong.length">
+                    <h3 class="dx-mini-h">Questions to retry ({{ latest.wrong.length }})</h3>
+                    <div class="dx-scroll">
+                      <div *ngFor="let w of latest.wrong" class="dx-ans dx-ans-bad">
+                        <p class="dx-ans-q" [innerHTML]="w.text"></p>
+                        <p>Answer: <strong [innerHTML]="w.correct"></strong></p>
+                      </div>
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </div>
+
+            <!-- Leaderboard -->
+            <div class="dx-card" #secBoard>
+              <div class="dx-head">
+                <div>
+                  <h2>Leaderboard</h2>
+                  <p class="dx-sub">See how you rank against other learners.</p>
+                </div>
+              </div>
+              <div class="dx-tabs">
+                <button type="button" class="dx-tab" *ngFor="let tb of tabs" [class.dx-tab-on]="boardTab === tb.id"
+                  (click)="boardTab = tb.id">{{ tb.name }}</button>
+              </div>
+
+              <p *ngIf="boardLoading" class="dx-sub">Loading leaderboard…</p>
+              <p *ngIf="!boardLoading && !board" class="dx-sub">The leaderboard is not available right now.</p>
+
+              <ng-container *ngIf="activeBoard as b">
+                <p *ngIf="!b.board.length" class="dx-sub">No scores yet. Be the first on the board!</p>
+                <div class="dx-lb-row" *ngFor="let r of b.board" [class.dx-me]="r.isMe">
+                  <span class="dx-lb-rank">{{ r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : r.rank
+                    }}</span>
+                  <span class="dx-lb-av">{{ r.name.charAt(0) }}</span>
+                  <div>
+                    <span class="dx-lb-name">{{ r.name }}<em *ngIf="r.isMe"> (You)</em></span>
+                    <div class="dx-bar"><i [style.width.%]="r.score"></i></div>
+                  </div>
+                  <strong class="dx-lb-score">{{ r.score }}%</strong>
+                </div>
+              </ng-container>
+            </div>
+
+            <!-- Lessons -->
+            <div class="dx-card dx-lessons" #secLessons>
+              <span class="dx-lessons-ico" aria-hidden="true">🎬</span>
+              <div>
+                <h2>Your lessons</h2>
+                <p class="dx-sub">Video lessons, exercises and worked solutions will appear here.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Bottom tab bar (phones and tablets) ===== -->
+      <nav class="dx-tabbar" aria-label="Main">
+        <button type="button" class="dx-tb-item" [class.dx-tb-on]="activeNav === 'dashboard'"
+          (click)="setNav('dashboard'); secTop.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+          <span aria-hidden="true">🏠</span>Home
+        </button>
+        <button type="button" class="dx-tb-item" [class.dx-tb-on]="activeNav === 'assessments'"
+          (click)="setNav('assessments'); secAssess.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+          <span aria-hidden="true">📝</span>Quizzes
+        </button>
+        <button type="button" class="dx-tb-item" [class.dx-tb-on]="activeNav === 'progress'"
+          (click)="setNav('progress'); secTopics.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+          <span aria-hidden="true">📈</span>Progress
+        </button>
+        <button type="button" class="dx-tb-item" [class.dx-tb-on]="activeNav === 'leaderboard'"
+          (click)="setNav('leaderboard'); secBoard.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+          <span aria-hidden="true">🏆</span>Ranking
+        </button>
+        <button type="button" class="dx-tb-item" [class.dx-tb-on]="activeNav === 'lessons'"
+          (click)="setNav('lessons'); secLessons.scrollIntoView({ behavior: 'smooth', block: 'start' })">
+          <span aria-hidden="true">📖</span>Lessons
+        </button>
+      </nav>
+
     </div>
   </main>
 </div>

@@ -23,7 +23,8 @@ export class DashboardComponent implements OnInit {
   assessments = [
     { id: 'all', name: 'Trigonometry', icon: '📐', desc: 'Triangles, their rules and SOH CAH TOA' },
     { id: 'patterns', name: 'Number patterns', icon: '🔢', desc: 'Finding any term with Tn = a + (n − 1)d' },
-    { id: 'measurement', name: 'Measurement', icon: '📦', desc: 'Surface area and volume of solids' }
+    { id: 'measurement', name: 'Measurement', icon: '📦', desc: 'Surface area and volume of solids' },
+    { id: 'algebra', name: 'Algebra', icon: '🧮', desc: 'Grade 9 to 10: expressions, equations and graphs' }
   ];
   board: any = null;
   boardLoading = true;
@@ -154,7 +155,61 @@ export class DashboardComponent implements OnInit {
   }
   abs(n: number) { return Math.abs(n); }
 
-    // true when a Trigonometry quiz was started and closed before finishing
+  // ----- redesign helpers -----
+  readonly navItems = [
+    { id: 'dashboard', name: 'Dashboard', icon: '🏠' },
+    { id: 'assessments', name: 'My Assessments', icon: '📝' },
+    { id: 'resources', name: 'Learning Resources', icon: '📖' },
+    { id: 'progress', name: 'Progress', icon: '📈' },
+    { id: 'settings', name: 'Settings', icon: '⚙️' }
+  ];
+  activeNav = 'dashboard';
+
+  private readonly assessmentTotals: Record<string, number> = {
+    all: 5, patterns: 3, measurement: 3, algebra: 13
+  };
+
+  // progress for each card in "Recent Activity"
+  assessmentProgress(id: string) {
+    const total = this.assessmentTotals[id] ?? 0;
+    if (id === 'all') {
+      return { pct: this.overallPct, done: this.completedCount, total };
+    }
+    if (id === 'algebra') {
+      const bestByTopic: Record<string, number> = {};
+      for (const a of this.attempts) {
+        if (!/^algebra/i.test(a.quiz ?? '')) continue;
+        for (const p of a.byPart ?? []) {
+          if (!p.total) continue;
+          const pct = Math.round(p.correct * 100 / p.total);
+          bestByTopic[p.name] = Math.max(bestByTopic[p.name] ?? 0, pct);
+        }
+      }
+      const done = Object.values(bestByTopic).filter(v => v >= 70).length;
+      return { pct: total ? Math.round(done * 100 / total) : 0, done, total };
+    }
+    return { pct: 0, done: 0, total };
+  }
+
+  // used by the circular progress ring in the hero card
+  get ringDash(): string { return `${this.overallPct}, 100`; }
+
+  // greeting on the welcome banner
+  get firstName(): string { return this.profile?.firstName ?? 'Learner'; }
+
+  // the "Latest Questions" strip: 4 most recent answers from the last attempt
+  get latestQuestions() {
+    return (this.latest?.answers ?? []).slice(-4).reverse();
+  }
+
+  setNav(id: string) { this.activeNav = id; }
+
+  // the topic we suggest next: lowest-scoring in-progress topic, else the first not-started one
+  get nextTopic() {
+    const open = this.topics.filter(t => t.status === 'in-progress');
+    const pool = open.length ? open : this.topics.filter(t => t.status === 'not-started');
+    return pool.length ? pool.reduce((a, b) => (b.best < a.best ? b : a)) : null;
+  }    // true when a Trigonometry quiz was started and closed before finishing
   get hasSavedQuiz(): boolean {
     try {
       const raw = localStorage.getItem('trig-quiz-progress-v3');

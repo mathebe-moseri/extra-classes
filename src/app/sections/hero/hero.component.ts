@@ -5,11 +5,11 @@ import { JoinFormService } from '../../join-form.service';
 import { ActivatedRoute, Router } from '@angular/router'; import { RevealDirective } from '../../shared/reveal.directive';
 import { smoothScrollToId } from '../../shared/smooth-scroll';
 import { NumberPatternsComponent } from '../topics/number-patterns/number-patterns.component';
-
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../auth.service';
 import { QuizLauncherService } from '../../quiz-launcher.service';
 import { MeasurementComponent } from '../topics/measurement/measurement.component';
+import { AlgebraComponent } from '../topics/algebra/algebra.component';
 // Stacked fraction: frac('O', 'H') shows O over H with a fraction bar
 const frac = (top: string, bottom: string) =>
   `<span class="frac"><span>${top}</span><span>${bottom}</span></span>`;
@@ -17,7 +17,7 @@ const frac = (top: string, bottom: string) =>
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, FormsModule, RevealDirective, NumberPatternsComponent, MeasurementComponent],
+  imports: [CommonModule, FormsModule, RevealDirective, NumberPatternsComponent, MeasurementComponent, AlgebraComponent],
   providers: [AuthService],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css']
@@ -163,7 +163,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   topics = [
     { id: 'trig', name: 'Trigonometry', icon: '📐', desc: 'Triangles, their rules and SOH CAH TOA' },
     { id: 'patterns', name: 'Number patterns', icon: '🔢', desc: 'Finding any term with Tn = a + (n − 1)d' },
-    { id: 'measurement', name: 'Measurement', icon: '📦', desc: 'Surface area and volume of solids' }
+    { id: 'measurement', name: 'Measurement', icon: '📦', desc: 'Surface area and volume of solids' },
+    { id: 'algebra', name: 'Algebra', icon: '🧮', desc: 'Grade 9 to 10: expressions, equations and graphs' }
   ];
   selectedTopic = '';
   topicOpen = false;   // true while the topic list is showing
@@ -184,6 +185,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   showNumberPatterns = false;  // will open the new Number Patterns component (step 2)
   showMeasurement = false;
+  showAlgebra = false;
 
   startTopicQuiz() {
     if (!this.selectedTopic) {
@@ -198,6 +200,10 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (this.selectedTopic === 'measurement') {
       this.showMeasurement = true;
+      return;
+    }
+    if (this.selectedTopic === 'algebra') {
+      this.showAlgebra = true;
       return;
     }
     this.openQuiz();           // trigonometry: your existing quiz
@@ -240,6 +246,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     switch (quiz) {
       case 'patterns': this.showNumberPatterns = true; break;
       case 'measurement': this.showMeasurement = true; break;
+      case 'algebra': this.showAlgebra = true; break;
       case 'parts': this.startPart(0); break;
       case 'types': this.startPart(1); break;
       case 'rules': this.startPart(2); break;
@@ -327,6 +334,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     else if (this.showQuizCompletedPopup) this.closeQuizCompletedPopup();
     else if (this.showNumberPatterns) this.showNumberPatterns = false;
     else if (this.showMeasurement) this.showMeasurement = false;
+    else if (this.showAlgebra) this.showAlgebra = false;
     else if (this.showTestimonials) this.closeTestimonials();
   }
 

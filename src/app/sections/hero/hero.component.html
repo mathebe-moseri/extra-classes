@@ -340,6 +340,11 @@
     (signUp)="showMeasurement = false; openJoin()">
   </app-measurement>
 
+  <!-- ============ ALGEBRA QUIZ ============ -->
+  <app-algebra *ngIf="showAlgebra" (closed)="showAlgebra = false; returnIfFromDashboard()"
+    (signUp)="showAlgebra = false; openJoin()">
+  </app-algebra>
+
   <!-- ============ QUIZ ============ -->
   <div *ngIf="showQuiz" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
     <div class="modal-backdrop"></div>
