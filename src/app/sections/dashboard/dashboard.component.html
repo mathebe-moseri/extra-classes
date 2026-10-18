@@ -179,6 +179,8 @@
                       <p class="dx-pg-meta" *ngIf="r.sum; else pgNone">
                         <b>{{ r.sum.answered }}</b> of {{ r.sum.total }} questions answered ·
                         <b>{{ r.sum.correct }}</b> correct
+                        <ng-container *ngIf="r.tries"> · <b>{{ r.tries }}</b> {{ r.tries === 1 ? 'attempt' : 'attempts'
+                          }} · best <b>{{ r.bestPct }}%</b></ng-container>
                       </p>
                       <ng-template #pgNone>
                         <p class="dx-pg-meta">You have not answered any questions yet.</p>
@@ -200,6 +202,16 @@
                       </div>
                     </ng-container>
                     <p *ngIf="!r.sum" class="dx-sub">Answer your first question and your progress will appear here.</p>
+
+                    <ng-container *ngIf="r.attempts.length">
+                      <h3 class="dx-mini-h">Your attempts</h3>
+                      <div class="dx-pg-rec" *ngFor="let a of r.attempts">
+                        <span class="dx-pg-rec-pct" [ngClass]="a.percent >= 70 ? 'dx-pg-pass' : 'dx-pg-fail'">{{
+                          a.percent }}%</span>
+                        <span class="dx-pg-rec-name">{{ a.percent >= 70 ? 'Passed' : 'Not passed yet' }}</span>
+                        <span class="dx-pg-rec-date">{{ shortDate(a.date) }}</span>
+                      </div>
+                    </ng-container>
 
                     <button type="button" class="dx-btn dx-btn-primary dx-btn-sm" (click)="startQuiz(r.id)">
                       {{ pgStatus(r.sum) === 'not-started' ? 'Start' : 'Practise again' }}
@@ -253,7 +265,7 @@
             <div class="dx-card" #secTopics>
               <div class="dx-head">
                 <div>
-                  <h2>Your topics</h2>
+                  <h2>Trigonometry topics</h2>
                   <p class="dx-sub">Score 70% or more to complete a topic.</p>
                 </div>
                 <div class="dx-legend">

@@ -187,8 +187,19 @@ export class DashboardComponent implements OnInit {
   activeNav = 'dashboard';
 
   // ----- "My progress": questions answered in every assessment, finished or not -----
-  progressRows: { id: string; name: string; icon: string; sum: ProgressSummary | null }[] = [];
+  progressRows: {
+    id: string; name: string; icon: string; sum: ProgressSummary | null;
+    tries: number; bestPct: number; attempts: any[];
+  }[] = [];
   totalAnswered = 0;
+
+  /** How each assessment's finished attempts are named on the server */
+  private readonly quizMatch: Record<string, RegExp> = {
+    all: /^introduction to trigonometry/i,
+    patterns: /^number patterns/i,
+    measurement: /^measurement/i,
+    algebra: /^algebra/i
+  };
 
   /** Rebuilds the progress card. Uses the answers saved while quizzes were open, or the finished attempts, whichever is further. */
   private refreshProgress() {
@@ -198,16 +209,20 @@ export class DashboardComponent implements OnInit {
       const sum = local && server
         ? (local.answered >= server.answered ? local : server)
         : (local ?? server);
-      return { id: a.id, name: a.name, icon: a.icon, sum };
+      const mine = this.attempts.filter(x => this.quizMatch[a.id]?.test(x.quiz ?? ''));
+      return {
+        id: a.id, name: a.name, icon: a.icon, sum,
+        tries: mine.length,
+        bestPct: mine.length ? Math.max(...mine.map(x => x.percent)) : 0,
+        attempts: mine.slice(-5).reverse()
+      };
     });
     this.totalAnswered = this.progressRows.reduce((n, r) => n + (r.sum?.answered ?? 0), 0);
   }
 
   /** Progress worked out from finished attempts saved on the server (older attempts) */
   private fromAttempts(id: string): ProgressSummary | null {
-    const rx = id === 'algebra' ? /^algebra/i
-      : id === 'all' ? /^introduction to trigonometry/i
-        : null;
+    const rx = this.quizMatch[id];
     if (!rx) return null;
 
     const best: Record<string, { correct: number; total: number }> = {};

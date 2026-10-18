@@ -508,6 +508,7 @@ export class NumberPatternsComponent implements OnInit, OnDestroy {
     this.stopTimer();
 
     if (this.isLast) {
+  this.saveAttempt();
       this.showResults = true;
       return;
     }
@@ -515,12 +516,75 @@ export class NumberPatternsComponent implements OnInit, OnDestroy {
     this.startQuestion();
   }
 
-  private saveProgress(ok: boolean): void {
-    if (!this.auth.isLoggedIn()) {
+  // ---------- Saving answers and attempts ----------
+  private topicCorrect: Record<string, number> = {};
+  private answerLog: { part: string; text: string; given: string; correct: string; ok: boolean; explanation: string }[] = [];
+  private attemptSaved = false;
+
+  /** The section a question belongs to: the heading of the nearest Learn card above it */
+  private topicOf(index: number): string {
+    for (let i = index; i >= 0; i--) {
+      if (this.questions[i].type === 'info') {
+        return this.questions[i].text.replace(/<[^>]*>/g, '');
+      }
+    }
+    return 'Questions';
+  }
+
+  /** Number of scored questions in each section */
+  private get topicTotals(): Record<string, number> {
+    const totals: Record<string, number> = {};
+    this.questions.forEach((q, i) => {
+      if (q.type === 'info') {
+        return;
+      }
+      const name = this.topicOf(i);
+      totals[name] = (totals[name] ?? 0) + 1;
+    });
+    return totals;
+  }
+
+  /** One row per section with correct and total */
+  private get byTopic(): { name: string; correct: number; total: number }[] {
+    const totals = this.topicTotals;
+    return Object.keys(totals).map(name => ({ name, correct: this.topicCorrect[name] ?? 0, total: totals[name] }));
+  }
+
+  private saveProgress(ok: boolean, given?: string): void {
+    const q = this.currentQuestion;
+    const topic = this.topicOf(this.currentIndex);
+    const shown = given ?? (q.type === 'mcq'
+      ? (q.options?.[this.selectedOption ?? 0] ?? '')
+      : String(this.userAnswer));
+
+    if (ok) {
+      this.topicCorrect[topic] = (this.topicCorrect[topic] ?? 0) + 1;
+    }
+    this.answerLog.push({
+      part: topic,
+      text: q.text,
+      given: shown,
+      correct: q.type === 'mcq' ? (q.options?.[q.correctIndex ?? 0] ?? '') : String(q.answer),
+      ok,
+      explanation: q.explanation ?? ''
+    });
+
+    if (this.auth.isLoggedIn()) {
+      this.progress.record('patterns', `q${this.currentIndex}`, topic, ok, this.scoredTotal, this.topicTotals);
+    }
+  }
+
+  private saveAttempt(): void {
+    if (this.attemptSaved || !this.auth.isLoggedIn()) {
       return;
     }
-    const total = this.scoredTotal;
-    this.progress.record('patterns', `q${this.currentIndex}`, 'Number patterns', ok, total, { 'Number patterns': total });
+    this.attemptSaved = true;
+    this.auth.saveAttempt({
+      quiz: 'Number patterns',
+      correct: this.totalCorrect,
+      total: this.scoredTotal,
+      details: JSON.stringify({ byPart: this.byTopic, answers: this.answerLog })
+    }).subscribe({ error: () => { /* save failed: the quiz still works */ } });
   }
 
   // ---------- Option styling ----------
@@ -576,7 +640,7 @@ export class NumberPatternsComponent implements OnInit, OnDestroy {
     this.selectedOption = null;
     this.answered = true;
     this.totalWrong++;
-    this.saveProgress(false);
+this.saveProgress(false, 'No answer (time ran out)');
     this.feedback = "Time's up!";
   }
 
@@ -586,6 +650,9 @@ export class NumberPatternsComponent implements OnInit, OnDestroy {
     this.currentIndex = 0;
     this.totalCorrect = 0;
     this.totalWrong = 0;
+this.topicCorrect = {};
+    this.answerLog = [];
+    this.attemptSaved = false;
     this.showResults = false;
     this.startQuestion();
   }
