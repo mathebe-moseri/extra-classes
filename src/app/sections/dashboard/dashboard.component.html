@@ -14,7 +14,16 @@
     </label>
 
     <div class="dx-user">
-      <span class="dx-user-av">{{ initials }}</span>
+      <div class="dx-av-wrap">
+        <span class="dx-user-av dx-av-click" role="button" tabindex="0"
+          [attr.aria-label]="photo ? 'Change your profile picture' : 'Add a profile picture'"
+          title="Click to add or change your picture" (click)="photoInput.click()" (keydown.enter)="photoInput.click()">
+          <img *ngIf="photo" [src]="photo" alt="Your profile picture" class="dx-av-img" />
+          <ng-container *ngIf="!photo">{{ initials }}</ng-container>
+        </span>
+        <span *ngIf="!photo" class="dx-av-cam" aria-hidden="true">📷</span>
+        <input #photoInput type="file" accept="image/*" hidden (change)="onPhotoPicked($event)" />
+      </div>
       <span class="dx-user-txt">
         <strong>{{ profile?.firstName }} {{ profile?.surname }}</strong>
         <small>Grade {{ profile?.grade }}</small>
@@ -22,6 +31,8 @@
       <button type="button" class="dx-logout" (click)="logOut()">Log out</button>
     </div>
   </header>
+
+  <p *ngIf="photoError" class="dx-av-toast" role="alert">{{ photoError }}</p>
 
   <main class="dx-wrap">
     <p *ngIf="loading" class="dx-state"><span class="dx-spin"></span> Loading your dashboard…</p>
@@ -54,7 +65,7 @@
           </button>
         </nav>
 
-        <div class="dx-card dx-prof">
+        <!-- <div class="dx-card dx-prof">
           <div class="dx-prof-top">
             <span class="dx-avatar">{{ initials }}</span>
             <div>
@@ -67,9 +78,9 @@
             <li><span>School</span><strong>{{ profile.school }}</strong></li>
             <li><span>Email</span><strong>{{ profile.email }}</strong></li>
           </ul>
-        </div>
+        </div> -->
 
-        <div class="dx-card dx-next" *ngIf="nextTopic as n">
+        <!-- <div class="dx-card dx-next" *ngIf="nextTopic as n">
           <small>🎯 Next up</small>
           <h3>{{ n.name }}</h3>
           <p>{{ n.tries ? 'Best so far ' + n.best + '%.' : 'You have not tried this one yet.' }} Score 70% to complete
@@ -77,7 +88,7 @@
           <button type="button" class="dx-btn dx-btn-primary dx-btn-block" (click)="startQuiz(n.id)">
             {{ n.status === 'in-progress' ? 'Continue' : 'Start' }}
           </button>
-        </div>
+        </div> -->
         <div class="dx-card dx-next" *ngIf="!nextTopic && topics.length">
           <small>🎉 Amazing</small>
           <h3>Every topic completed!</h3>
@@ -162,8 +173,7 @@
               </div>
 
               <div class="dx-pg-list">
-                <details class="dx-pg-item" *ngFor="let r of progressRows"
-                  [open]="pgStatus(r.sum) === 'in-progress'">
+                <details class="dx-pg-item" *ngFor="let r of progressRows" [open]="pgStatus(r.sum) === 'in-progress'">
                   <summary class="dx-pg-sum">
                     <span class="dx-pg-ico" aria-hidden="true">{{ r.icon }}</span>
 

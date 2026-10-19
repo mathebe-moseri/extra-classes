@@ -73,6 +73,8 @@ export class NavComponent implements OnInit {
 
   // Login form state
   loginEmail = '';
+  showLoginPassword = false;
+  showNewPassword = false;
   loginPassword = '';
 
   constructor(
@@ -206,8 +208,7 @@ export class NavComponent implements OnInit {
     this.loginNotice = '';
     this.isLoginFormOpen = true;
   }
-  closeLoginForm() { this.isLoginFormOpen = false; this.loginNotice = ''; this.showChangePassword = false; this.changeError = ''; }
-
+  closeLoginForm() { this.isLoginFormOpen = false; this.loginNotice = ''; this.showChangePassword = false; this.changeError = ''; this.showLoginPassword = false; this.showNewPassword = false; }
   loginBusy = false;
   showChangePassword = false;
   newPassword = '';
@@ -278,7 +279,7 @@ export class NavComponent implements OnInit {
       },
       error: (err) => {
         this.loginBusy = false;
-        this.loginPassword = '';
+        // this.loginPassword = '';
         this.loginNotice = err?.error?.message || 'We could not log you in. Check your connection and try again.';
       }
     });

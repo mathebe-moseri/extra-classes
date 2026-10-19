@@ -53,6 +53,7 @@ export class DashboardComponent implements OnInit {
       next: p => {
         // Tell the quizzes whose progress to save, then rebuild what the dashboard shows
         this.progress.setOwner(p.email);
+        this.photo = this.readPhoto(p.email);
         this.buildTopics();
         this.profile = p;
         this.loading = false;
@@ -290,6 +291,76 @@ export class DashboardComponent implements OnInit {
   }
 
   setNav(id: string) { this.activeNav = id; }
+
+  // ----- profile picture (saved in this browser, separately for each learner) -----
+  photo: string | null = null;
+  photoError = '';
+
+  private photoKey(email: string): string {
+    return `profile-photo:${(email ?? '').toLowerCase()}`;
+  }
+
+  private readPhoto(email: string): string | null {
+    try { return localStorage.getItem(this.photoKey(email)); } catch { return null; }
+  }
+
+  /** Called when the learner picks a picture: crops it to a square, shrinks it and saves it */
+  onPhotoPicked(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';   // lets the learner pick the same file again later
+    if (!file) return;
+
+    this.photoError = '';
+    if (!file.type.startsWith('image/')) {
+      this.showPhotoError('Please choose a picture (JPG or PNG).');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      this.showPhotoError('That picture is too big. Please choose one under 10 MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const size = 256;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          this.showPhotoError('We could not use that picture. Please try another one.');
+          return;
+        }
+        // Take the middle square so faces are not stretched
+        const side = Math.min(img.width, img.height);
+        ctx.drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, size, size);
+        this.savePhoto(canvas.toDataURL('image/jpeg', 0.85));
+      };
+      img.onerror = () => { this.showPhotoError('We could not read that picture. Please try another one.'); };
+      img.src = reader.result as string;
+    };
+    reader.onerror = () => { this.showPhotoError('We could not read that picture. Please try another one.'); };
+    reader.readAsDataURL(file);
+  }
+
+  /** Shows a short message under the top bar, then hides it again */
+  private showPhotoError(message: string) {
+    this.photoError = message;
+    setTimeout(() => { this.photoError = ''; }, 5000);
+  }
+
+  private savePhoto(data: string) {
+    try {
+      localStorage.setItem(this.photoKey(this.profile?.email ?? ''), data);
+      this.photo = data;
+    } catch {
+      this.showPhotoError('We could not save your picture on this device.');
+    }
+  }
+
 
   // the topic we suggest next: lowest-scoring in-progress topic, else the first not-started one
   get nextTopic() {
