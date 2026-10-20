@@ -165,7 +165,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     { id: 'trig', name: 'Trigonometry', icon: '📐', desc: 'Triangles, their rules and SOH CAH TOA' },
     { id: 'patterns', name: 'Number patterns', icon: '🔢', desc: 'Finding any term with Tn = a + (n − 1)d' },
     { id: 'measurement', name: 'Measurement', icon: '📦', desc: 'Surface area and volume of solids' },
-    // { id: 'algebra', name: 'Algebra', icon: '🧮', desc: 'Grade 9 to 10: expressions, equations and graphs' }
+    { id: 'algebra', name: 'Algebra', icon: '🧮', desc: 'Grade 9 to 10: expressions, equations and graphs' }
   ];
   selectedTopic = '';
   topicOpen = false;   // true while the topic list is showing
