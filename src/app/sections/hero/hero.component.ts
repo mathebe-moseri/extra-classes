@@ -217,6 +217,14 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.joinForm.testimonialsRequested$.subscribe(() => this.openTestimonials());
 
+    // Make sure progress is saved under this learner, even if they skip the dashboard
+    if (this.auth.isLoggedIn()) {
+      this.auth.me().subscribe({
+        next: p => { this.progress.setOwner(p.email); this.progress.pull().subscribe({ error: () => { } }); },
+        error: () => { }
+      });
+    }
+
     // Opened from the dashboard Start buttons
     const pending = this.launcher.take();
     if (pending) { this.fromDashboard = true; this.launch(pending); }

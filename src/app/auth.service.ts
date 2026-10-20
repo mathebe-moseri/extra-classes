@@ -32,8 +32,15 @@ export class AuthService {
     return this.http.post<any>(`${this.baseUrl}/quiz_attempts`, attempt, { headers: this.authHeaders() });
   }
 
-  myAttempts(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/quiz_attempts`, { headers: this.authHeaders() });
+  saveProgress(items: any[]): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/quiz_progress`, { items }, { headers: this.authHeaders() });
+  }
+
+  loadProgress(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/quiz_progress`, { headers: this.authHeaders() });
+  }
+
+  myAttempts(): Observable<any[]> {    return this.http.get<any[]>(`${this.baseUrl}/quiz_attempts`, { headers: this.authHeaders() });
   }
 
   leaderboard(): Observable<any> {

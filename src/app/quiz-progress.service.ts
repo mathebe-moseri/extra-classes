@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { Observable, tap, map } from 'rxjs';
+import { AuthService } from './auth.service';
 
 /** Progress inside one topic of a quiz, e.g. "Grade 9: Exponents" */
 export interface TopicProgress {
@@ -34,6 +36,9 @@ interface Stored {
 @Injectable({ providedIn: 'root' })
 export class QuizProgressService {
   private readonly OWNER_KEY = 'quiz-progress-owner';
+  private readonly QUIZZES = ['all', 'patterns', 'measurement', 'algebra'];
+
+  constructor(private auth: AuthService) { }
 
   setOwner(email: string): void {
     try { localStorage.setItem(this.OWNER_KEY, (email ?? '').toLowerCase()); } catch { /* storage blocked */ }
@@ -91,6 +96,57 @@ export class QuizProgressService {
       data.updated = new Date().toISOString();
       localStorage.setItem(k, JSON.stringify(data));
     } catch { /* storage full or blocked: the quiz still works */ }
+
+    // Also keep it in the database so it follows the learner to any device
+    if (this.auth.isLoggedIn()) {
+      this.auth.saveProgress([{ quiz, key, topic, ok, total, totals }])
+        .subscribe({ error: () => { /* offline: still saved in this browser and syncs later */ } });
+    }
+  }
+
+  /** Loads progress from the database, merges it into this browser, and uploads anything the server is missing */
+  pull(): Observable<void> {
+    return this.auth.loadProgress().pipe(
+      tap(rows => this.merge(rows ?? [])),
+      map(() => void 0)
+    );
+  }
+
+  private merge(rows: any[]): void {
+    const byQuiz: Record<string, any[]> = {};
+    for (const r of rows) (byQuiz[r.quiz] ??= []).push(r);
+
+    // 1. Server -> browser
+    for (const quiz of Object.keys(byQuiz)) {
+      const k = this.key(quiz);
+      if (!k) continue;
+      const list = byQuiz[quiz];
+      const data: Stored = this.read(quiz) ?? { total: 0, totals: {}, answers: {}, updated: '' };
+      for (const r of list) {
+        if (!(r.key in data.answers)) data.answers[r.key] = { t: r.topic, ok: !!r.ok };
+      }
+      const last = list[list.length - 1];
+      data.total = Number(last.total) || data.total;
+      try {
+        data.totals = typeof last.totals === 'string' ? JSON.parse(last.totals) : (last.totals ?? data.totals);
+      } catch { /* keep the old totals */ }
+      data.updated = new Date().toISOString();
+      try { localStorage.setItem(k, JSON.stringify(data)); } catch { }
+    }
+
+    // 2. Browser -> server (answers saved offline, or before this feature existed)
+    const missing: any[] = [];
+    for (const quiz of this.QUIZZES) {
+      const data = this.read(quiz);
+      if (!data) continue;
+      const onServer = new Set((byQuiz[quiz] ?? []).map(r => r.key));
+      for (const key of Object.keys(data.answers)) {
+        if (onServer.has(key)) continue;
+        const a = data.answers[key];
+        missing.push({ quiz, key, topic: a.t, ok: a.ok, total: data.total, totals: data.totals });
+      }
+    }
+    if (missing.length) this.auth.saveProgress(missing).subscribe({ error: () => { } });
   }
 
   /** The numbers shown on the dashboard, or null when nothing has been answered yet */

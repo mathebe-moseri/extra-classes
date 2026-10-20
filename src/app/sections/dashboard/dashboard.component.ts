@@ -53,6 +53,7 @@ export class DashboardComponent implements OnInit {
       next: p => {
         // Tell the quizzes whose progress to save, then rebuild what the dashboard shows
         this.progress.setOwner(p.email);
+        this.progress.pull().subscribe({ next: () => this.buildTopics(), error: () => { } });
         this.photo = this.readPhoto(p.email);
         this.buildTopics();
         this.profile = p;
