@@ -363,7 +363,101 @@ export class NumberPatternsComponent implements OnInit, OnDestroy {
     }
   ];
 
-  // ---------- State ----------
+  // ---------- Saved progress (resume) ----------
+  private readonly PROGRESS_KEY = 'patterns-quiz-progress-v1';
+  showResumePrompt = false;
+  savedProgress: {
+    index: number;
+    totalCorrect: number;
+    totalWrong: number;
+    topicCorrect: Record<string, number>;
+    answerLog: any[];
+  } | null = null;
+
+  get savedQuestionNumber(): number {
+    const i = Math.min(this.savedProgress?.index ?? 0, this.questions.length - 1);
+    const n = this.questions.slice(0, i + 1).filter(q => q.type !== 'info').length;
+    return Math.max(n, 1);
+  }
+
+  get savedTopicName(): string {
+    const i = Math.min(this.savedProgress?.index ?? 0, this.questions.length - 1);
+    return this.topicOf(i);
+  }
+
+  /** Remember where the learner is. Index 0 means "nothing to resume". */
+  private persistProgress(index: number): void {
+    if (index <= 0) { this.clearSavedProgress(); return; }
+    try {
+      localStorage.setItem(this.PROGRESS_KEY, JSON.stringify({
+        index,
+        totalCorrect: this.totalCorrect,
+        totalWrong: this.totalWrong,
+        topicCorrect: this.topicCorrect,
+        answerLog: this.answerLog
+      }));
+    } catch { /* storage blocked: quiz still works, just can't resume */ }
+  }
+
+  private readSavedProgress() {
+    try {
+      const raw = localStorage.getItem(this.PROGRESS_KEY);
+      if (!raw) return null;
+      const p = JSON.parse(raw);
+      const valid =
+        Number.isInteger(p.index) && p.index > 0 && p.index <= this.questions.length &&
+        Number.isFinite(p.totalCorrect) && Number.isFinite(p.totalWrong) &&
+        p.topicCorrect && typeof p.topicCorrect === 'object' &&
+        Array.isArray(p.answerLog);
+      return valid ? p : null;
+    } catch { return null; }
+  }
+
+  private clearSavedProgress(): void {
+    try { localStorage.removeItem(this.PROGRESS_KEY); } catch { }
+  }
+
+  resumeQuiz(): void {
+    const s = this.savedProgress;
+    if (!s) { this.startFresh(); return; }
+
+    this.showResumePrompt = false;
+    this.totalCorrect = s.totalCorrect;
+    this.totalWrong = s.totalWrong;
+    this.topicCorrect = { ...s.topicCorrect };
+    this.answerLog = [...s.answerLog];
+
+    // They answered the very last question but never pressed "See results"
+    if (s.index >= this.questions.length) {
+      this.currentIndex = this.questions.length - 1;
+      this.clearSavedProgress();
+      this.saveAttempt();
+      this.showResults = true;
+      return;
+    }
+
+    this.currentIndex = s.index;
+    this.startQuestion();
+  }
+
+  startFresh(): void {
+    this.clearSavedProgress();
+    this.showResumePrompt = false;
+    this.currentIndex = 0;
+    this.totalCorrect = 0;
+    this.totalWrong = 0;
+    this.topicCorrect = {};
+    this.answerLog = [];
+    this.attemptSaved = false;
+    this.showResults = false;
+    this.startQuestion();
+  }
+
+  closeResumePrompt(): void {
+    this.showResumePrompt = false;   // progress stays saved
+    this.close();
+  }
+
   currentIndex = 0;
   showResults = false;
 
@@ -384,6 +478,12 @@ export class NumberPatternsComponent implements OnInit, OnDestroy {
 
   // ---------- Lifecycle ----------
   ngOnInit(): void {
+    const saved = this.readSavedProgress();
+    if (saved) {
+      this.savedProgress = saved;
+      this.showResumePrompt = true;   // ask: resume / start over / close
+      return;
+    }
     this.startQuestion();
   }
 
@@ -450,6 +550,7 @@ export class NumberPatternsComponent implements OnInit, OnDestroy {
     this.userAnswer = null;
     this.feedback = '';
     this.stopTimer();
+    this.persistProgress(this.currentIndex);
 
     if (!this.isInfo) {
       this.startTimer();
@@ -500,7 +601,8 @@ export class NumberPatternsComponent implements OnInit, OnDestroy {
     } else {
       this.totalWrong++;
     }
-      this.saveProgress(this.isCorrect);
+    this.saveProgress(this.isCorrect);
+    this.persistProgress(this.currentIndex + 1);
     this.feedback = 'Answer saved.';
   }
 
@@ -508,7 +610,8 @@ export class NumberPatternsComponent implements OnInit, OnDestroy {
     this.stopTimer();
 
     if (this.isLast) {
-  this.saveAttempt();
+      this.clearSavedProgress();
+      this.saveAttempt();
       this.showResults = true;
       return;
     }
@@ -640,21 +743,15 @@ export class NumberPatternsComponent implements OnInit, OnDestroy {
     this.selectedOption = null;
     this.answered = true;
     this.totalWrong++;
-this.saveProgress(false, 'No answer (time ran out)');
+    this.saveProgress(false, 'No answer (time ran out)');
     this.feedback = "Time's up!";
+    this.persistProgress(this.currentIndex + 1);
   }
 
   // ---------- Results actions ----------
   retry(): void {
     this.stopTimer();
-    this.currentIndex = 0;
-    this.totalCorrect = 0;
-    this.totalWrong = 0;
-this.topicCorrect = {};
-    this.answerLog = [];
-    this.attemptSaved = false;
-    this.showResults = false;
-    this.startQuestion();
+    this.startFresh();
   }
 
   goSignUp(): void {
