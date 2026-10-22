@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../../auth.service';
-import { QuizProgressService } from '../../../quiz-progress.service';
+import { AuthService } from '../../../../auth.service';
+import { QuizProgressService } from '../../../../quiz-progress.service';
 
 type QuestionType = 'info' | 'mcq' | 'calc';
 

@@ -4,13 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { JoinFormService } from '../../join-form.service';
 import { ActivatedRoute, Router } from '@angular/router'; import { RevealDirective } from '../../shared/reveal.directive';
 import { smoothScrollToId } from '../../shared/smooth-scroll';
-import { NumberPatternsComponent } from '../topics/number-patterns/number-patterns.component';
+import { NumberPatternsComponent } from '../topics/Mathematics/number-patterns/number-patterns.component';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from '../../auth.service';
 import { QuizLauncherService } from '../../quiz-launcher.service';
-import { MeasurementComponent } from '../topics/measurement/measurement.component';
-import { AlgebraComponent } from '../topics/algebra/algebra.component';
+import { MeasurementComponent } from '../topics/Mathematics/measurement/measurement.component';
+import { AlgebraComponent } from '../topics/Mathematics/algebra/algebra.component';
 import { QuizProgressService } from '../../quiz-progress.service';
+import { SoilDegradationComponent } from '../topics/Agriculture/soil-degradation/soil-degradation.component';
 // Stacked fraction: frac('O', 'H') shows O over H with a fraction bar
 const frac = (top: string, bottom: string) =>
   `<span class="frac"><span>${top}</span><span>${bottom}</span></span>`;
@@ -18,7 +19,7 @@ const frac = (top: string, bottom: string) =>
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, FormsModule, RevealDirective, NumberPatternsComponent, MeasurementComponent, AlgebraComponent],
+  imports: [CommonModule, FormsModule, RevealDirective, NumberPatternsComponent, MeasurementComponent, AlgebraComponent, SoilDegradationComponent],
   providers: [AuthService],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css']
@@ -165,7 +166,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     { id: 'trig', name: 'Trigonometry', icon: '📐', desc: 'Triangles, their rules and SOH CAH TOA' },
     { id: 'patterns', name: 'Number patterns', icon: '🔢', desc: 'Finding any term with Tn = a + (n − 1)d' },
     { id: 'measurement', name: 'Measurement', icon: '📦', desc: 'Surface area and volume of solids' },
-    { id: 'algebra', name: 'Algebra', icon: '🧮', desc: 'Grade 9 to 10: expressions, equations and graphs' }
+    { id: 'algebra', name: 'Algebra', icon: '🧮', desc: 'Grade 9 to 10: expressions, equations and graphs' },
+    { id: 'soil', name: 'Soil Degradation', icon: '🌱', desc: 'Understanding soil degradation and its effects' }
   ];
   selectedTopic = '';
   topicOpen = false;   // true while the topic list is showing
@@ -187,6 +189,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   showNumberPatterns = false;  // will open the new Number Patterns component (step 2)
   showMeasurement = false;
   showAlgebra = false;
+  showSoilDegradation = false;
 
   startTopicQuiz() {
     if (!this.selectedTopic) {
@@ -205,6 +208,10 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (this.selectedTopic === 'algebra') {
       this.showAlgebra = true;
+      return;
+    }
+    if (this.selectedTopic === 'soil') {
+      this.showSoilDegradation = true;
       return;
     }
     this.openQuiz();           // trigonometry: your existing quiz
