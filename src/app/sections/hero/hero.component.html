@@ -75,8 +75,7 @@
         </div>
         <button type="button" (click)="scrollToApply()"
           class="btn btn-soft mt-3 w-full max-w-xs sm:max-w-md mx-auto text-sm">
-          How to apply: watch the video
-        </button>
+          Watch free demo lessons, classes, ... </button>
         <button type="button" (click)="openContact('whatsapp')" class="mt-4 text-sm font-semibold underline"
           style="color: #dbeafe;">
           Questions? Contact us
@@ -95,7 +94,8 @@
   <section id="about-us" class="screen snap">
     <div class="card" appReveal>
       <h2>What we offer</h2>
-      <p class="lead">Online self-study for Grades 8, 9, 10, 11 and 12. Learn any time and anywhere in a range of subjects.</p>
+      <p class="lead">Online self-study for Grades 8, 9, 10, 11 and 12. Learn any time and anywhere in a range of
+        subjects.</p>
 
       <ul class="mb-5">
         <li class="feature">
@@ -151,16 +151,47 @@
           allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>
       </div>
 
+      <!-- Step 1: grade -->
+      <p id="grade-label" class="field-label">Choose your grade</p>
+      <div class="grid grid-cols-5 gap-2 mb-2" role="radiogroup" aria-labelledby="grade-label">
+        <button *ngFor="let g of grades" type="button" role="radio" [attr.aria-checked]="selectedGrade === g"
+          (click)="selectGrade(g)" class="py-3 rounded-xl border-2 font-bold transition-colors" [ngClass]="selectedGrade === g
+            ? 'border-sky-600 bg-sky-50 text-sky-700'
+            : (gradeError ? 'border-red-400 text-slate-700' : 'border-slate-200 text-slate-700 hover:border-sky-300')">
+          {{ g }}
+        </button>
+      </div>
+      <p *ngIf="gradeError" class="mb-3 text-sm font-semibold text-red-600">Please choose your grade first.</p>
+      <div class="mb-2"></div>
+
+      <!-- Step 2: subject (shows once a grade is chosen) -->
+      <ng-container *ngIf="selectedGrade !== null">
+        <p id="subject-label" class="field-label">Choose a subject</p>
+        <div class="flex flex-wrap gap-2 mb-2" role="radiogroup" aria-labelledby="subject-label">
+          <button *ngFor="let s of subjectsForGrade" type="button" role="radio"
+            [attr.aria-checked]="selectedSubject === s" (click)="selectSubject(s)"
+            class="px-4 py-2 rounded-full border-2 font-bold text-sm transition-colors"
+            [ngClass]="selectedSubject === s
+              ? 'border-sky-600 bg-sky-50 text-sky-700'
+              : (subjectError ? 'border-red-400 text-slate-700' : 'border-slate-200 text-slate-700 hover:border-sky-300')">
+            {{ s }}
+          </button>
+        </div>
+        <p *ngIf="subjectError" class="mb-3 text-sm font-semibold text-red-600">Please choose a subject.</p>
+        <div class="mb-2"></div>
+      </ng-container>
+
       <p id="topic-label" class="field-label">Choose a topic</p>
       <div id="topic-picker" class="mb-4 text-left" [style.position]="'relative'" [style.z-index]="60">
 
         <!-- The closed dropdown -->
-        <button type="button" (click)="topicOpen = !topicOpen" aria-haspopup="listbox" [attr.aria-expanded]="topicOpen"
-          aria-labelledby="topic-label"
-          class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border-2 bg-white text-left font-semibold transition-colors"
+        <button type="button" (click)="topicOpen = !topicOpen" [disabled]="!selectedSubject" aria-haspopup="listbox"
+          [attr.aria-expanded]="topicOpen" aria-labelledby="topic-label"
+          class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border-2 bg-white text-left font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           [ngClass]="topicError ? 'border-red-400' : (topicOpen ? 'border-sky-600' : 'border-slate-200 hover:border-sky-300')">
           <span class="truncate" [ngClass]="selectedTopic ? 'text-slate-900' : 'text-slate-400'">
-            {{ selectedTopic ? selectedTopicName : 'Select a topic' }}
+            {{ selectedTopic ? selectedTopicName : (selectedSubject ? 'Select a topic' : 'Choose grade and subject
+            first') }}
           </span>
           <svg class="flex-none w-5 h-5 text-slate-500 transition-transform duration-200"
             [ngClass]="topicOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -192,7 +223,7 @@
       </div>
 
       <button type="button" (click)="startTopicQuiz()" class="btn btn-primary w-full" [style.position]="'relative'"
-        [style.z-index]="0">Test your knowledge</button>
+        [style.z-index]="0">Start learning</button>
     </div>
   </section>
 
@@ -204,7 +235,7 @@
 
       <ol class="mb-5 text-base md:text-lg">
         <li class="step"><span class="step-dot">1</span>
-          <p><strong class="text-slate-900">Sign up</strong> with learner and parent details.</p>
+          <p><strong class="text-slate-900">Sign up</strong></p>
         </li>
         <li class="step"><span class="step-dot">2</span>
           <p><strong class="text-slate-900">Check your email</strong>, print and sign the contract.</p>
@@ -216,7 +247,7 @@
           <p><strong class="text-slate-900">Check your emails</strong> for login details.</p>
         </li>
         <li class="step"><span class="step-dot">5</span>
-          <p><strong class="text-slate-900">Log in and enjoy.</strong></p>
+          <p><strong class="text-slate-900">Log in and explore.</strong></p>
         </li>
       </ol>
 

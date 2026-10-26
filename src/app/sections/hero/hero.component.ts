@@ -162,13 +162,58 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   copied = false;              // shows "Copied" on the account number button
 
   /* ---------------- TOPIC DROPDOWN ---------------- */
-  topics = [
-    { id: 'trig', name: 'Trigonometry', icon: '📐', desc: 'Triangles, their rules and SOH CAH TOA' },
-    { id: 'patterns', name: 'Number patterns', icon: '🔢', desc: 'Finding any term with Tn = a + (n − 1)d' },
-    { id: 'measurement', name: 'Measurement', icon: '📦', desc: 'Surface area and volume of solids' },
-    { id: 'algebra', name: 'Algebra', icon: '🧮', desc: 'Grade 9 to 10: expressions, equations and graphs' },
-    { id: 'soil', name: 'Soil Degradation', icon: '🌱', desc: 'Understanding soil degradation and its effects' }
+  /* ---------------- GRADE > SUBJECT > TOPIC ---------------- */
+  grades = [8, 9, 10, 11, 12];
+
+  // CHANGE the grades: [...] on each line so they match where the topic belongs.
+  // Keep the id values exactly as they are, the quiz buttons depend on them.
+  catalogue = [
+    { id: 'trig', name: 'Trigonometry', subject: 'Mathematics', grades: [9, 10], icon: '📐', desc: 'Triangles, their rules and SOH CAH TOA' },
+    { id: 'patterns', name: 'Number patterns', subject: 'Mathematics', grades: [8, 9, 10, 11, 12], icon: '🔢', desc: 'Finding any term with Tn = a + (n − 1)d' },
+    { id: 'measurement', name: 'Measurement', subject: 'Mathematics', grades: [8, 9, 10], icon: '📦', desc: 'Surface area and volume of solids' },
+    { id: 'algebra', name: 'Algebra', subject: 'Mathematics', grades: [9, 10], icon: '🧮', desc: 'Grade 9 to 10: expressions, equations and graphs' },
+    { id: 'soil', name: 'Soil Degradation', subject: 'Agriculture', grades: [10, 11, 12], icon: '🌱', desc: 'Understanding soil degradation and its effects' }
   ];
+
+  selectedGrade: number | null = null;
+  selectedSubject = '';
+  gradeError = false;
+  subjectError = false;
+
+  // Subjects that have at least one topic for the chosen grade
+  get subjectsForGrade(): string[] {
+    const g = this.selectedGrade;
+    if (g === null) return [];
+    return [...new Set(this.catalogue.filter(t => t.grades.includes(g)).map(t => t.subject))];
+  }
+
+  // Topics for the chosen grade AND subject (the dropdown in the HTML still uses "topics")
+  get topics() {
+    const g = this.selectedGrade;
+    if (g === null || !this.selectedSubject) return [];
+    return this.catalogue.filter(t => t.subject === this.selectedSubject && t.grades.includes(g));
+  }
+
+  selectGrade(g: number) {
+    this.selectedGrade = g;
+    this.gradeError = false;
+    this.subjectError = false;
+    this.selectedSubject = '';
+    this.selectedTopic = '';
+    this.topicOpen = false;
+    this.topicError = false;
+    // If the grade has only one subject, pick it for them
+    const subs = this.subjectsForGrade;
+    if (subs.length === 1) this.selectedSubject = subs[0];
+  }
+
+  selectSubject(s: string) {
+    this.selectedSubject = s;
+    this.subjectError = false;
+    this.selectedTopic = '';
+    this.topicOpen = false;
+    this.topicError = false;
+  }
   selectedTopic = '';
   topicOpen = false;   // true while the topic list is showing
   topicError = false;  // true when "Test your knowledge" is pressed with no topic chosen
@@ -192,6 +237,14 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   showSoilDegradation = false;
 
   startTopicQuiz() {
+    if (this.selectedGrade === null) {
+      this.gradeError = true;
+      return;
+    }
+    if (!this.selectedSubject) {
+      this.subjectError = true;
+      return;
+    }
     if (!this.selectedTopic) {
       this.topicError = true;
       this.topicOpen = true;
