@@ -14,3 +14,17 @@
 :host ::ng-deep .frac > span:last-child {
   padding: 0.1em 0.3em 0;
 }
+
+
+#science-branch {
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+  opacity: 1 !important;
+  min-height: 56px;
+}
+
+#science-branch option {
+  color: #0f172a;
+  background-color: #ffffff;
+  font-weight: 600;
+}

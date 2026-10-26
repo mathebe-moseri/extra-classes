@@ -173,19 +173,68 @@
       <!-- Step 2: subject (shows once a grade is chosen) -->
       <ng-container *ngIf="selectedGrade !== null && !isComingSoon">
         <p id="subject-label" class="field-label">Choose a subject</p>
-        <div class="flex flex-wrap gap-2 mb-2" role="radiogroup" aria-labelledby="subject-label">
-          <button *ngFor="let s of subjectsForGrade" type="button" role="radio"
-            [attr.aria-checked]="selectedSubject === s" (click)="selectSubject(s)"
-            class="px-4 py-2 rounded-full border-2 font-bold text-sm transition-colors"
-            [ngClass]="selectedSubject === s
-              ? 'border-sky-600 bg-sky-50 text-sky-700'
-              : (subjectError ? 'border-red-400 text-slate-700' : 'border-slate-200 text-slate-700 hover:border-sky-300')">
-            {{ s }}
-          </button>
+
+        <div class="mb-4 text-left">
+          <label for="subject-select" class="block mb-2 text-sm font-bold text-slate-800">
+            Choose a subject
+          </label>
+
+          <div class="relative">
+            <select id="subject-select" name="subject-select" [ngModel]="selectedSubject"
+              (ngModelChange)="selectSubject($event)" class="w-full appearance-none rounded-xl border-2
+             border-slate-200 bg-white px-4 py-3 pr-10
+             text-base font-semibold text-slate-900
+             focus:outline-none focus:border-sky-600">
+
+              <option value="" disabled>Choose a subject</option>
+
+              <option *ngFor="let s of subjectsForGrade" [value]="s">
+                {{ s }}
+              </option>
+            </select>
+
+            <svg class="pointer-events-none absolute right-4 top-1/2
+             h-5 w-5 -translate-y-1/2 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </div>
+
+          <p *ngIf="subjectError" class="mt-2 text-sm font-semibold text-red-600">
+            Please choose a subject.
+          </p>
         </div>
-        <p *ngIf="subjectError" class="mb-3 text-sm font-semibold text-red-600">Please choose a subject.</p>
-        <div class="mb-2"></div>
       </ng-container>
+
+
+      <div *ngIf="selectedSubject === 'Physical Science'" class="mb-4 text-left">
+
+        <label for="science-branch" class="block mb-2 text-sm font-bold text-slate-800">
+          Choose Physics or Chemistry
+        </label>
+
+        <div class="relative">
+          <select id="science-branch" name="science-branch" [(ngModel)]="selectedScienceBranch"
+            (ngModelChange)="selectedTopic = ''; topicOpen = false" class="w-full appearance-none px-4 py-3 pr-10
+             rounded-xl border-2 border-slate-200
+             bg-white text-slate-900 font-semibold
+             text-base cursor-pointer
+             focus:outline-none focus:border-sky-600">
+
+            <option value="" disabled>Choose Physics or Chemistry</option>
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+
+          </select>
+
+          <svg class="absolute right-4 top-1/2 -translate-y-1/2
+             w-5 h-5 text-slate-700 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </div>
+      </div>
+
 
       <p *ngIf="!isComingSoon" id="topic-label" class="field-label">Choose a topic</p>
       <div *ngIf="!isComingSoon" id="topic-picker" class="mb-4 text-left" [style.position]="'relative'"

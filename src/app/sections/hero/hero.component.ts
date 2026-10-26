@@ -181,15 +181,37 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   selectedGrade: number | null = null;
   selectedSubject = '';
+  scienceOptions = ['Physics', 'Chemistry'];
+selectedScienceBranch = '';
   gradeError = false;
   subjectError = false;
 
   // Subjects that have at least one topic for the chosen grade
-  get subjectsForGrade(): string[] {
-    const g = this.selectedGrade;
-    if (g === null) return [];
-    return [...new Set(this.catalogue.filter(t => t.grades.includes(g)).map(t => t.subject))];
+get subjectsForGrade(): string[] {
+  const g = this.selectedGrade;
+  if (g === null) return [];
+
+  const existing = [
+    ...new Set(
+      this.catalogue
+        .filter(t => t.grades.includes(g))
+        .map(t => t.subject)
+    )
+  ];
+
+  if (g >= 10) {
+    return [
+      ...existing.filter(
+        s => s !== 'Agriculture'
+      ),
+      'Physical Science',
+      'Life Sciences',
+      'Agricultural Sciences'
+    ];
   }
+
+  return existing;
+}
 
   // Topics for the chosen grade AND subject (the dropdown in the HTML still uses "topics")
   get topics() {
