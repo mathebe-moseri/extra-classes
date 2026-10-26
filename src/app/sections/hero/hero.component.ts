@@ -164,6 +164,10 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   /* ---------------- TOPIC DROPDOWN ---------------- */
   /* ---------------- GRADE > SUBJECT > TOPIC ---------------- */
   grades = [8, 9, 10, 11, 12];
+  comingSoonGrades = [8, 9, 12];
+  get isComingSoon(): boolean {
+    return this.selectedGrade !== null && this.comingSoonGrades.includes(this.selectedGrade);
+  }
 
   // CHANGE the grades: [...] on each line so they match where the topic belongs.
   // Keep the id values exactly as they are, the quiz buttons depend on them.
@@ -204,7 +208,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.topicError = false;
     // If the grade has only one subject, pick it for them
     const subs = this.subjectsForGrade;
-    if (subs.length === 1) this.selectedSubject = subs[0];
+    if (subs.length === 1 && !this.isComingSoon) this.selectedSubject = subs[0];
   }
 
   selectSubject(s: string) {
@@ -241,6 +245,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       this.gradeError = true;
       return;
     }
+    if (this.isComingSoon) return;
     if (!this.selectedSubject) {
       this.subjectError = true;
       return;
