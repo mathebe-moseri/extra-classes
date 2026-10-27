@@ -437,6 +437,11 @@
     (signUp)="showSoilDegradation = false; openJoin()">
   </app-soil-degradation>
 
+  <!-- ============ PHYSICS ============ -->
+  <app-physics *ngIf="showPhysics" (closed)="showPhysics = false; returnIfFromDashboard()"
+    (signUp)="showPhysics = false; openJoin()">
+  </app-physics>
+
 
   <!-- ============ ORAL ASSESSMENT ============ -->
   <app-oral-assessment *ngIf="showOral" (closed)="showOral = false; returnIfFromDashboard()">
