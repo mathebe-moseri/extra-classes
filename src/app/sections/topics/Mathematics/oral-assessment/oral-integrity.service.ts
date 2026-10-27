@@ -8,6 +8,9 @@ export interface IntegrityState {
 export const MAX_ATTEMPTS = 2;
 export const LOCK_DAYS = 30;
 
+
+/** TESTING: while true, nobody is ever locked out. Set to false before real learners use this. */
+const TESTING_MODE = true;
 /**
  * Keeps track of strikes and the 30-day lockout for each learner.
  *
@@ -38,6 +41,7 @@ export class OralIntegrityService {
   /** Current state. An expired lock resets the learner to a fresh 2 attempts. */
   get(assessmentId: string, owner: string): IntegrityState {
     const k = this.key(assessmentId, owner);
+    if (TESTING_MODE) return { attemptsLeft: MAX_ATTEMPTS, lockedUntil: null };
     const s = this.read(k);
     if (!s) return { attemptsLeft: MAX_ATTEMPTS, lockedUntil: null };
 
@@ -52,6 +56,7 @@ export class OralIntegrityService {
   /** Records one strike. On the last attempt, starts the lockout. */
   strike(assessmentId: string, owner: string): IntegrityState {
     const k = this.key(assessmentId, owner);
+    if (TESTING_MODE) return { attemptsLeft: 1, lockedUntil: null };
     const s = this.get(assessmentId, owner);
     if (s.lockedUntil) return s;
 
