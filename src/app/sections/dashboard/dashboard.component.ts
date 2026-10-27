@@ -25,7 +25,8 @@ export class DashboardComponent implements OnInit {
     { id: 'all', name: 'Trigonometry', icon: '📐', desc: 'Triangles, their rules and SOH CAH TOA' },
     { id: 'patterns', name: 'Number patterns', icon: '🔢', desc: 'Finding any term with Tn = a + (n − 1)d' },
     { id: 'measurement', name: 'Measurement', icon: '📦', desc: 'Surface area and volume of solids' },
-    { id: 'algebra', name: 'Algebra', icon: '🧮', desc: 'Grade 9 to 10: expressions, equations and graphs' }
+    { id: 'algebra', name: 'Algebra', icon: '🧮', desc: 'Grade 9 to 10: expressions, equations and graphs' },
+    { id: 'oral', name: 'Oral assessment', icon: '🎤', desc: 'Answer questions out loud with the AI' }
   ];
   board: any = null;
   boardLoading = true;
@@ -200,7 +201,8 @@ export class DashboardComponent implements OnInit {
     all: /^introduction to trigonometry/i,
     patterns: /^number patterns/i,
     measurement: /^measurement/i,
-    algebra: /^algebra/i
+    algebra: /^algebra/i,
+    oral: /^oral assessment/i
   };
 
   /** Rebuilds the progress card. Uses the answers saved while quizzes were open, or the finished attempts, whichever is further. */

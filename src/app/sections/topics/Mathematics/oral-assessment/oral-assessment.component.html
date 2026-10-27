@@ -1,10 +1,10 @@
 <div class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="oral-title">
   <div class="modal-backdrop"></div>
 
-  <div class="sheet">
+  <div class="sheet oral-sheet" [class.oral-live]="stream && (phase === 'running' || phase === 'warning')">
     <button type="button" class="sheet-close" (click)="close()" aria-label="Close">&times;</button>
 
-    <h3 id="oral-title" class="mb-3">Oral assessment: Trigonometry</h3>
+    <h3 id="oral-title" class="oral-title mb-3 text-lg md:text-xl">Oral assessment: Trigonometry</h3>
 
     <!-- Loading -->
     <p *ngIf="phase === 'loading'" class="text-slate-600 font-medium">Checking your account…</p>
@@ -81,7 +81,7 @@
           [style.width.%]="((qIndex + (submitted ? 1 : 0)) / questions.length) * 100"></div>
       </div>
 
-      <p class="mb-3 text-lg font-extrabold text-slate-900">{{ current.text }}</p>
+      <p class="mb-3 text-lg md:text-xl lg:text-2xl font-extrabold text-slate-900">{{ current.text }}</p>
 
       <button *ngIf="ttsSupported" type="button" (click)="speak(current.text)"
         class="mb-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100">
@@ -89,7 +89,7 @@
       </button>
 
       <!-- What the AI heard -->
-      <div class="mb-3 min-h-[5rem] p-3 rounded-xl border-2 text-left"
+      <div class="mb-3 min-h-[5rem] md:min-h-[7rem] p-3 md:p-4 rounded-xl border-2 text-left"
         [ngClass]="listening ? 'border-sky-500 bg-sky-50' : 'border-slate-200 bg-white'">
         <p class="text-xs font-bold text-slate-500 mb-1">{{ listening ? 'Listening…' : 'Your answer' }}</p>
         <p class="font-medium text-slate-900" [class.text-slate-400]="!answerText">
@@ -97,12 +97,19 @@
         </p>
       </div>
 
+      <button *ngIf="transcript && !submitted" type="button" class="mb-3 text-sm font-semibold text-sky-700 underline"
+        (click)="editAnswer()">
+        Fix a word in my answer
+      </button>
+      <p *ngIf="listening && micStatus" class="mb-2 text-xs font-semibold text-sky-700" role="status">{{ micStatus }}
+      </p>
       <p *ngIf="micNote" class="mb-3 text-sm font-semibold text-amber-800" role="status">{{ micNote }}</p>
+      <p *ngIf="errorCode" class="mb-3 text-xs text-slate-500">Problem code: {{ errorCode }}</p>
 
       <textarea *ngIf="typingVisible" [(ngModel)]="typed" [disabled]="submitted" rows="3"
         placeholder="Type your answer here" aria-label="Type your answer" class="field mb-3 w-full"></textarea>
 
-      <div *ngIf="!submitted" class="flex gap-3 mb-3">
+      <div *ngIf="!submitted" class="flex flex-col sm:flex-row gap-3 mb-3">
         <button *ngIf="sttSupported" type="button" class="btn flex-1" [ngClass]="listening ? 'btn-navy' : 'btn-soft'"
           (click)="listening ? stopListening() : startListening()">
           {{ listening ? '⏹ Stop' : '🎤 ' + (transcript ? 'Speak again' : 'Speak') }}
@@ -164,9 +171,7 @@
     </div>
 
     <!-- Camera preview, shown while the assessment is active -->
-    <div *ngIf="stream && (phase === 'running' || phase === 'warning')"
-      class="fixed bottom-3 right-3 w-24 h-32 md:w-32 md:h-44 rounded-xl overflow-hidden border-2 border-white shadow-lg bg-slate-900"
-      style="z-index: 70">
+    <div *ngIf="stream && (phase === 'running' || phase === 'warning')" class="oral-cam">
       <video #cam class="w-full h-full object-cover" style="transform: scaleX(-1)" autoplay muted playsinline
         aria-label="Your camera"></video>
     </div>

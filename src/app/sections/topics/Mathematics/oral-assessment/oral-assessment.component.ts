@@ -39,7 +39,8 @@ interface OralResult {
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
   providers: [AuthService],
-  templateUrl: './oral-assessment.component.html'
+  templateUrl: './oral-assessment.component.html',
+  styleUrls: ['./oral-assessment.component.css']
 })
 export class OralAssessmentComponent implements OnInit, OnDestroy {
   @Output() closed = new EventEmitter<void>();
@@ -100,6 +101,10 @@ export class OralAssessmentComponent implements OnInit, OnDestroy {
   micNote = '';
   showTyping = false;
   private rec: any = null;
+  private committed = '';          // text from earlier listening sessions
+  private wantListening = false;   // true until the learner presses Stop
+  micStatus = '';
+  errorCode = '';
 
   get sttSupported(): boolean {
     const w = window as any;
@@ -155,11 +160,19 @@ export class OralAssessmentComponent implements OnInit, OnDestroy {
     this.phase = 'starting';
 
     try {
-      this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true });
+      this.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
     } catch {
       this.error = 'We need your camera and microphone. Allow them in your browser settings and try again.';
       this.phase = 'intro';
       return;
+    }
+
+    // Ask for the microphone now, so the permission box never appears mid-question
+    try {
+      const mic = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mic.getTracks().forEach(t => t.stop());
+    } catch {
+      this.showTyping = true;   // no microphone: the learner can still type answers
     }
 
     // If the camera is switched off or unplugged during the test, that counts as leaving
@@ -213,43 +226,78 @@ export class OralAssessmentComponent implements OnInit, OnDestroy {
   }
 
   startListening() {
-    if (!this.sttSupported || this.submitted) return;
+    if (!this.sttSupported || this.submitted || this.listening) return;
     if (this.ttsSupported) window.speechSynthesis.cancel();
     this.speaking = false;
     this.micNote = '';
+    this.micStatus = 'Starting the microphone…';
+    this.errorCode = '';
+    this.wantListening = true;
+    this.committed = this.transcript;   // keep anything already said
+    this.listening = true;
+    this.beginRecognition();
+  }
 
+  private beginRecognition() {
     const w = window as any;
     const SR = w.SpeechRecognition || w.webkitSpeechRecognition;
     const rec = new SR();
-    rec.lang = 'en-ZA';
+    rec.lang = 'en-US';
     rec.interimResults = true;
-    rec.continuous = true;
+    rec.continuous = false;   // continuous mode repeats words on Android
+
+    rec.onaudiostart = () => this.zone.run(() => this.micStatus = 'Microphone is on. Start speaking.');
+    rec.onspeechstart = () => this.zone.run(() => this.micStatus = 'Hearing you…');
+    rec.onspeechend = () => this.zone.run(() => this.micStatus = 'Processing what you said…');
 
     rec.onresult = (e: any) => this.zone.run(() => {
-      let t = '';
-      for (let i = 0; i < e.results.length; i++) t += e.results[i][0].transcript + ' ';
-      this.transcript = t.trim();
+      const latest = e.results[e.results.length - 1][0].transcript;
+      this.transcript = (this.committed + ' ' + latest).trim();
     });
+
     rec.onerror = (e: any) => this.zone.run(() => {
-      this.listening = false;
+      this.errorCode = e.error;
       if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        this.wantListening = false;
         this.micNote = 'Speech recognition is blocked. Type your answer instead.';
         this.showTyping = true;
       } else if (e.error === 'no-speech') {
-        this.micNote = 'We did not hear anything. Tap the microphone and try again.';
+        // Nothing heard yet: stay on and keep trying until the learner presses Stop
+        this.micStatus = 'We did not hear anything. Speak a little louder or closer.';
       } else if (e.error !== 'aborted') {
+        this.wantListening = false;
         this.micNote = 'Listening stopped. Tap the microphone to continue, or type your answer.';
       }
     });
-    rec.onend = () => this.zone.run(() => this.listening = false);
+
+    rec.onend = () => this.zone.run(() => {
+      this.committed = this.transcript;
+      if (this.wantListening) {
+        // The browser stops after a pause: start again until the learner presses Stop
+        setTimeout(() => { if (this.wantListening) this.beginRecognition(); }, 30);
+      } else {
+        this.listening = false;
+      }
+    });
 
     this.rec = rec;
-    try { rec.start(); this.listening = true; } catch { this.listening = false; }
+    try { rec.start(); } catch { this.listening = false; this.wantListening = false; }
+  }
+
+  /** Moves the heard text into the typing box so the learner can correct it */
+  editAnswer() {
+    this.stopListening();
+    this.typed = this.transcript || this.typed;
+    this.transcript = '';
+    this.committed = '';
+    this.showTyping = true;
   }
 
   stopListening() {
+    this.wantListening = false;
     try { this.rec?.stop(); } catch { }
     this.listening = false;
+    this.micStatus = '';
   }
 
   async submit() {

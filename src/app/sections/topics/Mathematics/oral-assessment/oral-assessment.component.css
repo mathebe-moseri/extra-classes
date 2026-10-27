@@ -1,0 +1,99 @@
+/* ---------- The sheet: width grows with the screen ---------- */
+.oral-sheet {
+  width: 100%;
+  max-width: 32rem;
+  /* phones */
+  max-height: calc(100vh - 1rem);
+  max-height: calc(100dvh - 1rem);
+  /* real visible height on phones */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+}
+
+@media (min-width: 768px) {
+  .oral-sheet {
+    max-width: 46rem;
+  }
+}
+
+/* iPad */
+@media (min-width: 1024px) {
+  .oral-sheet {
+    max-width: 54rem;
+  }
+}
+
+/* laptop */
+
+/* ---------- Easy to tap, and no zoom-in on iPhone ---------- */
+.oral-sheet .btn {
+  min-height: 3rem;
+}
+
+.oral-sheet textarea {
+  font-size: 16px;
+}
+
+/* ---------- Camera preview ---------- */
+.oral-title {
+  order: -2;
+}
+
+.oral-cam {
+  order: -1;
+  justify-self: end;
+  width: 5.5rem;
+  height: 4.25rem;
+  margin-bottom: 0.75rem;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  background: #0f172a;
+}
+
+/* ---------- iPad and laptop: camera beside the question ---------- */
+@media (min-width: 768px) {
+  .oral-sheet.oral-live {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 12rem;
+    column-gap: 1.5rem;
+    align-content: start;
+  }
+
+  .oral-sheet.oral-live>.oral-title {
+    grid-column: 1 / -1;
+  }
+
+  .oral-sheet.oral-live> :not(.oral-title):not(.oral-cam):not(.sheet-close) {
+    grid-column: 1;
+  }
+
+  .oral-cam {
+    order: 0;
+    grid-column: 2;
+    grid-row: 2 / span 8;
+    align-self: start;
+    justify-self: stretch;
+    position: sticky;
+    top: 0.5rem;
+    width: auto;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    margin-bottom: 0;
+  }
+}
+
+/* ---------- Phone held sideways: very little height ---------- */
+@media (max-height: 500px) and (orientation: landscape) {
+  .oral-sheet {
+    max-height: 100dvh;
+  }
+
+  .oral-cam {
+    width: 4.5rem;
+    height: 3.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
