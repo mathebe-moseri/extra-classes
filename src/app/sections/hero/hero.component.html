@@ -437,6 +437,11 @@
     (signUp)="showSoilDegradation = false; openJoin()">
   </app-soil-degradation>
 
+
+  <!-- ============ ORAL ASSESSMENT ============ -->
+  <app-oral-assessment *ngIf="showOral" (closed)="showOral = false; returnIfFromDashboard()">
+  </app-oral-assessment>
+
   <!-- ============ QUIZ ============ -->
   <div *ngIf="showQuiz" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
     <div class="modal-backdrop"></div>

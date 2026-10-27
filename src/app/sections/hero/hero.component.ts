@@ -12,6 +12,9 @@ import { MeasurementComponent } from '../topics/Mathematics/measurement/measurem
 import { AlgebraComponent } from '../topics/Mathematics/algebra/algebra.component';
 import { QuizProgressService } from '../../quiz-progress.service';
 import { SoilDegradationComponent } from '../topics/Agriculture/soil-degradation/soil-degradation.component';
+import { OralAssessmentComponent } from '../topics/Mathematics/oral-assessment/oral-assessment.component';
+// import { OralAssessmentComponent } from '../topics/Mathematics/oral-assessment/oral-assessment.component';
+
 // Stacked fraction: frac('O', 'H') shows O over H with a fraction bar
 const frac = (top: string, bottom: string) =>
   `<span class="frac"><span>${top}</span><span>${bottom}</span></span>`;
@@ -19,7 +22,7 @@ const frac = (top: string, bottom: string) =>
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, FormsModule, RevealDirective, NumberPatternsComponent, MeasurementComponent, AlgebraComponent, SoilDegradationComponent],
+  imports: [CommonModule, FormsModule, RevealDirective, NumberPatternsComponent, MeasurementComponent, AlgebraComponent, SoilDegradationComponent, OralAssessmentComponent],
   providers: [AuthService],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css']
@@ -176,42 +179,43 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     { id: 'patterns', name: 'Number patterns', subject: 'Mathematics', grades: [8, 9, 10, 11, 12], icon: '🔢', desc: 'Finding any term with Tn = a + (n − 1)d' },
     { id: 'measurement', name: 'Measurement', subject: 'Mathematics', grades: [8, 9, 10], icon: '📦', desc: 'Surface area and volume of solids' },
     { id: 'algebra', name: 'Algebra', subject: 'Mathematics', grades: [9, 10], icon: '🧮', desc: 'Grade 9 to 10: expressions, equations and graphs' },
-    { id: 'soil', name: 'Soil Degradation', subject: 'Agriculture', grades: [10, 11, 12], icon: '🌱', desc: 'Understanding soil degradation and its effects' }
+    { id: 'soil', name: 'Soil Degradation', subject: 'Agriculture', grades: [10, 11, 12], icon: '🌱', desc: 'Understanding soil degradation and its effects' },
+    { id: 'oral', name: 'Oral assessment', subject: 'Mathematics', grades: [9, 10], icon: '🎤', desc: 'Answer questions out loud with the AI' }
   ];
 
   selectedGrade: number | null = null;
   selectedSubject = '';
   scienceOptions = ['Physics', 'Chemistry'];
-selectedScienceBranch = '';
+  selectedScienceBranch = '';
   gradeError = false;
   subjectError = false;
 
   // Subjects that have at least one topic for the chosen grade
-get subjectsForGrade(): string[] {
-  const g = this.selectedGrade;
-  if (g === null) return [];
+  get subjectsForGrade(): string[] {
+    const g = this.selectedGrade;
+    if (g === null) return [];
 
-  const existing = [
-    ...new Set(
-      this.catalogue
-        .filter(t => t.grades.includes(g))
-        .map(t => t.subject)
-    )
-  ];
-
-  if (g >= 10) {
-    return [
-      ...existing.filter(
-        s => s !== 'Agriculture'
-      ),
-      'Physical Science',
-      'Life Sciences',
-      'Agricultural Sciences'
+    const existing = [
+      ...new Set(
+        this.catalogue
+          .filter(t => t.grades.includes(g))
+          .map(t => t.subject)
+      )
     ];
-  }
 
-  return existing;
-}
+    if (g >= 10) {
+      return [
+        ...existing.filter(
+          s => s !== 'Agriculture'
+        ),
+        'Physical Science',
+        'Life Sciences',
+        'Agricultural Sciences'
+      ];
+    }
+
+    return existing;
+  }
 
   // Topics for the chosen grade AND subject (the dropdown in the HTML still uses "topics")
   get topics() {
@@ -261,6 +265,7 @@ get subjectsForGrade(): string[] {
   showMeasurement = false;
   showAlgebra = false;
   showSoilDegradation = false;
+  showOral = false;
 
   startTopicQuiz() {
     if (this.selectedGrade === null) {
@@ -292,6 +297,10 @@ get subjectsForGrade(): string[] {
     }
     if (this.selectedTopic === 'soil') {
       this.showSoilDegradation = true;
+      return;
+    }
+    if (this.selectedTopic === 'oral') {
+      this.showOral = true;
       return;
     }
     this.openQuiz();           // trigonometry: your existing quiz
@@ -343,6 +352,7 @@ get subjectsForGrade(): string[] {
       case 'patterns': this.showNumberPatterns = true; break;
       case 'measurement': this.showMeasurement = true; break;
       case 'algebra': this.showAlgebra = true; break;
+      case 'oral': this.showOral = true; break;
       case 'parts': this.startPart(0); break;
       case 'types': this.startPart(1); break;
       case 'rules': this.startPart(2); break;
