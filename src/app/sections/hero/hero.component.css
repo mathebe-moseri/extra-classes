@@ -1,3 +1,8 @@
+/* Shorter subject dropdown (about 3 rows visible, the rest scrolls) */
+#subject-list {
+  max-height: 9rem !important;
+}
+
 :host ::ng-deep .frac {
   display: inline-flex;
   flex-direction: column;

@@ -693,6 +693,9 @@ export class PhysicsComponent implements OnInit, OnDestroy {
 
   title = 'Grade 10 Physics';
 
+  /** Which part of the paper to show: 'all', 'motion', 'energy' or 'em' */
+  @Input() topic = 'all';
+
   questions: QuizQuestion[] = buildQuestions(SECTIONS);
 
   // ---------- Pictures (SVG data URLs need to be marked as safe) ----------
@@ -707,7 +710,9 @@ export class PhysicsComponent implements OnInit, OnDestroy {
   }
 
   // ---------- Saved progress (resume) ----------
-  private readonly PROGRESS_KEY = 'physics-quiz-progress-v1';
+  private get PROGRESS_KEY(): string {
+    return this.topic === 'all' ? 'physics-quiz-progress-v1' : 'physics-quiz-progress-v1-' + this.topic;
+  }
   showResumePrompt = false;
   savedProgress: {
     index: number;
@@ -819,8 +824,24 @@ export class PhysicsComponent implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer
   ) { }
 
+  // ---------- Topic filter ----------
+  private static readonly TOPICS: Record<string, { index: number; title: string }> = {
+    motion: { index: 0, title: 'Grade 10 Physics: Motion in one dimension' },
+    energy: { index: 1, title: 'Grade 10 Physics: Mechanical energy' },
+    em: { index: 2, title: 'Grade 10 Physics: Electromagnetic radiation' }
+  };
+
+  private applyTopic(): void {
+    const t = PhysicsComponent.TOPICS[this.topic];
+    if (t) {
+      this.questions = buildQuestions([SECTIONS[t.index]]);
+      this.title = t.title;
+    }
+  }
+
   // ---------- Lifecycle ----------
   ngOnInit(): void {
+    this.applyTopic();
     const saved = this.readSavedProgress();
     if (saved) {
       this.savedProgress = saved;
@@ -1068,7 +1089,7 @@ export class PhysicsComponent implements OnInit, OnDestroy {
     });
 
     if (this.auth.isLoggedIn()) {
-      this.progress.record('physics', `q${this.currentIndex}`, topic, ok, this.scoredTotal, this.topicCounts);
+      this.progress.record(this.topic === 'all' ? 'physics' : 'physics-' + this.topic, `q${this.currentIndex}`, topic, ok, this.scoredTotal, this.topicCounts);
     }
   }
 
@@ -1078,7 +1099,7 @@ export class PhysicsComponent implements OnInit, OnDestroy {
     }
     this.attemptSaved = true;
     this.auth.saveAttempt({
-      quiz: 'Grade 10 Physics',
+      quiz: this.title,
       correct: this.marksEarned,
       total: this.marksTotal,
       details: JSON.stringify({ byPart: this.topicRows, answers: this.answerLog })

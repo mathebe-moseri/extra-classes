@@ -96,7 +96,8 @@
   <section id="about-us" class="screen snap">
     <div class="card" appReveal>
       <h2>What we offer</h2>
-      <p class="lead">Online self-service study for Grades 8 - 12 in Mathematics, Physics, Chemistry and many more.</p>
+      <p class="lead">Online self-service study for Grades 8 - 12 in Mathematics, Physics, Chemistry and more.
+      </p>
 
       <ul class="mb-5">
         <li class="feature">
@@ -225,36 +226,6 @@
         </div>
       </ng-container>
 
-
-      <div *ngIf="selectedSubject === 'Physical Science'" class="mb-4 text-left">
-
-        <label for="science-branch" class="block mb-2 text-sm font-bold text-slate-800">
-          Choose Physics or Chemistry
-        </label>
-
-        <div class="relative">
-          <select id="science-branch" name="science-branch" [(ngModel)]="selectedScienceBranch"
-            (ngModelChange)="selectedTopic = ''; topicOpen = false" class="w-full appearance-none px-4 py-3 pr-10
-             rounded-xl border-2 border-slate-200
-             bg-white text-slate-900 font-semibold
-             text-base cursor-pointer
-             focus:outline-none focus:border-sky-600">
-
-            <option value="" disabled>Choose Physics or Chemistry</option>
-            <option value="Physics">Physics</option>
-            <option value="Chemistry">Chemistry</option>
-
-          </select>
-
-          <svg class="absolute right-4 top-1/2 -translate-y-1/2
-             w-5 h-5 text-slate-700 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M6 9l6 6 6-6" />
-          </svg>
-        </div>
-      </div>
-
-
       <p *ngIf="!isComingSoon" id="topic-label" class="field-label">Choose a topic</p>
       <div *ngIf="!isComingSoon" id="topic-picker" class="mb-4 text-left" [style.position]="'relative'"
         [style.z-index]="60">
@@ -282,6 +253,8 @@
         <!-- The scrollable list -->
         <ul id="topic-list" *ngIf="topicOpen" role="listbox" aria-labelledby="topic-label"
           class="absolute left-0 right-0 top-full mt-2 z-30 max-h-48 overflow-y-auto overscroll-contain rounded-xl border-2 border-slate-200 bg-white shadow-2xl">
+          <li *ngIf="!topics.length" class="px-4 py-3 text-sm font-semibold text-slate-500">Topics for this subject are
+            coming soon.</li>
           <li *ngFor="let t of topics" role="option" [attr.aria-selected]="selectedTopic === t.id">
             <button type="button" (click)="selectTopic(t.id)"
               class="w-full flex items-center justify-between gap-3 text-left px-4 py-3 font-semibold border-b border-slate-100 transition-colors"
@@ -305,23 +278,17 @@
   <!-- ============ HOW TO APPLY ============ -->
   <section id="how-to-apply" class="screen snap">
     <div class="card" appReveal>
-      <h2>How to apply</h2>
-      <p class="note mb-5">Follow the 5 steps, or watch the short video below.</p>
+      <h2>How to Join</h2>
+      <p class="note mb-5">Follow the steps, or watch the short video below.</p>
 
       <ol class="mb-5 text-base md:text-lg">
         <li class="step"><span class="step-dot">1</span>
           <p><strong class="text-slate-900">Sign up</strong></p>
         </li>
         <li class="step"><span class="step-dot">2</span>
-          <p><strong class="text-slate-900">Check your email</strong>, print and sign the contract.</p>
+          <p><strong class="text-slate-900">Check your email (inbox)</strong> for login details.</p>
         </li>
         <li class="step"><span class="step-dot">3</span>
-          <p><strong class="text-slate-900"></strong>Reply with the 3 documents.</p>
-        </li>
-        <li class="step"><span class="step-dot">4</span>
-          <p><strong class="text-slate-900">Check your emails</strong> for login details.</p>
-        </li>
-        <li class="step"><span class="step-dot">5</span>
           <p><strong class="text-slate-900">Log in and explore.</strong></p>
         </li>
       </ol>
@@ -329,7 +296,7 @@
       <div id="apply-video" class="mb-4 bg-[#1f2937] rounded-2xl overflow-hidden">
         <div class="aspect-video">
           <video #applyVideo class="w-full h-full object-contain" controls playsinline preload="metadata"
-            title="How to join SM Remote Extra Classes"
+            title="How to Join SM Remote Extra Classes"
             src="https://pub-160d390f07564ee9a8c40e86ce875025.r2.dev/testimonial2.mp4"></video>
         </div>
       </div>
@@ -338,63 +305,185 @@
     </div>
   </section>
 
-  <!-- ============ PAYMENT ============ -->
-  <section id="payment" class="screen snap">
-    <div class="card" appReveal>
-      <h2>Payment details</h2>
-      <!-- <p class="lead">Registration is R300. Pay by EFT.</p> -->
-
-      <div class="mb-4">
-        <!-- <div class="row"><span>Bank</span><strong>ABSA</strong></div>
-        <div class="row"><span>Account type</span><strong>Savings</strong></div> -->
-        <!-- <div class="row">
-          <span>Account number</span>
-          <span class="flex items-center gap-2">
-            <strong>9388 3059 91</strong>
-            <button type="button" class="copy-btn" [class.done]="copied" (click)="copyAccount()">
-              {{ copied ? 'Copied' : 'Copy' }}
-            </button>
-          </span>
-        </div> -->
-        <div class="row"><span>Reference</span><strong>Your sign-up email</strong></div>
-      </div>
-
-      <p class="note">Use your sign-up email as the payment reference so we can match your payment.</p>
-    </div>
-  </section>
-
   <!-- ============ SPECIAL REQUEST CLASSES ============ -->
   <section id="special-classes" class="screen snap">
     <div class="card" appReveal>
-      <h2>Special request classes</h2>
-      <p class="lead">Live classes with a tutor. Booked and paid for separately.</p>
 
-      <div class="space-y-3">
-        <div class="p-4 rounded-2xl bg-sky-100">
-          <h3 class="font-bold text-slate-900">Monday – Thursday</h3>
-          <p class="font-bold text-sky-700">18h00 – 22h00</p>
-          <p class="font-bold text-slate-900">R60 per hour</p>
+      <h2>Need one-on-one class?</h2>
+      <p class="lead !mb-10 text-sm">Extra help from a live tutor. Just you and the Tutor.</p>
+
+      <!-- Three quick facts in one row -->
+      <div class="flex flex-wrap gap-2 mb-4">
+        <span class="px-3 py-1 rounded-full bg-sky-100 text-sky-800 text-xs font-bold">👩‍🏫 Live</span>
+        <span class="px-3 py-1 rounded-full bg-sky-100 text-sky-800 text-xs font-bold">🙋 One-on-one</span>
+      </div>
+
+
+      <!-- Prices -->
+      <div class="space-y-2 mb-3">
+        <div class="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border-2 border-sky-200 bg-white">
+          <div class="leading-tight">
+            <p class="font-bold text-slate-900">Mon – Fri</p>
+            <p class="text-sm font-semibold text-sky-700">18h00 – 22h00</p>
+          </div>
+          <p class="text-xl font-extrabold text-slate-900">R80<span class="text-xs font-semibold text-slate-500">
+              /hour</span></p>
         </div>
-        <div class="p-4 rounded-2xl bg-sky-100">
-          <h3 class="font-bold text-slate-900">Fridays &amp; weekends</h3>
-          <p class="font-bold text-sky-700">14h00 – 17h00</p>
-          <p class="font-bold text-slate-900">R100 per hour</p>
+        <div class="flex items-center justify-between gap-3 px-4 py-3 rounded-2xl border-2 border-sky-200 bg-white">
+          <div class="leading-tight">
+            <p class="font-bold text-slate-900">Weekends</p>
+            <p class="text-sm font-semibold text-sky-700">14h00 – 17h00</p>
+          </div>
+          <p class="text-xl font-extrabold text-slate-900">R100<span class="text-xs font-semibold text-slate-500">
+              /hour</span></p>
         </div>
       </div>
+
+
+      <button type="button" (click)="openBooking()" class="btn btn-primary w-full mt-12">
+        📅 Click here to book your class
+      </button>
+
     </div>
+
+
   </section>
 
-  <!-- ============ CONTACT ============ -->
-  <section id="contact" class="screen snap mb-6">
-    <div class="card" appReveal>
-      <h2>Questions? Talk to us</h2>
-      <!-- <p class="lead">Ask about classes, payment or how to apply.</p> -->
-      <div class="flex gap-3">
-        <button type="button" (click)="openContact('whatsapp')" class="btn btn-primary flex-1">WhatsApp</button>
-        <button type="button" (click)="openContact('email')" class="btn btn-outline flex-1">Email</button>
-      </div>
+  <!-- ============ ONE-ON-ONE BOOKING ============ -->
+  <div *ngIf="showBooking" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="booking-title">
+    <div class="modal-backdrop" (click)="closeBooking()"></div>
+    <div class="sheet">
+      <button type="button" class="sheet-close" (click)="closeBooking()" aria-label="Close">&times;</button>
+
+      <ng-container *ngIf="!bookingSent; else bookingDone">
+        <h3 id="booking-title" class="mb-1">Book a one-on-one class</h3>
+        <p class="text-sm text-slate-500 mb-4">Pick your date and time. Classes are paid for separately.</p>
+
+        <div class="flex flex-col gap-3">
+          <div>
+            <label class="field-label" for="b-name">Learner name</label>
+            <input id="b-name" [(ngModel)]="bookingName" type="text" autocomplete="name" class="field">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="field-label" for="b-grade">Grade</label>
+              <select id="b-grade" [(ngModel)]="bookingGrade" class="field">
+                <option value="" disabled>Choose</option>
+                <option *ngFor="let g of bookingGrades" [value]="g">Grade {{ g }}</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label" for="b-subject">Subject</label>
+              <select id="b-subject" [(ngModel)]="bookingSubject" class="field">
+                <option value="" disabled>Choose</option>
+                <option *ngFor="let s of bookingSubjects" [value]="s">{{ s }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="field-label" for="b-topic">Topic(s) you need help with</label>
+            <input id="b-topic" [(ngModel)]="bookingTopic" type="text" maxlength="80"
+              placeholder="e.g. Euclidean Geometry, ..." class="field">
+          </div>
+
+          <div>
+            <p id="b-date-label" class="field-label">Choose a date</p>
+            <button type="button" (click)="calendarOpen = !calendarOpen" aria-haspopup="dialog"
+              [attr.aria-expanded]="calendarOpen" aria-labelledby="b-date-label"
+              class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border-2 bg-white text-left font-semibold transition-colors"
+              [ngClass]="calendarOpen ? 'border-sky-600' : 'border-slate-200 hover:border-sky-300'">
+              <span class="truncate" [ngClass]="bookingDate ? 'text-slate-900' : 'text-slate-400'">
+                {{ bookingDate ? bookingDateLabel : 'Select a date' }}
+              </span>
+              <span aria-hidden="true">📅</span>
+            </button>
+
+            <div *ngIf="calendarOpen" class="mt-2 p-3 rounded-2xl border-2 border-slate-200 bg-white">
+              <div class="flex items-center justify-between mb-2">
+                <button type="button" (click)="prevMonth()" [disabled]="!calCanPrev" aria-label="Previous month"
+                  class="w-10 h-10 rounded-full bg-slate-100 font-extrabold text-lg disabled:opacity-30">‹</button>
+                <p class="font-extrabold text-slate-900">{{ calTitle }}</p>
+                <button type="button" (click)="nextMonth()" [disabled]="!calCanNext" aria-label="Next month"
+                  class="w-10 h-10 rounded-full bg-slate-100 font-extrabold text-lg disabled:opacity-30">›</button>
+              </div>
+
+              <div class="grid grid-cols-7 gap-1 mb-1 text-center text-xs font-bold text-slate-500">
+                <span *ngFor="let w of weekdays">{{ w }}</span>
+              </div>
+
+              <div class="grid grid-cols-7 gap-1">
+                <ng-container *ngFor="let c of calCells; trackBy: trackCell">
+                  <span *ngIf="!c"></span>
+                  <button *ngIf="c" type="button" [disabled]="c.disabled" (click)="pickDate(c.iso)"
+                    class="h-10 rounded-xl text-sm font-bold transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    [ngClass]="bookingDate === c.iso ? 'bg-sky-600 text-white' : (c.weekend ? 'bg-amber-50 text-amber-900 hover:bg-amber-100' : 'bg-slate-50 text-slate-800 hover:bg-sky-50')">
+                    {{ c.day }}
+                  </button>
+                </ng-container>
+              </div>
+
+              <p class="mt-2 text-xs font-semibold text-slate-500">Weekdays R80 per hour · Weekends (shaded) R100 per
+                hour</p>
+            </div>
+          </div>
+
+          <div *ngIf="bookingDate">
+            <p class="field-label">Choose a time <span class="font-normal text-slate-500">(1 hour)</span></p>
+            <div class="grid grid-cols-4 gap-2">
+              <button *ngFor="let t of bookingSlots" type="button" (click)="bookingTime = t; bookingError = ''"
+                class="py-3 rounded-xl border-2 font-bold text-sm transition-colors"
+                [ngClass]="bookingTime === t ? 'border-sky-600 bg-sky-50 text-sky-700' : 'border-slate-200 text-slate-700 hover:border-sky-300'">
+                {{ t }}
+              </button>
+            </div>
+            <p class="mt-2 text-sm font-semibold text-slate-600">R{{ bookingPrice }} per hour</p>
+          </div>
+
+          <div>
+            <p class="field-label">How will you pay?</p>
+            <div class="grid grid-cols-2 gap-2">
+              <button type="button" (click)="bookingPay = 'eft'; bookingError = ''"
+                class="px-3 py-3 rounded-xl border-2 font-bold text-sm text-center transition-colors"
+                [ngClass]="bookingPay === 'eft' ? 'border-sky-600 bg-sky-50 text-sky-700' : 'border-slate-200 text-slate-700 hover:border-sky-300'">
+                🏦 Bank transfer (EFT)
+              </button>
+              <button type="button" (click)="bookingPay = 'online'; bookingError = ''"
+                class="px-3 py-3 rounded-xl border-2 font-bold text-sm text-center transition-colors"
+                [ngClass]="bookingPay === 'online' ? 'border-sky-600 bg-sky-50 text-sky-700' : 'border-slate-200 text-slate-700 hover:border-sky-300'">
+                💳 Online payment
+              </button>
+            </div>
+            <p *ngIf="bookingPay === 'eft'" class="mt-2 text-sm text-slate-600">We will send you the banking details.
+            </p>
+            <p *ngIf="bookingPay === 'online'" class="mt-2 text-sm text-slate-600">We will send you a secure payment
+              link.</p>
+          </div>
+
+          <div *ngIf="bookingDate && bookingTime"
+            class="p-3 rounded-2xl bg-sky-50 border border-sky-100 text-sm font-semibold text-slate-800">
+            {{ bookingDateLabel }} at {{ bookingTime }} · R{{ bookingPrice }}
+          </div>
+
+          <p *ngIf="bookingError" class="msg-error" role="alert">{{ bookingError }}</p>
+
+          <button type="button" (click)="submitBooking()" class="btn btn-primary w-full">Send booking request</button>
+        </div>
+      </ng-container>
+
+      <ng-template #bookingDone>
+        <div class="text-center">
+          <div class="badge-ok" aria-hidden="true">✓</div>
+          <h3 class="!pr-0">Almost done</h3>
+          <p class="text-slate-600 mt-2 mb-5">
+            WhatsApp opened with your booking request. Press send there. Your class is confirmed once we reply.
+          </p>
+          <button type="button" class="btn btn-soft w-full" (click)="closeBooking()">Close</button>
+        </div>
+      </ng-template>
     </div>
-  </section>
+  </div>
 
   <!-- ============ REGISTRATIONS CLOSED ============ -->
   <div *ngIf="showClosedNotice" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="closed-title">
@@ -457,7 +546,7 @@
   </app-soil-degradation>
 
   <!-- ============ PHYSICS ============ -->
-  <app-physics *ngIf="showPhysics" (closed)="showPhysics = false; returnIfFromDashboard()"
+  <app-physics *ngIf="showPhysics" [topic]="physicsTopic" (closed)="showPhysics = false; returnIfFromDashboard()"
     (signUp)="showPhysics = false; openJoin()">
   </app-physics>
 

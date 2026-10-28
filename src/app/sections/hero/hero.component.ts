@@ -175,13 +175,15 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   // CHANGE the grades: [...] on each line so they match where the topic belongs.
   // Keep the id values exactly as they are, the quiz buttons depend on them.
   catalogue = [
-    { id: 'trig', name: 'Trigonometry', subject: 'Mathematics', grades: [9, 10], icon: '📐', desc: 'Triangles, their rules and SOH CAH TOA' },
+    { id: 'algebra', name: 'Algebra', subject: 'Mathematics', grades: [9, 10], icon: '🧮', desc: 'Grade 9 to 10: expressions, equations and graphs' },
     { id: 'patterns', name: 'Number patterns', subject: 'Mathematics', grades: [8, 9, 10, 11, 12], icon: '🔢', desc: 'Finding any term with Tn = a + (n − 1)d' },
     { id: 'measurement', name: 'Measurement', subject: 'Mathematics', grades: [8, 9, 10], icon: '📦', desc: 'Surface area and volume of solids' },
-    { id: 'algebra', name: 'Algebra', subject: 'Mathematics', grades: [9, 10], icon: '🧮', desc: 'Grade 9 to 10: expressions, equations and graphs' },
-    { id: 'soil', name: 'Soil Degradation', subject: 'Agriculture', grades: [10, 11, 12], icon: '🌱', desc: 'Understanding soil degradation and its effects' },
+    { id: 'trig', name: 'Trigonometry', subject: 'Mathematics', grades: [9, 10], icon: '📐', desc: 'Triangles, their rules and SOH CAH TOA' },
+    // { id: 'soil', name: 'Soil Degradation', subject: 'Agriculture', grades: [10, 11, 12], icon: '🌱', desc: 'Understanding soil degradation and its effects' },
     { id: 'oral', name: 'Oral assessment', subject: 'Mathematics', grades: [9, 10], icon: '🎤', desc: 'Answer questions out loud with the AI' },
-    { id: 'physics', name: 'Grade 10 Physics', subject: 'Physical Science', branch: 'Physics', grades: [10], icon: '⚛️', desc: 'Motion, mechanical energy and electromagnetic radiation' },
+    { id: 'physics-motion', name: 'Motion in one dimension', subject: 'Physics', grades: [10], icon: '🚗', desc: 'Displacement, velocity, acceleration, graphs and free fall' },
+    { id: 'physics-energy', name: 'Mechanical energy', subject: 'Physics', grades: [10], icon: '⚡', desc: 'Potential energy, kinetic energy and conservation' },
+    { id: 'physics-em', name: 'Electromagnetic radiation', subject: 'Physics', grades: [10], icon: '📡', desc: 'Waves, the spectrum, uses and dangers' },
   ];
 
   selectedGrade: number | null = null;
@@ -191,30 +193,10 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   gradeError = false;
   subjectError = false;
 
-  // Subjects that have at least one topic for the chosen grade
+  // The subjects offered in the demo dropdown
   get subjectsForGrade(): string[] {
-    const g = this.selectedGrade;
-    if (g === null) return [];
-
-    const existing = [
-      ...new Set(
-        this.catalogue
-          .filter(t => t.grades.includes(g))
-          .map(t => t.subject)
-      )
-    ];
-
-    if (g >= 10) {
-      return [
-        ...existing.filter(
-          s => s !== 'Agriculture' && s !== 'Physical Science'),
-        'Physical Science',
-        'Life Sciences',
-        'Agricultural Sciences'
-      ];
-    }
-
-    return existing;
+    if (this.selectedGrade === null) return [];
+    return ['Mathematics', 'Physics', 'Chemistry'];
   }
 
   // Topics for the chosen grade AND subject (the dropdown in the HTML still uses "topics")
@@ -270,6 +252,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   showSoilDegradation = false;
   showPhysics = false;
   showOral = false;
+  physicsTopic = 'all';   // which Physics topic the learner picked
 
   startTopicQuiz() {
     if (this.selectedGrade === null) {
@@ -304,7 +287,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
       this.showSoilDegradation = true;
       return;
     }
-    if (this.selectedTopic === 'physics') {
+    if (this.selectedTopic.startsWith('physics')) {
+      this.physicsTopic = this.selectedTopic === 'physics' ? 'all' : this.selectedTopic.replace('physics-', '');
       this.showPhysics = true;
       return;
     }
@@ -394,6 +378,152 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   // Set to true when the database is back and registrations reopen
   registrationsOpen = true; showClosedNotice = false;
 
+  /* ---------------- ONE-ON-ONE BOOKING ---------------- */
+  // CHANGE THIS: your WhatsApp number with the country code, no + and no spaces
+  private readonly BOOKING_WHATSAPP = '+27 76 5956 598';
+
+  showBooking = false;
+  bookingSent = false;
+  bookingError = '';
+  bookingName = '';
+  bookingGrade = '';
+  bookingSubject = '';
+  bookingTopic = ''; bookingDate = '';
+  bookingTime = '';
+  bookingPay: '' | 'eft' | 'online' = '';
+  readonly bookingGrades = [8, 9, 10, 11, 12];
+  readonly bookingSubjects = ['Mathematics', 'Physics', 'Chemistry'];
+
+  private pad(n: number): string { return n < 10 ? '0' + n : '' + n; }
+
+  // Earliest date a learner can pick: tomorrow
+  get bookingMinDate(): string {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    return `${d.getFullYear()}-${this.pad(d.getMonth() + 1)}-${this.pad(d.getDate())}`;
+  }
+
+  private get bookingDateObj(): Date | null {
+    if (!this.bookingDate) return null;
+    const [y, m, d] = this.bookingDate.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  get bookingIsWeekend(): boolean {
+    const day = this.bookingDateObj?.getDay();
+    return day === 0 || day === 6;
+  }
+
+  // Mon to Fri 18h00 - 22h00, weekends 14h00 - 17h00 (start times, 1 hour each)
+  get bookingSlots(): string[] {
+    if (!this.bookingDate) return [];
+    return this.bookingIsWeekend ? ['14:00', '15:00', '16:00'] : ['18:00', '19:00', '20:00', '21:00'];
+  }
+
+  get bookingPrice(): number { return this.bookingIsWeekend ? 100 : 80; }
+
+  get bookingDateLabel(): string {
+    return this.bookingDateObj?.toLocaleDateString('en-ZA', { weekday: 'long', day: 'numeric', month: 'long' }) ?? '';
+  }
+
+  openBooking() {
+    this.pauseAllVideos();
+    this.bookingSent = false;
+    this.bookingError = '';
+    this.showBooking = true;
+    this.calendarOpen = false;
+    this.initCalendar();
+  }
+
+  closeBooking() { this.showBooking = false; }
+
+  /* ---------------- BOOKING CALENDAR ---------------- */
+  calendarOpen = false;
+  calMonth = new Date();
+  calCells: ({ day: number; iso: string; disabled: boolean; weekend: boolean } | null)[] = [];
+  readonly weekdays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+
+  get calTitle(): string {
+    return this.calMonth.toLocaleDateString('en-ZA', { month: 'long', year: 'numeric' });
+  }
+
+  get calCanPrev(): boolean {
+    const [y, m] = this.bookingMinDate.split('-').map(Number);
+    return this.calMonth.getFullYear() * 12 + this.calMonth.getMonth() > y * 12 + (m - 1);
+  }
+
+  get calCanNext(): boolean {
+    const [y, m] = this.bookingMinDate.split('-').map(Number);
+    return this.calMonth.getFullYear() * 12 + this.calMonth.getMonth() < y * 12 + (m - 1) + 3;
+  }
+
+  trackCell(_i: number, c: { iso: string } | null) { return c ? c.iso : _i; }
+
+  initCalendar() {
+    const base = this.bookingDate || this.bookingMinDate;
+    const [y, m] = base.split('-').map(Number);
+    this.calMonth = new Date(y, m - 1, 1);
+    this.buildCalendar();
+  }
+
+  private buildCalendar() {
+    const y = this.calMonth.getFullYear();
+    const m = this.calMonth.getMonth();
+    const lead = (new Date(y, m, 1).getDay() + 6) % 7;   // week starts on Monday
+    const count = new Date(y, m + 1, 0).getDate();
+    const cells: ({ day: number; iso: string; disabled: boolean; weekend: boolean } | null)[] = [];
+    for (let i = 0; i < lead; i++) cells.push(null);
+    for (let d = 1; d <= count; d++) {
+      const iso = `${y}-${this.pad(m + 1)}-${this.pad(d)}`;
+      const dow = new Date(y, m, d).getDay();
+      cells.push({ day: d, iso, disabled: iso < this.bookingMinDate, weekend: dow === 0 || dow === 6 });
+    }
+    this.calCells = cells;
+  }
+
+  prevMonth() {
+    if (!this.calCanPrev) return;
+    this.calMonth = new Date(this.calMonth.getFullYear(), this.calMonth.getMonth() - 1, 1);
+    this.buildCalendar();
+  }
+
+  nextMonth() {
+    if (!this.calCanNext) return;
+    this.calMonth = new Date(this.calMonth.getFullYear(), this.calMonth.getMonth() + 1, 1);
+    this.buildCalendar();
+  }
+
+  pickDate(iso: string) {
+    this.onBookingDate(iso);
+    this.calendarOpen = false;
+  }
+
+  onBookingDate(value: string) {
+    this.bookingDate = value;
+    this.bookingTime = '';   // the slots change with the day, so start again
+    this.bookingError = '';
+  }
+
+  submitBooking() {
+    if (!this.bookingName.trim() || !this.bookingGrade || !this.bookingSubject ||
+      !this.bookingTopic.trim() || !this.bookingDate || !this.bookingTime || !this.bookingPay) {
+      this.bookingError = 'Please complete every step before you send.';
+      return;
+    }
+    const message = [
+      'Hi, I would like to book a one-on-one class.',
+      '',
+      `Learner: ${this.bookingName.trim()}`,
+      `Grade: ${this.bookingGrade}`,
+      `Subject: ${this.bookingSubject}`,
+      `Topic: ${this.bookingTopic.trim()}`, `Date: ${this.bookingDateLabel}`,
+      `Time: ${this.bookingTime} (1 hour)`,
+      `Price: R${this.bookingPrice}`,
+      `Payment: ${this.bookingPay === 'eft' ? 'Bank transfer (EFT)' : 'Online payment'}`
+    ].join('\n');
+    window.open('https://wa.me/' + this.BOOKING_WHATSAPP + '?text=' + encodeURIComponent(message), '_blank');
+    this.bookingSent = true;
+  }
   openJoin() {
     if (!this.registrationsOpen) {
       this.showClosedNotice = true;   // registrations closed: show the popup
@@ -443,8 +573,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   // Escape closes whichever popup is open
   @HostListener('document:keydown.escape')
   onEscape() {
-    if (this.subjectOpen) this.subjectOpen = false;
-    else if (this.topicOpen) this.topicOpen = false; else if (this.showClosedNotice) this.closeClosedNotice();
+    if (this.showBooking) this.closeBooking();
+    else if (this.subjectOpen) this.subjectOpen = false; else if (this.topicOpen) this.topicOpen = false; else if (this.showClosedNotice) this.closeClosedNotice();
     else if (this.showResumePrompt) this.closeResumePrompt();
     else if (this.showQuizCompletedPopup) this.closeQuizCompletedPopup();
     else if (this.showNumberPatterns) this.showNumberPatterns = false;

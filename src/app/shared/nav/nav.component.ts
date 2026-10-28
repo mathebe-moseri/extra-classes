@@ -43,8 +43,7 @@ export class NavComponent implements OnInit {
   sections = [
     { id: 'about-us', label: 'What we offer' },
     { id: 'demo-lesson', label: 'Free demo lesson' },
-    { id: 'how-to-apply', label: 'How to apply' },
-    { id: 'payment', label: 'Payment details' },
+    { id: 'how-to-apply', label: 'How to JOIN' },
     { id: 'special-classes', label: 'Special request classes' },
   ];
   activeSection = '';
