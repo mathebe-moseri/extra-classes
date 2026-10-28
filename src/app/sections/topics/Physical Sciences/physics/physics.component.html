@@ -102,16 +102,15 @@
           <!-- One word / term / value -->
           <ng-container *ngIf="isTerm">
             <label class="field-label" for="sd-answer">Your answer</label>
-            <input id="sd-answer" [(ngModel)]="userAnswer" (keyup.enter)="checkAnswer()" type="text"
-              autocomplete="off" autocapitalize="none" placeholder="Type your answer" class="field mb-4"
-              [disabled]="answered">
+            <input id="sd-answer" [(ngModel)]="userAnswer" (keyup.enter)="checkAnswer()" type="text" autocomplete="off"
+              autocapitalize="none" placeholder="Type your answer" class="field mb-4" [disabled]="answered">
           </ng-container>
 
           <!-- Short question: type, then mark yourself against the memo -->
           <ng-container *ngIf="isShort">
             <label class="field-label" for="sd-text">Your answer</label>
-            <textarea id="sd-text" [(ngModel)]="userText" rows="4" placeholder="Write your answer here" class="field mb-4"
-              [disabled]="answered"></textarea>
+            <textarea id="sd-text" [(ngModel)]="userText" rows="4" placeholder="Write your answer here"
+              class="field mb-4" [disabled]="answered"></textarea>
 
             <div *ngIf="answered" class="mb-4 p-3 rounded-xl bg-emerald-50 border-l-4 border-emerald-500 text-left">
               <p class="font-bold text-emerald-800 mb-1">Memo</p>
@@ -126,7 +125,8 @@
               </label>
               <p *ngIf="currentQuestion.explanation" class="text-xs text-slate-600 mt-2"
                 [innerHTML]="currentQuestion.explanation"></p>
-              <p class="font-extrabold text-emerald-800 mt-2">Your mark: {{ shortMarks }} / {{ currentQuestion.marks }}</p>
+              <p class="font-extrabold text-emerald-800 mt-2">Your mark: {{ shortMarks }} / {{ currentQuestion.marks }}
+              </p>
             </div>
           </ng-container>
 

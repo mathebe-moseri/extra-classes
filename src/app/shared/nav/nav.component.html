@@ -3,9 +3,18 @@
   <div class="flex items-center justify-between h-full">
 
     <button type="button" (click)="scrollToHero()"
-      class="text-left font-semibold text-gray-900 text-[12px] md:text-[14px] lg:text-[16px]">
-      <!-- <span class="block italic font-serif font-medium text-[6px] md:text-[10px] lg:text-[12px]">SM</span> -->
-      <span>Ithute Online</span>
+      class="flex items-center gap-1.5 text-left font-semibold text-gray-900 text-[12px] md:text-[14px] lg:text-[16px]"
+      aria-label="Ithute Online, back to top">
+      <svg viewBox="0 0 32 32" class="flex-none w-8 h-8 md:w-7 md:h-7" fill="none" aria-hidden="true">
+        <!-- cap board (diamond) -->
+        <path d="M16 5L30 12L16 19L2 12Z" fill="#1e3a8a" />
+        <!-- cap base -->
+        <path d="M8 15.5V21C8 23 11.6 25 16 25S24 23 24 21V15.5L16 19.5Z" fill="#3b82f6" />
+        <!-- tassel -->
+        <path d="M27 13.5V21" stroke="#f59e0b" stroke-width="1.8" stroke-linecap="round" />
+        <circle cx="27" cy="22.5" r="1.6" fill="#f59e0b" />
+      </svg>
+      <span class="font-bold text-[16px]">Ithute Online</span>
     </button>
 
     <!-- Desktop navigation -->

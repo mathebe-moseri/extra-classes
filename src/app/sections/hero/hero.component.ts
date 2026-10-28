@@ -12,7 +12,7 @@ import { MeasurementComponent } from '../topics/Mathematics/measurement/measurem
 import { AlgebraComponent } from '../topics/Mathematics/algebra/algebra.component';
 import { QuizProgressService } from '../../quiz-progress.service';
 import { SoilDegradationComponent } from '../topics/Agriculture/soil-degradation/soil-degradation.component';
-import { PhysicsComponent } from '../topics/physics/physics.component';import { OralAssessmentComponent } from '../topics/Mathematics/oral-assessment/oral-assessment.component';
+import { PhysicsComponent } from '../topics/Physical Sciences/physics/physics.component'; import { OralAssessmentComponent } from '../topics/Mathematics/oral-assessment/oral-assessment.component';
 // import { OralAssessmentComponent } from '../topics/Mathematics/oral-assessment/oral-assessment.component';
 
 // Stacked fraction: frac('O', 'H') shows O over H with a fraction bar
@@ -167,7 +167,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   /* ---------------- TOPIC DROPDOWN ---------------- */
   /* ---------------- GRADE > SUBJECT > TOPIC ---------------- */
   grades = [8, 9, 10, 11, 12];
-  comingSoonGrades = [8, 9, 12];
+  comingSoonGrades = [8, 9, 11, 12];
   get isComingSoon(): boolean {
     return this.selectedGrade !== null && this.comingSoonGrades.includes(this.selectedGrade);
   }
@@ -181,7 +181,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     { id: 'algebra', name: 'Algebra', subject: 'Mathematics', grades: [9, 10], icon: '🧮', desc: 'Grade 9 to 10: expressions, equations and graphs' },
     { id: 'soil', name: 'Soil Degradation', subject: 'Agriculture', grades: [10, 11, 12], icon: '🌱', desc: 'Understanding soil degradation and its effects' },
     { id: 'oral', name: 'Oral assessment', subject: 'Mathematics', grades: [9, 10], icon: '🎤', desc: 'Answer questions out loud with the AI' },
-        { id: 'physics', name: 'Grade 10 Physics', subject: 'Physical Science', branch: 'Physics', grades: [10], icon: '⚛️', desc: 'Motion, mechanical energy and electromagnetic radiation' },
+    { id: 'physics', name: 'Grade 10 Physics', subject: 'Physical Science', branch: 'Physics', grades: [10], icon: '⚛️', desc: 'Motion, mechanical energy and electromagnetic radiation' },
   ];
 
   selectedGrade: number | null = null;
@@ -207,7 +207,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     if (g >= 10) {
       return [
         ...existing.filter(
-          s => s !== 'Agriculture' && s !== 'Physical Science'        ),
+          s => s !== 'Agriculture' && s !== 'Physical Science'),
         'Physical Science',
         'Life Sciences',
         'Agricultural Sciences'

@@ -29,7 +29,7 @@ export interface MarkResult {
 export class AdminService {
   private baseUrl = environment.apiBaseUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   private headers(key: string): HttpHeaders {
     return new HttpHeaders({ 'X-Admin-Key': key });

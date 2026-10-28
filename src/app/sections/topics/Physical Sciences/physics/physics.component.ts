@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { AuthService } from '../../../auth.service';
-import { QuizProgressService } from '../../../quiz-progress.service';
+import { AuthService } from '../../../../auth.service';
+import { QuizProgressService } from '../../../../quiz-progress.service';
 
 
 type QuestionType = 'info' | 'mcq' | 'tf' | 'term' | 'short';
@@ -991,7 +991,7 @@ export class PhysicsComponent implements OnInit, OnDestroy {
       : (q.options?.[this.selectedOption ?? 0] ?? '');
     this.recordResult(this.isCorrect ? q.marks : 0, given);
     this.persistProgress(this.currentIndex + 1);
-      if (this.answersEnabled) {
+    if (this.answersEnabled) {
       this.revealAnswer();
     } else {
       this.feedback = 'Answer saved. 👍';

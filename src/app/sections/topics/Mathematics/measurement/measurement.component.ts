@@ -918,7 +918,7 @@ export class MeasurementComponent implements OnInit, OnDestroy {
     this.stopTimer();
 
     if (this.isLast) {
-     this.saveAttempt();
+      this.saveAttempt();
       this.showResults = true;
       return;
     }
@@ -1050,7 +1050,7 @@ export class MeasurementComponent implements OnInit, OnDestroy {
     this.selectedOption = null;
     this.answered = true;
     this.totalWrong++;
-this.saveProgress(false, 'No answer (time ran out)');
+    this.saveProgress(false, 'No answer (time ran out)');
     this.feedback = "Time's up!";
   }
 
@@ -1060,7 +1060,7 @@ this.saveProgress(false, 'No answer (time ran out)');
     this.currentIndex = 0;
     this.totalCorrect = 0;
     this.totalWrong = 0;
-this.topicCorrect = {};
+    this.topicCorrect = {};
     this.answerLog = [];
     this.attemptSaved = false;
     this.showResults = false;
