@@ -555,6 +555,11 @@
   <app-oral-assessment *ngIf="showOral" (closed)="showOral = false; returnIfFromDashboard()">
   </app-oral-assessment>
 
+  <!-- ============ SEPEDI LITERATURE (temporary) ============ -->
+  <app-sepedi-literature *ngIf="showSepedi" (closed)="showSepedi = false; returnIfFromDashboard()"
+    (signUp)="showSepedi = false; openJoin()">
+  </app-sepedi-literature>
+
   <!-- ============ QUIZ ============ -->
   <div *ngIf="showQuiz" class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
     <div class="modal-backdrop"></div>

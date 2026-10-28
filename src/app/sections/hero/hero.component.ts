@@ -13,7 +13,7 @@ import { AlgebraComponent } from '../topics/Mathematics/algebra/algebra.componen
 import { QuizProgressService } from '../../quiz-progress.service';
 import { SoilDegradationComponent } from '../topics/Agriculture/soil-degradation/soil-degradation.component';
 import { PhysicsComponent } from '../topics/Physical Sciences/physics/physics.component'; import { OralAssessmentComponent } from '../topics/Mathematics/oral-assessment/oral-assessment.component';
-// import { OralAssessmentComponent } from '../topics/Mathematics/oral-assessment/oral-assessment.component';
+import { SepediLiteratureComponent } from '../topics/sepedi-literature/sepedi-literature.component';
 
 // Stacked fraction: frac('O', 'H') shows O over H with a fraction bar
 const frac = (top: string, bottom: string) =>
@@ -22,7 +22,7 @@ const frac = (top: string, bottom: string) =>
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [CommonModule, FormsModule, RevealDirective, NumberPatternsComponent, MeasurementComponent, AlgebraComponent, SoilDegradationComponent, OralAssessmentComponent, PhysicsComponent],
+  imports: [CommonModule, FormsModule, RevealDirective, NumberPatternsComponent, MeasurementComponent, AlgebraComponent, SoilDegradationComponent, OralAssessmentComponent, PhysicsComponent, SepediLiteratureComponent],
   providers: [AuthService],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css']
@@ -181,6 +181,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     { id: 'trig', name: 'Trigonometry', subject: 'Mathematics', grades: [9, 10], icon: '📐', desc: 'Triangles, their rules and SOH CAH TOA' },
     // { id: 'soil', name: 'Soil Degradation', subject: 'Agriculture', grades: [10, 11, 12], icon: '🌱', desc: 'Understanding soil degradation and its effects' },
     { id: 'oral', name: 'Oral assessment', subject: 'Mathematics', grades: [9, 10], icon: '🎤', desc: 'Answer questions out loud with the AI' },
+    { id: 'sepedi', name: 'Sepedi Literature', subject: 'Mathematics', grades: [9, 10], icon: '📖', desc: 'Sepedi literature (temporary)' },
     { id: 'physics-motion', name: 'Motion in one dimension', subject: 'Physics', grades: [10], icon: '🚗', desc: 'Displacement, velocity, acceleration, graphs and free fall' },
     { id: 'physics-energy', name: 'Mechanical energy', subject: 'Physics', grades: [10], icon: '⚡', desc: 'Potential energy, kinetic energy and conservation' },
     { id: 'physics-em', name: 'Electromagnetic radiation', subject: 'Physics', grades: [10], icon: '📡', desc: 'Waves, the spectrum, uses and dangers' },
@@ -252,6 +253,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   showSoilDegradation = false;
   showPhysics = false;
   showOral = false;
+  showSepedi = false;
   physicsTopic = 'all';   // which Physics topic the learner picked
 
   startTopicQuiz() {
@@ -294,6 +296,10 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     if (this.selectedTopic === 'oral') {
       this.showOral = true;
+      return;
+    }
+    if (this.selectedTopic === 'sepedi') {
+      this.showSepedi = true;
       return;
     }
     this.openQuiz();           // trigonometry: your existing quiz
@@ -380,7 +386,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /* ---------------- ONE-ON-ONE BOOKING ---------------- */
   // CHANGE THIS: your WhatsApp number with the country code, no + and no spaces
-  private readonly BOOKING_WHATSAPP = '+27 76 5956 598';
+  private readonly BOOKING_WHATSAPP = '27765956598';
 
   showBooking = false;
   bookingSent = false;
@@ -581,6 +587,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     else if (this.showMeasurement) this.showMeasurement = false;
     else if (this.showAlgebra) this.showAlgebra = false;
     else if (this.showPhysics) this.showPhysics = false;
+    else if (this.showSepedi) this.showSepedi = false;
     else if (this.showTestimonials) this.closeTestimonials();
   }
 
