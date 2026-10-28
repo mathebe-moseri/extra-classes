@@ -1,0 +1,223 @@
+<div class="modal-layer" role="dialog" aria-modal="true" aria-labelledby="sd-title">
+  <div class="modal-backdrop"></div>
+  <div class="sheet">
+    <button type="button" class="sheet-close" (click)="close()" aria-label="Close quiz">&times;</button>
+
+    <!-- ============ RESUME PROMPT ============ -->
+    <div *ngIf="showResumePrompt" class="text-center q-in">
+      <h3 id="sd-title" class="mb-2">Welcome back!</h3>
+      <p class="mb-1 font-medium text-slate-700">
+        You stopped at question {{ savedQuestionNumber }} of {{ scoredTotal }}.
+      </p>
+      <p class="text-sm text-slate-500 mb-5">{{ savedTopicName }}</p>
+
+      <button type="button" (click)="resumeQuiz()" class="btn btn-primary w-full mb-3">
+        Resume from question {{ savedQuestionNumber }}
+      </button>
+      <button type="button" (click)="startFresh()" class="btn btn-navy w-full mb-3">
+        Start from the beginning
+      </button>
+      <button type="button" (click)="closeResumePrompt()" class="btn btn-soft w-full">Close</button>
+    </div>
+
+    <!-- ============ QUESTIONS ============ -->
+    <ng-container *ngIf="!showResults && !showResumePrompt">
+      <h3 id="sd-title" class="mb-1">{{ title }}</h3>
+      <p class="text-xs font-bold uppercase tracking-wide text-sky-700 mb-3">{{ currentQuestion.section }}</p>
+
+      <ng-container *ngFor="let q of [currentQuestion]">
+        <div class="q-in">
+
+          <!-- Learn card -->
+          <ng-container *ngIf="isInfo">
+            <span
+              class="inline-block mb-2 px-3 py-0.5 rounded-full bg-sky-100 text-sky-700 text-xs font-bold uppercase tracking-wide">Ithute (Learn)</span>
+            <p class="mb-4 text-xl font-extrabold text-slate-900" [innerHTML]="currentQuestion.text"></p>
+            <p class="mb-4 p-3 rounded-xl bg-sky-100 border-l-4 border-sky-500 text-slate-900 font-semibold whitespace-pre-line text-left"
+              [innerHTML]="currentQuestion.body"></p>
+          </ng-container>
+
+          <!-- Question heading (paper style) -->
+          <ng-container *ngIf="!isInfo">
+            <p class="text-sm font-bold text-slate-800 mb-0.5">{{ currentQuestion.sub }}</p>
+            <p class="text-xs text-slate-500 mb-3" [innerHTML]="currentQuestion.instruction"></p>
+
+            <!-- Poem or story the question is about -->
+            <div *ngIf="currentQuestion.passage"
+              class="mb-4 p-4 rounded-xl bg-amber-50 border-l-4 border-amber-400 text-slate-900 text-left leading-relaxed"
+              [innerHTML]="currentQuestion.passage"></div>
+
+            <p class="mb-4 font-medium">
+              <span class="font-extrabold mr-1">{{ currentQuestion.no }}</span>
+              <span [innerHTML]="currentQuestion.text"></span>
+              <span class="font-extrabold ml-1 whitespace-nowrap">({{ currentQuestion.marks }})</span>
+            </p>
+          </ng-container>
+
+          <!-- Progress -->
+          <p class="text-sm text-slate-500 mb-2">
+            <ng-container *ngIf="isInfo">Bala se pele, ke moka o araba (Read this first, then answer)</ng-container>
+            <ng-container *ngIf="!isInfo">Potšišo {{ questionNumber }} ya {{ scoredTotal }}</ng-container>
+          </p>
+          <div class="h-1.5 rounded-full bg-slate-100 mb-4 overflow-hidden">
+            <div class="h-full bg-emerald-400 transition-all duration-500"
+              [style.width.%]="(questionNumber / scoredTotal) * 100"></div>
+          </div>
+
+          <!-- Countdown (timed questions only) -->
+          <div *ngIf="!isInfo && currentQuestion.timed" class="mb-4">
+            <div class="flex items-center justify-between text-xs mb-1"
+              [ngClass]="timeLeft <= 5 && !answered ? 'text-red-600' : 'text-slate-500'">
+              <span>⏱ Nako (Time left)</span>
+              <span>{{ timeLeft }}s</span>
+            </div>
+            <div class="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+              <div class="h-full transition-all duration-1000 ease-linear"
+                [ngClass]="timeLeft <= 5 ? 'bg-red-500' : 'bg-sky-400'" [style.width.%]="(timeLeft / timeTotal) * 100">
+              </div>
+            </div>
+          </div>
+
+          <!-- Multiple choice and true/false -->
+          <div *ngIf="isChoice" class="grid gap-2 mb-4">
+            <button *ngFor="let opt of currentQuestion.options; let i = index" type="button" (click)="chooseOption(i)"
+              [disabled]="answered"
+              class="w-full flex items-center justify-between gap-3 text-left px-4 py-3 rounded-xl border-2 font-semibold transition-colors"
+              [ngClass]="optionClass(i)">
+              <span [innerHTML]="opt"></span>
+
+              <svg *ngIf="revealed && i === selectedOption && isCorrect" class="w-6 h-6 flex-none text-emerald-600"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                stroke-linejoin="round" aria-label="Correct answer">
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+              <svg *ngIf="revealed && i === selectedOption && !isCorrect" class="w-6 h-6 flex-none text-red-600"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                stroke-linejoin="round" aria-label="Wrong answer">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- One word / term / value -->
+          <ng-container *ngIf="isTerm">
+            <label class="field-label" for="sd-answer">Karabo ya gago (Your answer)</label>
+            <input id="sd-answer" [(ngModel)]="userAnswer" (keyup.enter)="checkAnswer()" type="text"
+              autocomplete="off" autocapitalize="none" placeholder="Ngwala karabo (Type your answer)" class="field mb-4"
+              [disabled]="answered">
+          </ng-container>
+
+          <!-- Short question: type, then mark yourself against the memo -->
+          <ng-container *ngIf="isShort">
+            <label class="field-label" for="sd-text">Karabo ya gago (Your answer)</label>
+            <textarea id="sd-text" [(ngModel)]="userText" rows="4" placeholder="Ngwala karabo ya gago mo (Write your answer here)" class="field mb-4"
+              [disabled]="answered"></textarea>
+
+            <div *ngIf="answered" class="mb-4 p-3 rounded-xl bg-emerald-50 border-l-4 border-emerald-500 text-left">
+              <p class="font-bold text-emerald-800 mb-1">Memo</p>
+              <p class="text-xs text-slate-600 mb-2">
+                Tikiša dintlha ka moka tšeo o di ngwadilego (Tick every point you included).
+                Up to {{ currentQuestion.marks }} mark{{ currentQuestion.marks === 1 ? '' : 's' }}.
+              </p>
+              <label *ngFor="let point of currentQuestion.model; let i = index"
+                class="flex items-start gap-2 py-1 text-sm text-slate-800 cursor-pointer">
+                <input type="checkbox" class="mt-1" [checked]="memoChecked[i]" (change)="toggleMemo(i)">
+                <span [innerHTML]="point"></span>
+              </label>
+              <p *ngIf="currentQuestion.explanation" class="text-xs text-slate-600 mt-2"
+                [innerHTML]="currentQuestion.explanation"></p>
+              <p class="font-extrabold text-emerald-800 mt-2">Dintlha tša gago (Your mark): {{ shortMarks }} / {{ currentQuestion.marks }}</p>
+            </div>
+          </ng-container>
+
+          <!-- Feedback -->
+          <p *ngIf="feedback" class="mb-4 text-center font-semibold" aria-live="polite"
+            [ngClass]="!revealed ? 'text-slate-600' : (isCorrect ? 'text-emerald-600' : 'text-red-600')"
+            [innerHTML]="feedback"></p>
+
+          <!-- Small "Check answer" link (enabled by admin) -->
+          <div *ngIf="!isInfo && !isShort && answersEnabled" class="flex justify-end mb-2">
+            <button type="button" (click)="revealAnswer()" [disabled]="!answered || revealed"
+              class="inline-flex items-center gap-1 px-2 py-1.5 rounded-full text-xs font-semibold text-sky-700 hover:bg-sky-50 disabled:opacity-40 disabled:cursor-not-allowed">
+              Lekola karabo (Check answer)
+            </button>
+          </div>
+
+          <!-- Buttons -->
+          <div class="flex gap-3">
+            <button *ngIf="isTerm" type="button" (click)="checkAnswer()" [disabled]="answered || !userAnswer.trim()"
+              class="btn btn-navy flex-1">Romela karabo (Submit)</button>
+
+            <button *ngIf="isShort" type="button" (click)="submitShort()" [disabled]="answered || !userText.trim()"
+              class="btn btn-navy flex-1">Bontšha memo (Show memo)</button>
+
+            <button type="button" (click)="nextQuestion()" [disabled]="!isInfo && !answered"
+              class="btn btn-primary flex-1">{{ nextLabel }}</button>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <!-- ============ RESULTS ============ -->
+    <div *ngIf="showResults" class="text-center q-in">
+      <h3 class="mb-3">Dipoelo tša quiz (Quiz results)</h3>
+
+      <span class="inline-block px-4 py-1 rounded-full text-sm font-extrabold tracking-wide mb-3"
+        [ngClass]="passed ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'">
+        {{ passed ? 'PASSED' : 'FAILED' }}
+      </span>
+
+      <p class="text-5xl font-extrabold mb-1" [ngClass]="passed ? 'text-emerald-600' : 'text-red-600'">
+        {{ scorePercent }}%
+      </p>
+      <p class="text-lg font-semibold text-slate-700 mb-4">
+        {{ marksEarned }}/{{ marksTotal }} marks = {{ scorePercent }}%
+      </p>
+
+      <div class="relative h-3 rounded-full bg-slate-100 mb-1 overflow-hidden">
+        <div class="h-full transition-all duration-700" [ngClass]="passed ? 'bg-emerald-400' : 'bg-red-400'"
+          [style.width.%]="scorePercent"></div>
+        <div class="absolute top-0 h-full w-0.5 bg-slate-500" [style.left.%]="passMark"></div>
+      </div>
+      <p class="text-xs text-slate-500 mb-4">{{ passMark }}% pass mark</p>
+
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div class="p-3 rounded-2xl bg-emerald-50">
+          <p class="text-2xl font-extrabold text-emerald-700">{{ marksEarned }}</p>
+          <p class="text-sm font-semibold text-emerald-800">Marks earned</p>
+        </div>
+        <div class="p-3 rounded-2xl bg-red-50">
+          <p class="text-2xl font-extrabold text-red-700">{{ marksLost }}</p>
+          <p class="text-sm font-semibold text-red-800">Marks lost</p>
+        </div>
+      </div>
+
+      <!-- Marks per section -->
+      <div class="mb-4 text-left">
+        <p class="font-bold text-slate-800 mb-2">Dintlha tša gago ka karolo (Your marks by section)</p>
+        <div *ngFor="let row of topicRows" class="mb-2">
+          <div class="flex justify-between text-xs text-slate-600 mb-1">
+            <span class="pr-2">{{ row.name }}</span>
+            <span class="font-bold whitespace-nowrap">{{ row.earned }}/{{ row.total }}</span>
+          </div>
+          <div class="h-1.5 rounded-full bg-slate-100 overflow-hidden">
+            <div class="h-full bg-sky-400" [style.width.%]="row.total ? (row.earned / row.total) * 100 : 0"></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="mb-5 font-medium text-slate-700">
+        <ng-container *ngIf="passed">
+          Go lokile! O feta {{ passMark }}% ya go feta. Kudu go lokile!
+        </ng-container>
+        <ng-container *ngIf="!passed">
+          O hloka dintlha tše {{ marksNeeded }} gore o fete. Boelela dikarata tša Ithute o leke gape!
+        </ng-container>
+      </p>
+
+      <button type="button" (click)="retry()" class="btn btn-navy w-full mb-3">Leka gape (Try again)</button>
+      <button type="button" (click)="goSignUp()" class="btn btn-primary w-full mb-3">Sign up to keep learning</button>
+      <button type="button" (click)="close()" class="btn btn-soft w-full">Tswalela (Close)</button>
+    </div>
+  </div>
+</div>
