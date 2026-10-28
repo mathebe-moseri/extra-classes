@@ -229,6 +229,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     this.gradeError = false;
     this.subjectError = false;
     this.selectedSubject = '';
+    this.subjectOpen = false;
     this.selectedTopic = '';
     this.topicOpen = false;
     this.topicError = false;
@@ -239,6 +240,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   selectSubject(s: string) {
     this.selectedSubject = s;
+    this.subjectOpen = false;
     this.subjectError = false;
     this.selectedTopic = '';
     this.topicOpen = false;
@@ -246,6 +248,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   selectedTopic = '';
   topicOpen = false;   // true while the topic list is showing
+  subjectOpen = false; // true while the subject list is showing
   topicError = false;  // true when "Test your knowledge" is pressed with no topic chosen
 
   get selectedTopicName(): string {
@@ -276,6 +279,7 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isComingSoon) return;
     if (!this.selectedSubject) {
       this.subjectError = true;
+      this.subjectOpen = true;
       return;
     }
     if (!this.selectedTopic) {
@@ -431,16 +435,16 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   // Tapping anywhere outside the topic picker closes its list
   @HostListener('document:click', ['$event'])
   onDocumentClick(e: Event) {
-    if (this.topicOpen && !(e.target as HTMLElement).closest('#topic-picker')) {
-      this.topicOpen = false;
-    }
+    const el = e.target as HTMLElement;
+    if (this.topicOpen && !el.closest('#topic-picker')) this.topicOpen = false;
+    if (this.subjectOpen && !el.closest('#subject-picker')) this.subjectOpen = false;
   }
 
   // Escape closes whichever popup is open
   @HostListener('document:keydown.escape')
   onEscape() {
-    if (this.topicOpen) this.topicOpen = false;
-    else if (this.showClosedNotice) this.closeClosedNotice();
+    if (this.subjectOpen) this.subjectOpen = false;
+    else if (this.topicOpen) this.topicOpen = false; else if (this.showClosedNotice) this.closeClosedNotice();
     else if (this.showResumePrompt) this.closeResumePrompt();
     else if (this.showQuizCompletedPopup) this.closeQuizCompletedPopup();
     else if (this.showNumberPatterns) this.showNumberPatterns = false;

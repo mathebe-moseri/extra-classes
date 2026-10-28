@@ -78,7 +78,7 @@
   width: .45rem;
   height: .45rem;
   border-radius: 50%;
-  /* emerald-500 */
+  background: #10b981;
   animation: live-pulse 2s ease-in-out infinite;
 }
 
@@ -98,4 +98,25 @@
   .live-badge::before {
     animation: none;
   }
+}
+
+/* Subject and topic dropdowns: identical, solid, and above everything below them */
+#subject-picker {
+  z-index: 90 !important;
+}
+
+#topic-picker {
+  z-index: 80 !important;
+}
+
+#subject-list,
+#topic-list {
+  background-color: #ffffff !important;
+  z-index: 100 !important;
+  isolation: isolate;
+}
+
+#subject-list li,
+#topic-list li {
+  background-color: #ffffff;
 }

@@ -63,7 +63,7 @@
         </p>
       </div>
 
-      <h1 class="rise text-white text-3xl md:text-5xl font-bold mt-3 mb-2" style="--d: .25s">
+      <h1 class="text-green-300 rise text-white text-3xl md:text-5xl font-bold mt-3 mb-2" style="--d: .25s">
         Ithute Online
       </h1>
 
@@ -76,8 +76,8 @@
           <button type="button" (click)="openJoin()" class="btn btn-primary flex-1">Sign up</button>
           <button type="button" (click)="openLogin()" class="btn btn-light flex-1">Log in</button>
         </div>
-        <p (click)="scrollToApply()" class="mt-3 w-full max-w-xs sm:max-w-md mx-auto text-sm text-blue-500">
-          Sign up for free and get 14 days of full access.</p>
+        <p (click)="scrollToApply()" class="mt-3 w-full max-w-xs sm:max-w-md mx-auto text-sm text-green-300">
+          Sign up and get FREE 14 days of full access.</p>
         <button type="button" (click)="openContact('whatsapp')" class="mt-4 text-sm font-semibold underline"
           style="color: #dbeafe;">
           Questions? Contact us
@@ -149,9 +149,10 @@
   </section>
 
   <!-- ============ FREE DEMO ============ -->
-  <section id="demo-lesson" class="screen snap" [style.position]="'relative'" [style.z-index]="topicOpen ? 50 : null">
+  <section id="demo-lesson" class="screen snap" [style.position]="'relative'"
+    [style.z-index]="(topicOpen || subjectOpen) ? 50 : null">
     <div class="card" appReveal [style.position]="'relative'" [style.overflow]="'visible'"
-      [style.z-index]="topicOpen ? 50 : null">
+      [style.z-index]="(topicOpen || subjectOpen) ? 50 : null">
       <h2>Free demo lesson</h2>
       <p class="lead">Watch one lesson, then test yourself.</p>
 
@@ -184,35 +185,43 @@
       <ng-container *ngIf="selectedGrade !== null && !isComingSoon">
         <p id="subject-label" class="field-label">Choose a subject</p>
 
-        <div class="mb-4 text-left">
-          <label for="subject-select" class="block mb-2 text-sm font-bold text-slate-800">
-            Choose a subject
-          </label>
+        <div id="subject-picker" class="mb-4 text-left" [style.position]="'relative'" [style.z-index]="90">
 
-          <div class="relative">
-            <select id="subject-select" name="subject-select" [ngModel]="selectedSubject"
-              (ngModelChange)="selectSubject($event)" class="w-full appearance-none rounded-xl border-2
-             border-slate-200 bg-white px-4 py-3 pr-10
-             text-base font-semibold text-slate-900
-             focus:outline-none focus:border-sky-600">
-
-              <option value="" disabled>Choose a subject</option>
-
-              <option *ngFor="let s of subjectsForGrade" [value]="s">
-                {{ s }}
-              </option>
-            </select>
-
-            <svg class="pointer-events-none absolute right-4 top-1/2
-             h-5 w-5 -translate-y-1/2 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          <!-- The closed dropdown -->
+          <button type="button" (click)="subjectOpen = !subjectOpen" aria-haspopup="listbox"
+            [attr.aria-expanded]="subjectOpen" aria-labelledby="subject-label"
+            class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border-2 bg-white text-left font-semibold transition-colors"
+            [ngClass]="subjectError ? 'border-red-400' : (subjectOpen ? 'border-sky-600' : 'border-slate-200 hover:border-sky-300')">
+            <span class="truncate" [ngClass]="selectedSubject ? 'text-slate-900' : 'text-slate-400'">
+              {{ selectedSubject || 'Select a subject' }}
+            </span>
+            <svg class="flex-none w-5 h-5 text-slate-500 transition-transform duration-200"
+              [ngClass]="subjectOpen ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="m6 9 6 6 6-6" />
+              <path d="M6 9l6 6 6-6" />
             </svg>
-          </div>
+          </button>
 
-          <p *ngIf="subjectError" class="mt-2 text-sm font-semibold text-red-600">
+          <p *ngIf="subjectError && !subjectOpen" class="mt-1 text-sm font-semibold text-red-600">
             Please choose a subject.
           </p>
+
+          <!-- The scrollable list -->
+          <ul id="subject-list" style="z-index:100" *ngIf="subjectOpen" role="listbox" aria-labelledby="subject-label"
+            class="absolute left-0 right-0 top-full mt-2 z-30 max-h-48 overflow-y-auto overscroll-contain rounded-xl border-2 border-slate-200 bg-white shadow-2xl">
+            <li *ngFor="let s of subjectsForGrade" role="option" [attr.aria-selected]="selectedSubject === s">
+              <button type="button" (click)="selectSubject(s)"
+                class="w-full flex items-center justify-between gap-3 text-left px-4 py-3 font-semibold border-b border-slate-100 transition-colors"
+                [ngClass]="selectedSubject === s ? 'bg-sky-50 text-sky-700' : 'text-slate-800 hover:bg-slate-50'">
+                <span>{{ s }}</span>
+                <svg *ngIf="selectedSubject === s" class="flex-none w-5 h-5" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+                  aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
+              </button>
+            </li>
+          </ul>
         </div>
       </ng-container>
 
