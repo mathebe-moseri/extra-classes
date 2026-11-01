@@ -11,7 +11,7 @@ import { QuizLauncherService } from '../../quiz-launcher.service';
 import { MeasurementComponent } from '../topics/Mathematics/measurement/measurement.component';
 import { AlgebraComponent } from '../topics/Mathematics/algebra/algebra.component';
 import { QuizProgressService } from '../../quiz-progress.service';
-import { SoilDegradationComponent } from '../topics/Agriculture/soil-degradation/soil-degradation.component';
+import { LearnerAPiService } from '../../learner-api.service'; import { SoilDegradationComponent } from '../topics/Agriculture/soil-degradation/soil-degradation.component';
 import { PhysicsComponent } from '../topics/Physical Sciences/physics/physics.component'; import { OralAssessmentComponent } from '../topics/Mathematics/oral-assessment/oral-assessment.component';
 import { SepediLiteratureComponent } from '../topics/sepedi-literature/sepedi-literature.component';
 
@@ -23,7 +23,7 @@ const frac = (top: string, bottom: string) =>
   selector: 'app-hero',
   standalone: true,
   imports: [CommonModule, FormsModule, RevealDirective, NumberPatternsComponent, MeasurementComponent, AlgebraComponent, SoilDegradationComponent, OralAssessmentComponent, PhysicsComponent, SepediLiteratureComponent],
-  providers: [AuthService],
+  providers: [AuthService, LearnerAPiService],
   templateUrl: './hero.component.html',
   styleUrls: ['./hero.component.css']
 })
@@ -307,8 +307,8 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private joinForm: JoinFormService, private auth: AuthService,
     private route: ActivatedRoute, private router: Router,
-    private launcher: QuizLauncherService, private progress: QuizProgressService) { }
-
+    private launcher: QuizLauncherService, private progress: QuizProgressService,
+    private learnerApi: LearnerAPiService) { }
   ngOnInit() {
     this.joinForm.testimonialsRequested$.subscribe(() => this.openTestimonials());
 
@@ -385,14 +385,13 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   registrationsOpen = true; showClosedNotice = false;
 
   /* ---------------- ONE-ON-ONE BOOKING ---------------- */
-  // CHANGE THIS: your WhatsApp number with the country code, no + and no spaces
-  private readonly BOOKING_WHATSAPP = '27765956598';
 
   showBooking = false;
   bookingSent = false;
   bookingError = '';
   bookingName = '';
-  bookingGrade = '';
+  bookingWhatsapp = '';
+  bookingSending = false; bookingGrade = '';
   bookingSubject = '';
   bookingTopic = ''; bookingDate = '';
   bookingTime = '';
@@ -511,24 +510,43 @@ export class HeroComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   submitBooking() {
-    if (!this.bookingName.trim() || !this.bookingGrade || !this.bookingSubject ||
+    if (this.bookingSending) return;
+    if (!this.bookingName.trim() || this.bookingWhatsapp.replace(/\D/g, '').length < 10 ||
+      !this.bookingGrade || !this.bookingSubject ||
       !this.bookingTopic.trim() || !this.bookingDate || !this.bookingTime || !this.bookingPay) {
-      this.bookingError = 'Please complete every step before you send.';
+      this.bookingError = 'Please complete every step, including a valid WhatsApp number.';
       return;
     }
+    this.bookingSending = true;
+    this.bookingError = '';
+
     const message = [
-      'Hi, I would like to book a one-on-one class.',
+      'NEW ONE-ON-ONE BOOKING REQUEST',
       '',
       `Learner: ${this.bookingName.trim()}`,
+      `WhatsApp: ${this.bookingWhatsapp.trim()}`,
       `Grade: ${this.bookingGrade}`,
       `Subject: ${this.bookingSubject}`,
-      `Topic: ${this.bookingTopic.trim()}`, `Date: ${this.bookingDateLabel}`,
+      `Topic: ${this.bookingTopic.trim()}`,
+      `Date: ${this.bookingDateLabel}`,
       `Time: ${this.bookingTime} (1 hour)`,
       `Price: R${this.bookingPrice}`,
       `Payment: ${this.bookingPay === 'eft' ? 'Bank transfer (EFT)' : 'Online payment'}`
     ].join('\n');
-    window.open('https://wa.me/' + this.BOOKING_WHATSAPP + '?text=' + encodeURIComponent(message), '_blank');
-    this.bookingSent = true;
+
+    this.learnerApi.sendContactEmail({
+      email: 'mathebemoseri@gmail.com',
+      message
+    }).subscribe({
+      next: () => {
+        this.bookingSending = false;
+        this.bookingSent = true;
+      },
+      error: () => {
+        this.bookingSending = false;
+        this.bookingError = 'Could not send your request. Please check your connection and try again.';
+      }
+    });
   }
   openJoin() {
     if (!this.registrationsOpen) {
